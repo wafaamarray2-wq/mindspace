@@ -1,0 +1,342 @@
+.register {
+  min-height: calc(100vh - 64px);
+  background-image: url("../images/ChatGPT Image Mar 3, 2026, 12_02_54 AM.png");
+  padding-top: 55px;
+
+  background-size: cover;
+  background-position: start;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.register::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgb(20, 54, 66, 0.55);
+}
+
+.register .content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  z-index: 2;
+  width: 100%;
+
+}
+
+.register .content .text h1 {
+  direction: rtl;
+  color: #ffffff;
+  margin-bottom: 10px;
+  font-size: 45px;
+  font-weight: bold;
+  width: fit-content;
+  overflow: hidden;
+  white-space: nowrap;
+  border-left: 1px solid #1b6f63;
+  animation:
+    typing 3s steps(30) forwards,
+    blink 0.7s infinite;
+  transition: all 0.6s ease;
+}
+.register .content .text p {
+  color: #e6f2f3;
+  margin-bottom: 30px;
+  font-weight: bold;
+  font-size: 25px;
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(4px);
+  animation: fadeSmooth 0.8s ease forwards;
+  animation-delay: 3.5s;
+}
+
+.register .content form {
+  background: white;
+  width: 500px;
+  height: auto;
+  padding: 20px;
+  border-radius: 20px;
+  width: 380px;
+  max-width: 90%;
+  margin-bottom: 570px;
+}
+.register .content form .reg-role .card .imge{
+  height: 60px;
+}
+.register .content form .reg-role .card img {
+     width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+.register .content form .reg-role p {
+  color: #6b7280;
+    margin: 3px;
+  position: relative;
+}
+.register .content form .reg-role p::before {
+  position: absolute;
+  content: "";
+  width: 100px;
+  height: 1px;
+  background-color: #b8cdd2;
+  top: 10px;
+  right: 14px;
+}
+.register .content form .reg-role p::after {
+  position: absolute;
+  content: "";
+  width: 100px;
+  height: 1px;
+  background-color: #b8cdd2;
+  top: 10px;
+  left: 14px;
+}
+
+.register .content form .reg-role .cards {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  gap: 30px;
+}
+.register .content form .reg-role .cards .card {
+  background: #e8f4fd;
+  padding: 2px 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 2px solid #cfe8f9;
+}
+.card.selected{
+ background: #3498db;
+  border: 2px solid #1d6fa5;
+  box-shadow: 0 0 15px rgba(52,152,219,0.5);
+  color: white;
+}
+/* .card.selected::after {
+  content: "✔";
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 18px;
+} */
+.register .content form .reg-role .cards .tex {
+  font-size: 20px;
+  color: #333;
+}
+.register .content form h2 {
+  color: #2a9d8f;
+  
+}
+.register .content form .rad {
+  margin-top: 14px;
+  width: 100%;
+  padding: 10px 25px 10px 10px;
+  outline: none;
+  flex: 1;
+  border-radius: 8px;
+  border: 1.5px solid #b8cdd2;
+  transition: 0.3s ease;
+  height: 37px;
+}
+.register .content form .rad:focus {
+  border-color: #2a9d8f;
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.15);
+}
+.register .content form input::placeholder {
+  color: #8fa3a8;
+  opacity: 1;
+  text-align: right;
+  font-size: 18px;
+}
+.inp {
+  position: relative;
+  width: 100%;
+}
+.register .content form .inp .icon {
+  position: absolute;
+  right: -37px;
+  top: 66%;
+  transform: translateY(-50%);
+  color: #8fa3a8;
+  z-index: 2;
+  pointer-events: none;
+  font-size: 16px;
+  padding-right: 40px;
+}
+.register .content form button {
+  border: none;
+  cursor: pointer;
+  background: #2a9d8f;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 20px;
+}
+.register .content form button:hover {
+  background: #21867a;
+}
+
+.register .content form .cont {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  font-size: 20px;
+  gap: 7px;
+}
+.register .content form  .cnt-lg h5::before{
+       position: absolute;
+    content: "";
+    width: 79px;
+    height: 1px;
+    background-color: #b8cdd2;
+    top: 10px;
+    right: -88px;
+}
+.register .content form .cont h5 {
+  color: #6c757d;
+  position: relative;
+}
+.register .content form .cont h5::before {
+     position: absolute;
+    content: "";
+    width: 90px;
+    height: 1px;
+    background-color: #b8cdd2;
+    top: 10px;
+    right: -98px;
+}
+.register .content form .cont a {
+  color: #2a9d8f;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  position: relative;
+}
+.register .content form .cont a::after {
+  position: absolute;
+  content: "";
+  width:90px;
+  height: 1px;
+  background-color: #b8cdd2;
+  top: 10px;
+  left: -98px;
+}
+
+ .register .content form .cnt-lg {
+    display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  font-size: 20px;
+  gap: 7px;
+ }
+ .register .content form .cnt-lg a{
+  color: #2a9d8f;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  position: relative;
+ }
+ .register .content form .cnt-lg h5{
+color: #6c757d;
+  position: relative;
+ }
+.register .content form .cnt-lg a::after{
+  position: absolute;
+  content: "";
+  width:79px;
+  height: 1px;
+  background-color: #b8cdd2;
+  top: 10px;
+  left: -88px;
+}
+.register .content form .cont a:hover {
+  color: #21867a;
+  text-decoration: underline;
+  text-decoration: none;
+}
+.ag-gn{
+  display: flex;
+  gap: 10px;
+}
+
+
+.register .content form .inp select {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px 25px 10px 10px;
+  outline: none;
+  flex: 1;
+  border-radius: 8px;
+  border: 1.5px solid #b8cdd2;
+  transition: 0.3s ease;
+  text-align: right;
+  color: #8fa3a8;
+  font-size: 18px;
+}
+.register .content form .inp .icons {
+  position: absolute;
+  right: -37px;
+  top: 66%;
+  transform: translateY(-50%);
+  color: #8fa3a8;
+  z-index: 2;
+  pointer-events: none;
+  font-size: 18px;
+  padding-right: 40px;
+}
+
+
+
+
+.frm{
+    background: white;
+  width: 500px;
+  height: auto;
+  padding: 40px!important;
+  border-radius: 20px;
+  width: 380px;
+  max-width: 90%;
+  margin-bottom: 100px!important
+}
+
+
+
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: none;
+}
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+@keyframes fadeSmooth {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
