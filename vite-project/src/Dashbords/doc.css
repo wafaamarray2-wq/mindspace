@@ -1,14 +1,15 @@
 .dashbord {
   min-height: 100vh;
   padding: 60px;
+  background: #0cb4d6;
 }
 .dash-content {
   display: flex;
 }
 .dash-content .details {
   background: #f4f7fb;
-  width: 83%;
 
+  flex: 1;
 }
 .dash-content .boxes {
   display: flex;
@@ -17,19 +18,20 @@
 }
 .dash-content .boxes .box {
   background: #ffffff;
-  padding: 50px ;
+  padding: 50px;
   width: 500px;
   height: 200px;
   box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.1),
-   0 1px 3px rgba(0, 0, 0, 0.08);
-    cursor: pointer;
-     transition: all 0.3s ease;
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 .dash-content .boxes .box:hover {
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15),
-                0 4px 6px rgba(0, 0, 0, 0.1);
-    transform: translateY(-3px); /* رفع خفيف عند hover */
+  box-shadow:
+    0 10px 15px rgba(0, 0, 0, 0.15),
+    0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px); /* رفع خفيف عند hover */
 }
 .dash-content .boxes .box p {
   color: #6b7280;
@@ -46,11 +48,17 @@
   font-size: 30px;
   font-weight: bold;
 }
-.dash-content .boxes .box .number span svg{
-fill: #facc15;
+.dash-content .boxes .box .number span svg {
+  fill: #facc15;
 }
+
+
+
+
+
+
 .dashbord .sidebar {
- background:   #2f8a9d;
+  background: #2f8a9d;
   width: 17%;
   height: 100vh;
   padding: 30px;
@@ -91,25 +99,22 @@ fill: #facc15;
   list-style: none;
 }
 
-.dashbord .sidebar ul .link {
+.dashbord .sidebar ul .link-content {
   list-style: none;
   background: #ffffff !important;
-  padding: 10px;
+  
 }
 .dashbord .sidebar ul .link .link-content {
-  display: flex;
-  align-items: center;
-  gap: 20px;
 
-  border-radius: 8px;
-  text-decoration: none;
+
+
   color: #71787f;
-  transition: 0.3s;
+ 
 }
-.dashbord .sidebar ul .link svg {
+.dashbord .sidebar ul .link-content svg {
   fill: #1f3c88;
 }
-.dashbord .sidebar ul li {
+.dashbord .sidebar ul li a {
   display: flex;
   align-items: center;
   gap: 20px;
@@ -118,6 +123,7 @@ fill: #facc15;
   padding: 10px;
   cursor: pointer;
   transition: 0.3s;
+  text-decoration: none;
 }
 .dashbord .sidebar ul li:hover {
   background: rgb(255, 255, 255, 0.1);
@@ -140,7 +146,6 @@ fill: #facc15;
   font-size: 30px;
 }
 
-
 .table-container {
   padding: 0;
   margin-left: 60px;
@@ -155,14 +160,14 @@ fill: #facc15;
   font-family: Arial, sans-serif;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
 /* thead */
 .dashboard-table thead {
   background-color: #e0e0e0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .dashboard-table thead th {

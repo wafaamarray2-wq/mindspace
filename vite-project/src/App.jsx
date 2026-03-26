@@ -8,6 +8,12 @@ import Regester from "./Registers/Regester";
 import Login from "./Registers/Login";
 import DoctorDashbord from "./Dashbords/doctorDashbord";
 import PatientDashbord from "./Dashbords/PatientDashbord";
+import Patients from "./Dashbords/Patients";
+import DashbordContent from "./Dashbords/DashbordContent";
+import Messages from "./Dashbords/Messages";
+import Sessions from "./Dashbords/Sessions";
+import Setting from "./Dashbords/Setting";
+import LogOut from "./Dashbords/LogOut";
 
 function App() {
   return (
@@ -16,8 +22,15 @@ function App() {
         <Route path="/therapists" element={<><Navbar /><Therapists /><Footer /></>} />
         <Route path="/register" element={<><Navbar /><Regester /><Footer /></>} />
         <Route path="/login" element={<><Navbar /><Login /><Footer /></>} />
-        <Route path="/doctor-dashboard" element={<DoctorDashbord />} />
-        <Route path="/patient-dashboard" element={<PatientDashbord />} />
+        <Route path="/doctor-dashboard" element={<DoctorDashbord />}>
+      <Route index element={<DashbordContent />} />   {/* صفحة الرئيسية */}
+      <Route path="dash" element={<DashbordContent />} />
+      <Route path="patients" element={<Patients />} />
+      <Route path="message" element={<Messages />} />
+      <Route path="session" element={<Sessions />} />
+      <Route path="setting" element={<Setting />} />
+      <Route path="logOut" element={<LogOut />} />
+    </Route>
         <Route path="*" element={<h1>Page Not Found</h1>} />
       </Routes>
   );

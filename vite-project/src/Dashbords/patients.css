@@ -1,0 +1,45 @@
+.patients {
+  margin-left: 60px;
+  margin: 50px;
+}
+.patients h1 {
+  color: #6b7280;
+  font-weight: bold;
+}
+.patients .boxes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  
+}
+.patients .boxes .box {
+   display: flex; 
+    margin-bottom: 40px;
+}
+.patients .boxes .box .image {
+}
+.patients .boxes .box .image img {
+}
+.patients .boxes .box .content {
+}
+.patients .boxes .box .content h2 {
+    margin-bottom: 5px;
+}
+.patients .boxes .box .content p {
+    margin-bottom: 5px !important;
+}
+.patients .boxes .box .content button {
+  background: #5bb6c9;
+  color: white;
+  padding: 8px ;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+ margin-bottom: 5px;
+ font-weight: bold;
+  transition: 0.3s;
+}
+.patients .boxes .box .content button:hover {
+ background: #4aa8bb;
+}
