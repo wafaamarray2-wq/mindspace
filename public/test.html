@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>اختبار الصحة النفسية</title>
+  <link rel="stylesheet" href="test.css">
+ 
+</head>
+<body>
+
+<h1>اختبار الصحة النفسية</h1>
+<form id="quizForm">
+
+  <!-- Question 1 -->
+  <div class="question active">
+    <p>1. كم مرة شعرت بالتوتر أو القلق خلال الأسبوعين الماضيين؟</p>
+    <label><input type="radio" name="q1" value="0"> أبدًا</label>
+    <label><input type="radio" name="q1" value="1"> عدة أيام</label>
+    <label><input type="radio" name="q1" value="2"> أكثر من نصف الأيام</label>
+    <label><input type="radio" name="q1" value="3"> تقريبًا كل يوم</label>
+  </div>
+
+  <!-- Question 2 -->
+  <div class="question">
+    <p>2. هل واجهت صعوبة في النوم؟</p>
+    <label><input type="radio" name="q2" value="0"> أبدًا</label>
+    <label><input type="radio" name="q2" value="1"> أحيانًا</label>
+    <label><input type="radio" name="q2" value="2"> كثيرًا</label>
+    <label><input type="radio" name="q2" value="3"> دائمًا</label>
+  </div>
+
+  <!-- Question 3 -->
+  <div class="question">
+    <p>3. هل تشعر بفقدان المتعة؟</p>
+    <label><input type="radio" name="q3" value="0"> لا</label>
+    <label><input type="radio" name="q3" value="1"> قليلًا</label>
+    <label><input type="radio" name="q3" value="2"> متوسط</label>
+    <label><input type="radio" name="q3" value="3"> شديد</label>
+  </div>
+
+  <!-- Question 4 -->
+  <div class="question">
+    <p>4. هل تشعر بالإرهاق؟</p>
+    <label><input type="radio" name="q4" value="0"> نادرًا</label>
+    <label><input type="radio" name="q4" value="1"> أحيانًا</label>
+    <label><input type="radio" name="q4" value="2"> غالبًا</label>
+    <label><input type="radio" name="q4" value="3"> دائمًا</label>
+  </div>
+
+  <!-- Question 5 -->
+  <div class="question">
+    <p>5. هل لديك صعوبة في التركيز؟</p>
+    <label><input type="radio" name="q5" value="0"> لا</label>
+    <label><input type="radio" name="q5" value="1"> قليلًا</label>
+    <label><input type="radio" name="q5" value="2"> متوسط</label>
+    <label><input type="radio" name="q5" value="3"> شديد</label>
+  </div>
+
+  <!-- Buttons -->
+  <div class="navigation">
+    <button type="button" id="prevBtn">السابق</button>
+    <button type="button" id="nextBtn">التالي</button>
+  </div>
+
+</form>
+
+<h2 id="result"></h2>
+
+<script>
+let currentQuestion = 0;
+const questions = document.querySelectorAll(".question");
+
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+
+showQuestion(currentQuestion);
+
+function showQuestion(index) {
+  questions.forEach(q => q.classList.remove("active"));
+  questions[index].classList.add("active");
+
+  prevBtn.style.display = index === 0 ? "none" : "inline-block";
+  nextBtn.innerText = index === questions.length - 1 ? "إظهار النتيجة" : "التالي";
+}
+
+nextBtn.addEventListener("click", () => {
+  const currentInputs = questions[currentQuestion].querySelectorAll("input");
+  let answered = false;
+
+  currentInputs.forEach(input => {
+    if (input.checked) answered = true;
+  });
+
+  if (!answered) {
+    alert("من فضلك اختار إجابة");
+    return;
+  }
+
+  if (currentQuestion < questions.length - 1) {
+    currentQuestion++;
+    showQuestion(currentQuestion);
+  } else {
+    calculateResult();
+  }
+});
+
+prevBtn.addEventListener("click", () => {
+  currentQuestion--;
+  showQuestion(currentQuestion);
+});
+
+function calculateResult() {
+  let score = 0;
+
+  questions.forEach((q, index) => {
+    const answer = document.querySelector(`input[name="q${index+1}"]:checked`);
+    score += parseInt(answer.value);
+  });
+
+  let resultText = "";
+let advice = "";
+
+if (score <= 5) {
+  resultText = "🟢 حالتك النفسية جيدة";
+  advice = `
+  ✔ حافظ على روتينك اليومي  
+  ✔ استمر في ممارسة الرياضة  
+  ✔ نام كويس (7-8 ساعات)  
+  ✔ خصص وقت للراحة والاستمتاع  
+  ✔ حافظ على علاقاتك الاجتماعية  
+  `;
+} else if (score <= 10) {
+  resultText = "🟡 لديك توتر بسيط";
+  advice = `
+  ✔ جرب تمارين التنفس (خد نفس عميق 5 ثواني واطلعه ببطء)  
+  ✔ قلل الكافيين  
+  ✔ نظم وقتك كويس  
+  ✔ امشي يوميًا 20-30 دقيقة  
+  ✔ ابعد شوية عن الموبايل قبل النوم  
+  `;
+} else {
+  resultText = "🔴 تحتاج إلى دعم نفسي";
+  advice = `
+  ✔ حاول تتكلم مع شخص تثق فيه  
+  ✔ اكتب مشاعرك يوميًا (journaling)  
+  ✔ مارس تمارين الاسترخاء أو التأمل  
+  ✔ قلل الضغط عليك واهتم بنفسك  
+  ✔ يفضل استشارة مختص نفسي لو الوضع مستمر  
+  `;
+}
+
+document.getElementById("quizForm").style.display = "none";
+
+document.getElementById("result").innerHTML = `
+  <div>
+    <h2>${resultText}</h2>
+    <p style="margin-top:15px; line-height:1.8">${advice}</p>
+  </div>
+`;
+}
+</script>
+
+</body>
+</html>

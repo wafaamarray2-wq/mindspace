@@ -1,0 +1,150 @@
+/* Reset بسيط */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Cairo", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #eef7f7, #d6ecec);
+  direction: rtl;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* الكارد الأساسي */
+form {
+  background: #fff;
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  animation: fadeIn 0.5s ease;
+}
+
+/* عنوان السؤال */
+.question p {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: bold;
+}
+
+/* إخفاء باقي الأسئلة */
+.question {
+  display: none;
+}
+
+.question.active {
+  display: block;
+}
+
+/* الاختيارات */
+label {
+  display: block;
+  background: #f5fafa;
+  padding: 12px 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  border: 2px solid transparent;
+}
+
+/* hover */
+label:hover {
+  background: #e3f3f3;
+  border-color: #3b7d7f;
+}
+
+/* hide radio */
+input[type="radio"] {
+  display: none;
+}
+
+/* لما يتختار */
+input[type="radio"]:checked + span,
+input[type="radio"]:checked {
+  background: #3b7d7f;
+}
+
+/* لما يتختار */
+label:has(input:checked) {
+  background: #3b7d7f;
+  color: #fff;
+  border-color: #3b7d7f;
+}
+
+/* الأزرار */
+.navigation {
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #3b7d7f;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #2e6668;
+  transform: scale(1.05);
+}
+
+/* زر السابق */
+#prevBtn {
+  background: #ccc;
+  color: #333;
+}
+
+#prevBtn:hover {
+  background: #aaa;
+}
+
+/* النتيجة */
+#result {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  form {
+    padding: 20px;
+  }
+
+  .question p {
+    font-size: 18px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 8px 15px;
+  }
+}
