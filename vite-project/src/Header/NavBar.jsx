@@ -4,7 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
-import Logo from '../images/photo_2026-03-01_01-42-02 (2).jpg'
+import Logo from "../images/logo.png";
 import './nav.css'
 function Navbar() {
   return (
@@ -12,7 +12,7 @@ function Navbar() {
       <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
         
         <Typography variant="h6" component="div" className="logo-m">
-            <img src= {Logo}alt="" className="logo-img"/>
+            <img src= {Logo} alt="" className="logo-img"/>
             <h5>  Mind Space</h5>
         
         </Typography>

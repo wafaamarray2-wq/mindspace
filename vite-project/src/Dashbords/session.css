@@ -1,0 +1,79 @@
+.sessions-container {
+  padding: 30px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+.sessions-container h2 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.sessions-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.sessions-table th,
+.sessions-table td {
+  padding: 15px;
+  text-align: left;
+}
+
+.sessions-table th {
+  background: #1a73e8;
+  color: white;
+}
+
+.sessions-table tr {
+  border-bottom: 1px solid #eee;
+}
+
+.sessions-table tr:hover {
+  background: #f9fbff;
+}
+
+/* status */
+.status {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+}
+
+.status.completed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status.pending {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.status.cancelled {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* buttons */
+.view-btn {
+  background: #1a73e8;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  margin-right: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: #e53935;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}

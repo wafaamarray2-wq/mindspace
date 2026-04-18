@@ -1,5 +1,5 @@
 import React from 'react'
-import Hero from '../images/photo_2026-03-01_01-42-02.jpg'
+import Hero from '../images//photo_2026-03-01_01-42-02.jpg'
 import './hero.css'
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
