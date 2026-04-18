@@ -21,7 +21,9 @@ function HeroSection() {
            <Stack spacing={2} direction="row">
  
       <Button className='btn1' variant="contained" sx={{background:'#3b7d7f'}} onClick={()=>native("/register")}>احجز الان</Button>
-      <Button className='btn2' variant="outlined" sx={{color:'#3b7d7f'}} onClick={()=>native("/register")}>ابدا الاختبار</Button>
+     <Button className='btn2' variant="outlined" sx={{color:'#3b7d7f'}} onClick={() => window.location.href = "/test.html"}>
+  ابدا الاختبار
+</Button>
     </Stack>
       </div>
              
