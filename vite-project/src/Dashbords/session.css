@@ -1,79 +1,121 @@
-.sessions-container {
+.sessions-page {
   padding: 30px;
-  background: #f5f7fb;
+  background: #f4f7fb;
   min-height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
-.sessions-container h2 {
+/* Header */
+.sessions-header {
   margin-bottom: 20px;
-  color: #2c3e50;
 }
 
+.sessions-header h2 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.sessions-header p {
+  color: #777;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.stat-card h3 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.stat-card span {
+  color: #777;
+}
+
+.stat-card.green h3 {
+  color: #2ecc71;
+}
+
+.stat-card.orange h3 {
+  color: #f39c12;
+}
+
+/* Table card */
+.table-card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* Table */
 .sessions-table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
 }
 
 .sessions-table th,
 .sessions-table td {
-  padding: 15px;
+  padding: 12px;
   text-align: left;
-}
-
-.sessions-table th {
-  background: #1a73e8;
-  color: white;
-}
-
-.sessions-table tr {
   border-bottom: 1px solid #eee;
 }
 
-.sessions-table tr:hover {
-  background: #f9fbff;
-}
-
-/* status */
+/* Status */
 .status {
   padding: 5px 10px;
-  border-radius: 15px;
+  border-radius: 20px;
   font-size: 12px;
+  font-weight: bold;
 }
 
 .status.completed {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: #eafaf1;
+  color: #27ae60;
 }
 
 .status.pending {
-  background: #fff3e0;
-  color: #ef6c00;
+  background: #fff4e5;
+  color: #f39c12;
 }
 
 .status.cancelled {
-  background: #ffebee;
-  color: #c62828;
+  background: #fdecea;
+  color: #e74c3c;
 }
 
-/* buttons */
+/* Buttons */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
 .view-btn {
-  background: #1a73e8;
+  background: #2f6f73;
   color: white;
   border: none;
-  padding: 6px 12px;
-  margin-right: 5px;
+  padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
 }
 
 .delete-btn {
-  background: #e53935;
+  background: #e74c3c;
   color: white;
   border: none;
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
 }

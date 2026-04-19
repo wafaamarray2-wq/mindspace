@@ -1,10 +1,112 @@
-.details-container {
+.details-page {
   padding: 30px;
+  min-height: 100vh;
+  background: #f4f7fb;
+  font-family: Arial, sans-serif;
 }
 
+/* Header */
+.details-header {
+  margin-bottom: 20px;
+}
+
+.details-header h2 {
+  font-size: 28px;
+  margin: 0;
+}
+
+.details-header p {
+  color: #777;
+}
+
+/* Main Card */
 .details-card {
   background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+}
+
+/* Top Section */
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.top-section h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.date-box p {
+  color: #555;
+}
+
+/* Status */
+.status {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status.completed {
+  background: #eafaf1;
+  color: #27ae60;
+}
+
+.status.pending {
+  background: #fff4e5;
+  color: #f39c12;
+}
+
+.status.cancelled {
+  background: #fdecea;
+  color: #e74c3c;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.info-box {
+  background: #f9fbfd;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.info-box h4 {
+  margin: 0 0 5px;
+  font-size: 14px;
+  color: #777;
+}
+
+.info-box p {
+  margin: 0;
+  font-weight: bold;
+}
+
+/* Notes */
+.notes-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9fbfd;
+  border-radius: 10px;
+}
+
+.notes-section h4 {
+  margin-bottom: 8px;
+}
+
+.not-found {
+  padding: 30px;
+  text-align: center;
 }

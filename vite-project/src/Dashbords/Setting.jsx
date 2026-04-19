@@ -10,77 +10,98 @@ export default function Settings() {
   });
 
   const [image, setImage] = useState(null);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    alert("Changes Saved ✅");
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl);
+    }
   };
 
-  const handleImageChange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    setImage(URL.createObjectURL(file));
-  }
-};
+  const handleSave = () => {
+    alert("Profile updated successfully ✅");
+  };
+
   return (
-    <div className="settings-container">
-      <h2>Settings</h2>
+    <div className="page">
 
-      {/* Profile Info */}
-      <div className="image-section">
-  <img
-    src={image || "https://via.placeholder.com/100"}
-    alt="profile"
-    className="profile-img"
-  />
+      <div className="layout">
 
-  <input type="file" onChange={handleImageChange} />
-</div>
-      <div className="card">
-        <h3>Profile Info</h3>
+        {/* LEFT SIDE */}
+        <div className="side">
 
-        <label>Name</label>
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-        />
+          <img
+            src={image || "https://via.placeholder.com/120"}
+            className="avatar"
+            alt="profile"
+          />
 
-        <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-        />
+          <h2>{form.name}</h2>
+          <p>{form.email}</p>
+
+          {/* UPLOAD */}
+          <label className="upload">
+            Change Photo
+            <input
+              type="file"
+              hidden
+              onChange={handleImageChange}
+            />
+          </label>
+
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="content-set">
+
+          <h1>Account Settings</h1>
+
+          <div className="grid">
+
+            <div className="box-set">
+              <label>Name</label>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="box-set">
+              <label>Email</label>
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="box full">
+              <label>Current Password</label>
+              <input type="password" />
+            </div>
+
+            <div className="box full">
+              <label>New Password</label>
+              <input type="password" />
+            </div>
+
+          </div>
+
+          <button className="set-btn" onClick={handleSave}>
+            Save Changes
+          </button>
+
+        </div>
+
       </div>
 
-      {/* Change Password */}
-      <div className="card">
-        <h3>Change Password</h3>
-
-        <label>Current Password</label>
-        <input
-          type="password"
-          name="password"
-          onChange={handleChange}
-        />
-
-        <label>New Password</label>
-        <input
-          type="password"
-          name="newPassword"
-          onChange={handleChange}
-        />
-      </div>
-
-      {/* Actions */}
-      <button className="save-btn" onClick={handleSave}>
-        Save Changes
-      </button>
     </div>
   );
 }

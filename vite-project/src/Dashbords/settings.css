@@ -1,56 +1,101 @@
-.settings-container {
-  padding: 30px;
-  background: #f5f7fb;
-  min-height: 100vh;
+.page {
+  height: 100vh;
+  width: 100%;
+  background: #f6f8fb;
+  font-family: system-ui;
 }
 
-.settings-container h2 {
-  margin-bottom: 20px;
-  color: #2c3e50;
+/* FULL SCREEN LAYOUT */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100vh;
 }
 
-.card {
+/* LEFT PANEL */
+.side {
   background: white;
-  padding: 20px;
-  border-radius: 15px;
+  border-right: 1px solid #eee;
+  padding: 30px;
+  text-align: center;
+}
+
+.avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.side h2 {
+  margin: 5px 0;
+}
+
+.side p {
+  color: #777;
+  font-size: 13px;
+}
+
+/* UPLOAD BUTTON */
+.upload {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #2f6f73;
+  cursor: pointer;
+}
+
+/* RIGHT SIDE */
+.content-set {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.content h1 {
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.card h3 {
-  margin-bottom: 15px;
-  color: #1a73e8;
+/* GRID FORM */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
-.card label {
-  display: block;
-  margin: 10px 0 5px;
-  font-size: 14px;
+/* INPUT BOX */
+.box label {
+  font-size: 13px;
   color: #555;
 }
 
-.card input {
+input {
   width: 100%;
   padding: 10px;
+  margin-top: 6px;
   border-radius: 8px;
   border: 1px solid #ddd;
   outline: none;
 }
 
-.card input:focus {
-  border-color: #1a73e8;
+input:focus {
+  border-color: #2f6f73;
 }
 
-.save-btn {
-  background: #1a73e8;
-  color: white;
+/* FULL WIDTH */
+.full {
+  grid-column: span 2;
+}
+
+/* BUTTON */
+.set-btn {
+  margin-top: 25px;
+  padding: 12px;
   border: none;
-  padding: 12px 20px;
   border-radius: 10px;
+  background: #2f6f73;
+  color: white;
   cursor: pointer;
-  font-size: 16px;
-}
-
-.save-btn:hover {
-  background: #1666c1;
+  width: 100%;
 }
