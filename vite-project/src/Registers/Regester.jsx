@@ -8,6 +8,9 @@ import { IoMdCalendar } from "react-icons/io";
 import { CgGenderMale } from "react-icons/cg";
 import Doct from "..//images/photo_2026-03-04_02-40-53.jpg";
 import Sic from "..//images/photo_2026-03-04_02-40-47.jpg";
+import axios from "axios";
+import DoctorDashbord from "../Dashbords/doctorDashbord";
+import PatientDashbord from "../Dashbords/PatientDashbord";
 function Regester() {
   const [name, setName] = useState("");
   const [email, setemail] = useState("");
@@ -16,6 +19,7 @@ function Regester() {
   const [gender, setGender] = useState("");
   const [age, setAge] = useState("");
   const [role, setRole] = useState("");
+  const [specialty, setSpecialty] = useState("");
   const navigate = useNavigate();
   const handleName = (e) => {
     setName(e.target.value);
@@ -38,38 +42,83 @@ function Regester() {
   const handelAge = (e) => {
     setAge(e.target.value);
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  
-    if (password != confirmBassword) {
-        alert("كلمة المرور غير متطابقة")
-        return;
-    }
-    
-const user = {
-    name,
-    email,
-    password,
-    gender,
-    age,
-    role,
-  };
 
-  localStorage.setItem("user", JSON.stringify(user));
-  localStorage.setItem("isLoggedIn", true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-
-
-  if (role === "doctor") {
-    navigate("/doctor-dashboard")
-  }else
-  {
-        navigate("/patient-dashboard")
+  if (
+    !name ||
+    !email ||
+    !password ||
+    !confirmBassword ||
+    !role ||
+    !age ||
+    !gender
+  ) {
+    return alert("برجاء استكمال جميع البيانات المطلوبة قبل المتابعة");
   }
-    
+
+  if (password !== confirmBassword) {
+    return alert("كلمة المرور وتأكيدها غير متطابقين");
+  }
+
+  const emailRegex = /\S+@\S+\.\S+/;
+  if (!emailRegex.test(email)) {
+    return alert("برجاء إدخال بريد إلكتروني صحيح");
+  }
+
+  if (Number(age) <= 0) {
+    return alert("برجاء إدخال عمر صحيح");
+  }
+
+  const allowedRoles = ["user", "admin", "therapist", "guest"];
+
+  if (!allowedRoles.includes(role)) {
+    return alert("الدور المختار غير صحيح");
+  }
+
+  const data = {
+    userName: name.trim(),
+    email: email.trim(),
+    password,
+    cPassword: confirmBassword,
+    role,
+    age: Number(age),
+    gender,
   };
 
-  
+  // ✅ مهم: therapist لازم specialty من القيم المسموحة
+  if (role === "therapist") {
+    data.specialty = "therapist"; 
+    // ممكن تغيريها لأي قيمة من:
+    // "life coach", "relationship coach", "career coach", "therapist", "performance and skill coach"
+  }
+
+  try {
+    const res = await axios.post(
+      "https://mind-space-ov3r.onrender.com/auth/sign-up",
+      data
+    );
+
+    console.log(res.data);
+
+    alert("تم إنشاء الحساب بنجاح");
+
+ if (role === "therapist") {
+  navigate("/login");
+} else {
+  navigate("/login");
+}
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+
+    alert(
+      err.response?.data?.message ||
+      "حدث خطأ أثناء إنشاء الحساب، برجاء المحاولة لاحقًا"
+    );
+  }
+};
+
   return (
     <div className="register">
       <div className="content">
@@ -84,9 +133,14 @@ const user = {
           <div className="reg-role">
             <p>:اختر نوع الحساب</p>
             <div className="cards">
-              <div className={`card ${role==="doctor" ? "selected" :""}`}>
+             <div className={`card ${role === "therapist" ? "selected" : ""}`}>
                 <label className="role-option">
-                  <input type="radio" name="role" value="doctor" onChange={handelRole} />
+                  <input
+                    type="radio"
+                    name="role"
+                    value="therapist"
+                    onChange={handelRole}
+                  />
 
                   <div className="imge">
                     <img src={Doct} alt="" />
@@ -94,9 +148,14 @@ const user = {
                   <div className="tex"> دكتور </div>
                 </label>
               </div>
-              <div className={`card ${role==="patient" ? "selected" :""}`}>
+              <div className={`card ${role === "user" ? "selected" : ""}`}>
                 <label className="role-option">
-                  <input type="radio" name="role" value="patient" onChange={handelRole} />
+                  <input
+                    type="radio"
+                    name="role"
+                   value="user"
+                    onChange={handelRole}
+                  />
                   <div className="imge">
                     <img src={Sic} alt="" />
                   </div>

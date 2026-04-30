@@ -21,7 +21,7 @@ import Booking from "./Dashbords/Booking";
 import PatientHome from "./Dashbords/PatientHome";
 import MessagePatient from "./Dashbords/MessagePatient";
 import SettingPatients from "./Dashbords/SettingPatients";
-
+ import VerifyOtp from "./Registers/VerifyOtp";
 
 function App() {
   return (
@@ -92,6 +92,7 @@ function App() {
       <Route path="/booking/:id" element={<Booking />} />
 
       <Route path="/doctor" element={<Therapists />} />
+      <Route path="/verify-otp" element={<VerifyOtp />} />
 
       <Route path="*" element={<h1>Page Not Found</h1>} />
     </Routes>
