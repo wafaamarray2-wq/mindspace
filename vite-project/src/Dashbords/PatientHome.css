@@ -10,8 +10,8 @@
 
 /* الكارت الكبير */
 .home-card {
-  width: 85%;          /* 👈 ده المهم */
-  height: 70vh;        /* 👈 يخليه يملى الشاشة */
+  width: 85%;
+  height: 70vh;
   background: white;
   padding: 50px;
   border-radius: 25px;
@@ -63,4 +63,116 @@
   background: #2f6f73;
   color: white;
   transform: translateY(-6px);
+}
+
+/* ================== PROFILE IMAGE (FIXED) ================== */
+
+.image-prof {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 15px;
+  position: relative;
+}
+
+/* الصورة أو الـ avatar */
+.image-prof img,
+.empty-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border: 4px solid white;
+}
+
+/* avatar لو مفيش صورة */
+.empty-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2f6f73, #5cc3c7);
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+/* label يغطي الصورة */
+.image-prof label {
+  display: block;
+  position: relative;
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+}
+
+/* إخفاء input */
+.image-prof input {
+  display: none;
+}
+
+/* أيقونة التعديل */
+.edit-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: #000000b3;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* ================== HEAD ================== */
+
+.head {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.head h3 {
+  margin: 5px 0;
+  font-size: 20px;
+}
+
+.head p {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* ================== INPUT & BUTTONS ================== */
+
+.head input {
+  width: 100%;
+  margin: 10px 0;
+  font-size: 12px;
+}
+
+.head button {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #2f6f73;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.head button:hover {
+  background: #255a5d;
+}
+
+/* زرار Remove */
+.head button:last-child {
+  background: #e11d48;
+}
+
+.head button:last-child:hover {
+  background: #be123c;
 }

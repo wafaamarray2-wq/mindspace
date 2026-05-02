@@ -82,7 +82,7 @@ function App() {
      <Route index element={<PatientHome />} />
         <Route path="message" element={<MessagePatient />} />
         <Route path="setting" element={<SettingPatients />} />
-
+      <Route path="logOut" element={<LogOut />} />
       </Route> 
       <Route path="/PatientHome" element={<PatientHome />} />
       <Route path="/patient/:id" element={<PatientProfile />} />
@@ -93,7 +93,7 @@ function App() {
 
       <Route path="/doctor" element={<Therapists />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
-
+   
       <Route path="*" element={<h1>Page Not Found</h1>} />
     </Routes>
   );
