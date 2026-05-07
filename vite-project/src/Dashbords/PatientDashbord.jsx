@@ -11,60 +11,92 @@ import "./doc.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+// 🔥 NEW
+import { useUser } from "../UserContext";
+
 export default function PatientDashbord() {
-  const [user, setUser] = useState(null);
+  const { user, setUser, fetchUser } = useUser();
+
   const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-    axios
-      .get("https://mind-space-ov3r.onrender.com/user/profile", {
-        headers: {
-          Authorization: `dash ${token}`,
-        },
-      })
-      .then((res) => {
-        setUser(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  const uploadImage = async () => {
-    const token = localStorage.getItem("token");
-
-    const formData = new FormData();
-    formData.append("pfp", imageFile);
-
-    const res = await axios.post(
-      "https://mind-space-ov3r.onrender.com/user/profile-picture",
-      formData,
-      {
-        headers: {
-          Authorization: `dash ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-
-    setUser((prev) => ({
-      ...prev,
-      pfp: res.data.data.pfp,
-    }));
+  const authHeader = {
+    Authorization: `dash ${token}`,
   };
 
-  const resetImage = async () => {
-    const token = localStorage.getItem("token");
+  // ================= GET USER =================
+  const fetchUserData = async () => {
+    try {
+      const res = await axios.get(
+        "https://mind-space-ov3r.onrender.com/user/profile",
+        {
+          headers: authHeader,
+        }
+      );
 
+      setUser(res.data.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (token) fetchUserData();
+  }, []);
+
+  // ================= UPLOAD IMAGE =================
+  const uploadImage = async (fileParam) => {
+    const formData = new FormData();
+    formData.append("pfp", fileParam || imageFile);
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post(
+        "https://mind-space-ov3r.onrender.com/user/profile-picture",
+        formData,
+        {
+          headers: {
+            ...authHeader,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const newPfp = res.data.data.pfp;
+
+      setUser((prev) => ({
+        ...prev,
+        pfp: {
+          ...newPfp,
+          secure_url: newPfp.secure_url + "?t=" + Date.now(),
+        },
+      }));
+
+      setPreview(null);
+
+      await fetchUser();
+
+      // // 🔥 FIX
+      // window.location.reload();
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ================= RESET IMAGE =================
+  const resetImage = async () => {
     await axios.patch(
       "https://mind-space-ov3r.onrender.com/user/reset-profile-picture",
       {},
       {
-        headers: {
-          Authorization: `dash ${token}`,
-        },
+        headers: authHeader,
       }
     );
 
@@ -72,6 +104,13 @@ export default function PatientDashbord() {
       ...prev,
       pfp: null,
     }));
+
+    setPreview(null);
+
+    await fetchUser();
+
+    // // 🔥 FIX
+    // window.location.reload();
   };
 
   return (
@@ -80,17 +119,25 @@ export default function PatientDashbord() {
         <div className="sidebar">
           <div className="head">
 
-            {/* ================= IMAGE (FIXED ONLY HERE) ================= */}
-            <div className="image-prof">
+            {/* IMAGE */}
+            <div className="image-box">
               <label>
                 <input
                   type="file"
-                  onChange={(e) => setImageFile(e.target.files[0])}
+                  hidden
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    setImageFile(file);
+                    setPreview(URL.createObjectURL(file));
+                    uploadImage(file);
+                  }}
                 />
 
-                {user?.pfp?.secure_url ? (
+                {preview || user?.pfp?.secure_url ? (
                   <img
-                    src={user.pfp.secure_url}
+                    src={preview || user?.pfp?.secure_url}
                     alt="profile"
                   />
                 ) : (
@@ -99,12 +146,13 @@ export default function PatientDashbord() {
                   </div>
                 )}
               </label>
+
+              {loading && <span className="loading">...</span>}
             </div>
 
             <h3>{user?.userName || "Loading..."}</h3>
             <p>{user?.role || "User"}</p>
 
-            <button onClick={uploadImage}>Upload</button>
             <button onClick={resetImage}>Remove Photo</button>
 
           </div>

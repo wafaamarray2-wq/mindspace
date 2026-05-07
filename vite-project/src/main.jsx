@@ -4,12 +4,14 @@ import './index.css';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import { TherapistProvider } from "./Therapists/TherapistContext";
-
+import { UserProvider } from './UserContext.jsx';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <TherapistProvider>
+          <UserProvider>
         <App />
+        </UserProvider>
       </TherapistProvider>
     </BrowserRouter>
   </StrictMode>

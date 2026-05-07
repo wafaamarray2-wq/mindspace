@@ -82,7 +82,8 @@
   object-fit: cover;
   border-radius: 50%;
   margin-bottom: 10px;
-  padding: 5px;
+  /* padding: 3px; */
+  border: 5px solid #fff;
 }
 .dashbord .sidebar .head h3 {
   color: #ffffff;

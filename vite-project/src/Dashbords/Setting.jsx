@@ -1,107 +1,142 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import "./settings.css";
 
 export default function Settings() {
   const [form, setForm] = useState({
-    name: "Dr. Ahmed",
-    email: "doctor@mail.com",
+    userName: "",
+    email: "",
     password: "",
-    newPassword: "",
   });
 
-  const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  const token = localStorage.getItem("token");
+
+  // ===== GET USER (بس للعرض مش للـ input) =====
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const res = await axios.get(
+          "https://mind-space-ov3r.onrender.com/user/profile",
+          {
+            headers: {
+              Authorization: `dash ${token}`,
+            },
+          }
+        );
+
+        // ❗ مهم: مش بنحطها في الفورم عشان يفضل فاضي زي ما طلبتي
+        console.log("Current user:", res.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getUser();
+  }, []);
+
+  // ===== HANDLE CHANGE =====
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  // ===== UPDATE USER =====
+  const handleSave = async () => {
+    try {
+      setLoading(true);
 
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
+      await axios.put(
+        "https://mind-space-ov3r.onrender.com/user/update-user",
+        {
+          userName: form.userName,
+          email: form.email,
+          password: form.password,
+        },
+        {
+          headers: {
+            Authorization: `dash ${token}`,
+          },
+        }
+      );
+
+      alert("Profile updated successfully ✅");
+
+      // (اختياري) تمسحي الفورم بعد الحفظ
+      setForm({
+        userName: "",
+        email: "",
+        password: "",
+      });
+    } catch (err) {
+      console.log(err);
+      alert("Update failed ❌");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleSave = () => {
-    alert("Profile updated successfully ✅");
   };
 
   return (
     <div className="page">
-
       <div className="layout">
 
-        {/* LEFT SIDE */}
-        <div className="side">
-
-          <img
-            src={image || "https://via.placeholder.com/120"}
-            className="avatar"
-            alt="profile"
-          />
-
-          <h2>{form.name}</h2>
-          <p>{form.email}</p>
-
-          {/* UPLOAD */}
-          <label className="upload">
-            Change Photo
-            <input
-              type="file"
-              hidden
-              onChange={handleImageChange}
-            />
-          </label>
-
-        </div>
-
-        {/* RIGHT SIDE */}
         <div className="content-set">
 
           <h1>Account Settings</h1>
 
           <div className="grid">
 
+            {/* NAME */}
             <div className="box-set">
               <label>Name</label>
               <input
-                name="name"
-                value={form.name}
+                name="userName"
+                value={form.userName}
                 onChange={handleChange}
+                placeholder="Enter new name"
               />
             </div>
 
+            {/* EMAIL */}
             <div className="box-set">
               <label>Email</label>
               <input
                 name="email"
                 value={form.email}
                 onChange={handleChange}
+                placeholder="Enter new email"
               />
             </div>
 
+            {/* PASSWORD */}
             <div className="box full">
-              <label>Current Password</label>
-              <input type="password" />
-            </div>
-
-            <div className="box full">
-              <label>New Password</label>
-              <input type="password" />
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Enter password"
+              />
             </div>
 
           </div>
 
-          <button className="set-btn" onClick={handleSave}>
-            Save Changes
+          {/* SAVE BUTTON */}
+          <button
+            className="set-btn"
+            onClick={handleSave}
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save Changes"}
           </button>
 
         </div>
 
       </div>
-
     </div>
   );
 }
