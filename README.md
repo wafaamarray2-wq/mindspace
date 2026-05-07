@@ -1,16 +1,60 @@
-# React + Vite
+# 🧠 MindSpace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A mental health platform built with React that connects patients with doctors and allows easy appointment booking and management.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📌 About the Project
 
-## React Compiler
+MindSpace is a web application designed to help patients communicate with doctors, book sessions, and manage their profiles in an easy and organized way.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The system includes both patient and doctor dashboards.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🚀 Features
+
+- User Authentication (Login / Register)
+- Patient Dashboard
+- Doctor Dashboard
+- Profile Management
+- Booking Appointments
+- Settings Page
+- Responsive UI Design
+
+---
+
+## 🛠️ Tech Stack
+
+- React.js
+- React Router
+- Axios
+- CSS / Styled Components
+- Vite
+
+---
+
+## 📷 Screenshots
+
+- Register Page
+
+![Login Page](./screenshots/Screenshot%202026-05-07%20163512.png)
+ 
+
+- Booking Page  
+![Register Page](./screenshots/Screenshot%202026-05-07%20164727.png)
+
+- Therapists Page 
+![Therapists Page](./screenshots/Screenshot%202026-05-07%20163857.png)
+
+- Profile Page
+![Profile Page](./screenshots/Screenshot%202026-05-07%20163633.png)  
+
+---
+
+## ⚙️ Installation & Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/wafaamarray2-wq/mindspace.git
