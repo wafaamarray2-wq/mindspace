@@ -311,7 +311,23 @@ color: #6c757d;
   margin-bottom: 100px!important
 }
 
+.register .content form .forget-pass {
+  text-align: center;
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
 
+.register .content form .forget-pass a {
+  color: #5f7f86;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.register .content form .forget-pass a:hover {
+  color: #2a9d8f;
+}
 
 
 select {

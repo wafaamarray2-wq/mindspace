@@ -1,69 +1,372 @@
-.footer {
-  background-color: #2f6f73; /* لون الهيدر الجديد */
-  color: #fff;
-  padding: 40px 20px 20px 20px;
-  font-family: "Roboto", sans-serif;
+/* =============================================================
+   foot.css — MindSpace Footer
+   Refactored: refined dark-teal wellness aesthetic
+   Rules:
+     • All original class names preserved
+       (.footer, .footer-container, .footer-col,
+        .footer-logo, .socials, .footer-bottom)
+     • New classes prefixed with footer- to avoid conflicts
+     • CSS custom properties for easy theming
+     • RTL-friendly, fully responsive
+   ============================================================= */
+
+/* ─────────────────────────────────────────
+   0. GOOGLE FONT
+───────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=DM+Sans:wght@400;500&display=swap');
+
+/* ─────────────────────────────────────────
+   1. DESIGN TOKENS
+───────────────────────────────────────── */
+:root {
+  --footer-bg:          #1e4d50;
+  --footer-bg-deep:     #163a3d;
+  --footer-teal:        #2f6f73;
+  --footer-accent:      #5bbfc4;
+  --footer-accent-soft: rgba(91,191,196,0.15);
+
+  --footer-text:        rgba(255,255,255,0.85);
+  --footer-text-muted:  rgba(255,255,255,0.50);
+  --footer-text-head:   #ffffff;
+
+  --footer-divider:     rgba(255,255,255,0.10);
+  --footer-badge-bg:    rgba(255,255,255,0.08);
+  --footer-badge-border:rgba(255,255,255,0.14);
+
+  --footer-font:        'Tajawal', sans-serif;
+  --footer-font-en:     'DM Sans', sans-serif;
+
+  --radius-sm:          6px;
+  --radius-badge:       30px;
+  --transition:         0.22s ease;
 }
 
+/* ─────────────────────────────────────────
+   2. SHELL  (.footer)
+───────────────────────────────────────── */
+.footer {
+  position: relative;
+  background: var(--footer-bg);
+  color: var(--footer-text);
+  padding: 0 0 0;                 /* wave handles top spacing */
+  font-family: var(--footer-font);
+  direction: rtl;
+  overflow: hidden;
+}
+
+/* Subtle diagonal lines texture */
+.footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255,255,255,0.015) 0px,
+    rgba(255,255,255,0.015) 1px,
+    transparent 1px,
+    transparent 12px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─────────────────────────────────────────
+   3. TOP WAVE  (.footer-wave)
+───────────────────────────────────────── */
+.footer-wave {
+  position: relative;
+  z-index: 1;
+  line-height: 0;
+  margin-bottom: -1px;
+}
+
+.footer-wave svg {
+  width: 100%;
+  height: 60px;
+  display: block;
+}
+
+/* ─────────────────────────────────────────
+   4. CONTENT GRID  (.footer-container)
+───────────────────────────────────────── */
 .footer-container {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   max-width: 1200px;
-  margin: auto;
-  gap: 50px;
+  margin: 0 auto;
+  padding: 48px 40px 36px;
+  gap: 40px;
   flex-wrap: wrap;
 }
 
+/* ─────────────────────────────────────────
+   5. COLUMN BASE  (.footer-col)
+───────────────────────────────────────── */
 .footer-col {
   flex: 1;
-  min-width: 200px;
+  min-width: 190px;
 }
 
-.footer-logo {
-  font-size: 1.8rem;
-  margin-bottom: 10px;
-}
-
+/* Section heading */
 .footer-col h3 {
-  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--footer-font);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--footer-text-head);
+  margin: 0 0 18px;
+  letter-spacing: 0.2px;
 }
 
+/* Coloured bar before heading */
+.footer-col__bar {
+  display: inline-block;
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--footer-accent);
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────
+   6. BRAND COLUMN  (.footer-col--brand)
+───────────────────────────────────────── */
+.footer-col--brand {
+  flex: 1.4;               /* slightly wider */
+  min-width: 220px;
+}
+
+/* Logo */
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--footer-font);
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 14px;
+  letter-spacing: -0.5px;
+}
+
+.footer-logo__dot {
+  color: var(--footer-accent);
+  font-size: 1.1rem;
+  line-height: 1;
+  animation: logoSpin 6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes logoSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Tagline */
+.footer-col--brand p {
+  font-size: 14px !important;
+  line-height: 1.75 !important;
+  color: var(--footer-text) !important;
+  margin: 0 0 18px !important;
+  max-width: 280px;
+}
+
+/* Trust badges */
+.footer-trust {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.footer-trust__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: var(--radius-badge);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--footer-accent);
+  background: var(--footer-accent-soft);
+  border: 1px solid var(--footer-badge-border);
+  transition: background var(--transition);
+}
+
+.footer-trust__badge:hover {
+  background: rgba(91,191,196,0.25);
+}
+
+/* ─────────────────────────────────────────
+   7. LINK LISTS  (.footer-col ul / li / a)
+───────────────────────────────────────── */
 .footer-col p,
 .footer-col ul,
 .footer-col li {
-  font-size: 1rem;
+  font-size: 14px;
   line-height: 1.6;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+.footer-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .footer-col ul li a {
-  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--footer-text);
   text-decoration: none;
-  transition: color 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color var(--transition), padding-right var(--transition);
 }
 
 .footer-col ul li a:hover {
-  color: #64B5F6; /* لون فاتح عند hover */
+  color: var(--footer-accent);
+  padding-right: 4px;
 }
 
-.socials li {
-  margin-bottom: 5px;
+/* ─────────────────────────────────────────
+   8. SOCIAL LINKS  (.socials)
+───────────────────────────────────────── */
+.socials {
+  gap: 8px !important;
 }
 
+.socials li a {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 10px !important;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--footer-badge-bg);
+  border: 1px solid var(--footer-badge-border);
+  font-size: 14px !important;
+  color: var(--footer-text) !important;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    transform var(--transition) !important;
+}
+
+.socials li a:hover {
+  background: var(--footer-accent-soft) !important;
+  color: var(--footer-accent) !important;
+  border-color: rgba(91,191,196,0.35) !important;
+  transform: translateX(-3px) !important;
+  padding-right: 14px !important;  /* override parent nudge */
+}
+
+/* Social icon letter/symbol */
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.10);
+  font-size: 11px;
+  font-family: var(--footer-font-en);
+  font-weight: 700;
+  color: var(--footer-accent);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* ─────────────────────────────────────────
+   9. DIVIDER  (.footer-divider)
+───────────────────────────────────────── */
+.footer-divider {
+  position: relative;
+  z-index: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--footer-divider) 20%,
+    var(--footer-divider) 80%,
+    transparent
+  );
+  margin: 0 40px;
+}
+
+/* ─────────────────────────────────────────
+   10. BOTTOM BAR  (.footer-bottom)
+───────────────────────────────────────── */
 .footer-bottom {
-  text-align: center;
-  margin-top: 30px;
-  font-size: 0.9rem;
-  opacity: 0.8;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 40px;
+  font-size: 13px;
+  color: var(--footer-text-muted);
+  font-family: var(--footer-font);
+  letter-spacing: 0.2px;
+  background: var(--footer-bg-deep);
 }
 
-/* Responsive للموبايل */
-@media (max-width: 768px) {
+.footer-bottom__sep {
+  opacity: 0.4;
+  font-size: 16px;
+}
+
+/* ─────────────────────────────────────────
+   11. RESPONSIVE — TABLET  (≤ 860px)
+───────────────────────────────────────── */
+@media (max-width: 860px) {
+  .footer-container {
+    padding: 40px 28px 30px;
+    gap: 32px;
+  }
+}
+
+/* ─────────────────────────────────────────
+   12. RESPONSIVE — MOBILE  (≤ 640px)
+───────────────────────────────────────── */
+@media (max-width: 640px) {
   .footer-container {
     flex-direction: column;
-    gap: 30px;
     text-align: center;
+    align-items: center;
+    padding: 36px 20px 28px;
+    gap: 28px;
   }
+
+  .footer-col { min-width: unset; width: 100%; }
+
+  .footer-col h3 { justify-content: center; }
+
+  .footer-col--brand p { max-width: 100%; }
+
+  .footer-trust { justify-content: center; }
+
+  .footer-col ul { align-items: center; }
+
+  .socials li a { justify-content: center; }
+
+  .footer-logo { justify-content: center; }
+
+  .footer-divider { margin: 0 20px; }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px;
+  }
+
+  .footer-bottom__sep { display: none; }
 }

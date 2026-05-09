@@ -1,20 +1,288 @@
+/* =============================================================
+   nav.css — MindSpace Navbar
+   Refactored: refined glass-teal, wellness aesthetic
+   Rules:
+     • All original class names preserved
+       (.nav-br, .logo-m, .logo-img)
+     • New classes prefixed with nav- to avoid conflicts
+     • CSS custom properties for easy theming
+     • RTL-friendly, fully responsive
+   ============================================================= */
 
+/* ─────────────────────────────────────────
+   0. GOOGLE FONT
+───────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
-.logo-m{
-display: flex;
-align-items: center;
-gap: 5px;
+/* ─────────────────────────────────────────
+   1. DESIGN TOKENS
+───────────────────────────────────────── */
+:root {
+  --nav-teal:          #2f6f73;
+  --nav-teal-dark:     #245558;
+  --nav-teal-light:    rgba(230,244,241,0.15);
+  --nav-accent:        #e6f4f1;
+  --nav-accent-soft:   rgba(230,244,241,0.10);
 
+  --nav-h:             68px;
+  --nav-font:          'DM Sans', sans-serif;
+  --nav-font-brand:    'Tajawal', sans-serif;
+
+  --nav-shadow-rest:   0 1px 0 rgba(0,0,0,0.08);
+  --nav-shadow-scroll: 0 4px 24px rgba(0,0,0,0.14);
+  --nav-radius-pill:   40px;
+  --transition:        0.22s ease;
 }
-.logo-m h5{
-color: #e6f4f1;
-font-size: 20px;
-font-weight: bold;
+
+/* ─────────────────────────────────────────
+   2. APPBAR SHELL  (.nav-br)
+───────────────────────────────────────── */
+.nav-br {
+  background: var(--nav-teal) !important;
+  box-shadow: var(--nav-shadow-rest) !important;
+  transition: box-shadow var(--transition), background var(--transition) !important;
+  font-family: var(--nav-font);
+  position: sticky !important;
+  top: 0;
+  z-index: 1200;
+
+  /* Subtle noise-texture shimmer */
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") !important;
 }
-.logo-img{
- width: 34px;
- border-radius: 50%;
+
+/* Elevated state on scroll */
+.nav-br--scrolled {
+  background: var(--nav-teal-dark) !important;
+  box-shadow: var(--nav-shadow-scroll) !important;
 }
 
+/* ─────────────────────────────────────────
+   3. TOOLBAR  (.nav-toolbar)
+───────────────────────────────────────── */
+.nav-toolbar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-height: var(--nav-h) !important;
+  padding: 0 28px !important;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
 
+/* ─────────────────────────────────────────
+   4. BRAND  (.logo-m / .logo-img)
+───────────────────────────────────────── */
+.logo-m {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
 
+/* Ring wrapper around logo image */
+.logo-img-wrap {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0.15));
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.20);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.logo-img-wrap:hover {
+  transform: rotate(-6deg) scale(1.08);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.35);
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Brand name */
+.logo-m h5 {
+  font-family: var(--nav-font-brand);
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin: 0;
+  line-height: 1;
+  /* Shimmer on hover */
+  transition: opacity var(--transition);
+}
+
+.logo-m:hover h5 { opacity: 0.85; }
+
+/* ─────────────────────────────────────────
+   5. DESKTOP NAVIGATION  (.nav-links)
+───────────────────────────────────────── */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Individual link button */
+.nav-link-btn {
+  position: relative;
+  font-family: var(--nav-font) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.2px !important;
+  padding: 6px 16px !important;
+  border-radius: var(--nav-radius-pill) !important;
+  text-transform: none !important;
+  transition: background var(--transition), color var(--transition) !important;
+  overflow: visible !important;
+}
+
+.nav-link-btn:hover {
+  background: var(--nav-accent-soft) !important;
+}
+
+/* Active state pill */
+.nav-link-btn--active {
+  background: rgba(255,255,255,0.14) !important;
+  font-weight: 600 !important;
+}
+
+/* Active underline dot */
+.nav-active-dot {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffffff;
+  animation: dotPop 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+
+@keyframes dotPop {
+  from { transform: translateX(-50%) scale(0); }
+  to   { transform: translateX(-50%) scale(1); }
+}
+
+/* ── Register button — pill CTA style ── */
+.nav-link-btn:last-child {
+  background: rgba(255,255,255,0.18) !important;
+  border: 1px solid rgba(255,255,255,0.30) !important;
+  padding: 6px 20px !important;
+  font-weight: 600 !important;
+}
+
+.nav-link-btn:last-child:hover {
+  background: rgba(255,255,255,0.28) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+}
+
+/* ─────────────────────────────────────────
+   6. HAMBURGER  (.nav-hamburger)
+───────────────────────────────────────── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 38px;
+  height: 38px;
+  padding: 6px;
+  border: none;
+  background: var(--nav-accent-soft);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.nav-hamburger:hover { background: rgba(255,255,255,0.18); }
+
+.nav-hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 2px;
+  transition: transform var(--transition), opacity var(--transition);
+  transform-origin: center;
+}
+
+/* Animate to X when open */
+.nav-hamburger--open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.nav-hamburger--open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.nav-hamburger--open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ─────────────────────────────────────────
+   7. MOBILE DROPDOWN  (.nav-mobile-menu)
+───────────────────────────────────────── */
+.nav-mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 16px;
+  max-height: 0;
+  overflow: hidden;
+  background: var(--nav-teal-dark);
+  transition: max-height 0.35s ease, padding 0.3s ease;
+}
+
+.nav-mobile-menu--open {
+  max-height: 300px;
+  padding: 10px 16px 16px;
+}
+
+/* Mobile link */
+.nav-mobile-link {
+  font-family: var(--nav-font) !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  padding: 10px 16px !important;
+  border-radius: 10px !important;
+  justify-content: flex-start !important;
+  transition: background var(--transition) !important;
+}
+
+.nav-mobile-link:hover {
+  background: var(--nav-accent-soft) !important;
+}
+
+.nav-mobile-link--active {
+  background: rgba(255,255,255,0.12) !important;
+  font-weight: 600 !important;
+}
+
+/* ─────────────────────────────────────────
+   8. RESPONSIVE — TABLET  (≤ 860px)
+───────────────────────────────────────── */
+@media (max-width: 860px) {
+  .nav-links   { display: none;  }
+  .nav-hamburger { display: flex; }
+  .nav-mobile-menu { display: flex; }
+
+  .nav-toolbar { padding: 0 16px !important; }
+}
+
+/* ─────────────────────────────────────────
+   9. RESPONSIVE — SMALL MOBILE  (≤ 480px)
+───────────────────────────────────────── */
+@media (max-width: 480px) {
+  .logo-m h5 { font-size: 16px; }
+  .logo-img-wrap { width: 32px; height: 32px; }
+}

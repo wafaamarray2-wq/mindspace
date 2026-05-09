@@ -1,99 +1,477 @@
+/* =============================================================
+   hero.css — MindSpace Hero Section
+   Refactored: warm organic / soft wellness aesthetic
+   Rules:
+     • All original class names preserved (.hero-sec, .contain,
+       .hero-img, .hero-content, .text, .btn, .btn1, .btn2)
+     • CSS custom properties for easy theming
+     • Direction: RTL-friendly (Arabic content)
+     • Responsive: mobile-first
+   ============================================================= */
+
+/* ─────────────────────────────────────────
+   0. GOOGLE FONT
+───────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+
+/* ─────────────────────────────────────────
+   1. DESIGN TOKENS
+───────────────────────────────────────── */
+:root {
+  --hero-teal:          #3b7d7f;
+  --hero-teal-dark:     #2f6568;
+  --hero-teal-light:    #e6f4f4;
+  --hero-teal-glow:     rgba(59, 125, 127, 0.18);
+
+  --hero-bg:            #f2f8f5;
+  --hero-text-h:        #1a2e2f;
+  --hero-text-p:        #4a5e5f;
+  --hero-text-muted:    #7a9a9b;
+
+  --hero-blob-a:        rgba(59,125,127,0.10);
+  --hero-blob-b:        rgba(130,195,130,0.10);
+  --hero-blob-c:        rgba(200,240,210,0.25);
+
+  --font-ar:            'Tajawal', sans-serif;
+
+  --radius-img:         50%;
+  --radius-badge:       40px;
+  --radius-btn:         12px;
+
+  --shadow-img:
+    0 20px 60px rgba(59,125,127,0.22),
+    0 6px 18px rgba(0,0,0,0.08);
+  --shadow-badge:
+    0 4px 16px rgba(0,0,0,0.10);
+  --shadow-btn:
+    0 4px 20px rgba(59,125,127,0.30);
+
+  --transition: 0.25s ease;
+}
+
+/* ─────────────────────────────────────────
+   2. BASE
+───────────────────────────────────────── */
+.hero-sec *,
+.hero-sec *::before,
+.hero-sec *::after {
+  box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────
+   3. SECTION SHELL  (.hero-sec)
+───────────────────────────────────────── */
 .hero-sec {
-  min-height: 90vh;
-  padding: 80px 0;
+  position: relative;
+  padding: 90px 6vw 80px;
   margin-top: 10px;
-  background: #f4f9f0;
+  overflow: hidden;
+
+  /* Soft organic background */
+  background: var(--hero-bg);
+  font-family: var(--font-ar);
+  direction: rtl;
+
+  min-height: 100vh;  /* كان 90vh — خليه يملا الشاشة كاملة */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* يحط الـ .contain في النص */
+
 }
 
-.contain{
-display: flex;
-align-items: center;
-justify-content: space-between;
-  
+/* ─────────────────────────────────────────
+   4. DECORATIVE BACKGROUND BLOBS
+───────────────────────────────────────── */
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(60px);
+  z-index: 0;
 }
+
+.hero-blob--1 {
+  width: 520px; height: 520px;
+  top: -140px; right: -100px;
+  background: var(--hero-blob-a);
+  animation: blobFloat 8s ease-in-out infinite alternate;
+}
+
+.hero-blob--2 {
+  width: 380px; height: 380px;
+  bottom: -80px; left: -80px;
+  background: var(--hero-blob-b);
+  animation: blobFloat 10s ease-in-out 1s infinite alternate;
+}
+
+.hero-blob--3 {
+  width: 260px; height: 260px;
+  top: 50%; left: 35%;
+  background: var(--hero-blob-c);
+  animation: blobFloat 12s ease-in-out 2s infinite alternate;
+}
+
+@keyframes blobFloat {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(20px, -20px) scale(1.06); }
+}
+
+/* ─────────────────────────────────────────
+   5. LAYOUT ROW  (.contain)
+───────────────────────────────────────── */
+.contain {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────
+   6. IMAGE COLUMN  (.image)
+───────────────────────────────────────── */
+.contain .image {
+  position: relative;
+  flex-shrink: 0;
+  /* Entrance animation */
+  animation: fadeInUp 0.9s ease-out forwards;
+}
+
+/* Glowing ring behind photo */
+.image-glow {
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(59,125,127,0.35),
+    rgba(130,195,130,0.20),
+    rgba(59,125,127,0.35)
+  );
+  animation: spinSlow 12s linear infinite;
+  z-index: 0;
+}
+
+@keyframes spinSlow {
+  to { transform: rotate(360deg); }
+}
+
+/* Photo itself */
 .hero-img {
-border-radius:100%;
-animation: fadeInUp 1s ease-out forwards;
+  position: relative;
+  z-index: 1;
+  width: 340px;
+  height: 340px;
+  border-radius: var(--radius-img);
+  object-fit: cover;
+  border: 6px solid #fff;
+  box-shadow: var(--shadow-img);
+  animation: fadeInUp 1s ease-out forwards;
+  display: block;
+}
 
-}
-.hero-sec .container .text{
- 
+/* ── Floating badges ── */
+.hero-badge {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: #ffffff;
+  border-radius: var(--radius-badge);
+  box-shadow: var(--shadow-badge);
+  font-family: var(--font-ar);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--hero-teal);
+  white-space: nowrap;
+  animation: badgePop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
 }
 
-.hero-content{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeInLeft 2s ease-out forwards;
-   
-    
+.hero-badge--top {
+  top: 18px;
+  right: -28px;           /* pokes out to the right of the circle */
+  animation-delay: 0.7s;
+  opacity: 0;
 }
-.hero-content .text{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding:  0 20px;
-    
-    
+
+.hero-badge--bottom {
+  bottom: 28px;
+  left: -28px;            /* pokes out to the left */
+  animation-delay: 1s;
+  opacity: 0;
 }
+
+.hero-badge__icon { font-size: 16px; }
+
+@keyframes badgePop {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1);   }
+}
+
+/* ─────────────────────────────────────────
+   7. CONTENT COLUMN  (.hero-content)
+───────────────────────────────────────── */
+.hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 22px;
+  animation: fadeInRight 0.9s ease-out forwards;
+}
+
+/* ── Eyebrow label ── */
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--hero-teal-light);
+  border: 1px solid rgba(59,125,127,0.25);
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--hero-teal);
+  letter-spacing: 0.3px;
+  opacity: 0;
+  animation: fadeInRight 0.7s ease-out 0.1s forwards;
+}
+
+.hero-eyebrow__dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--hero-teal);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* ─────────────────────────────────────────
+   8. TEXT BLOCK  (.text)
+───────────────────────────────────────── */
+.hero-content .text {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* H1 */
 .hero-sec h1 {
-    opacity: 0;
-  font-size: 4rem;
-  color: #2d3748;  /* نفس لون الهيدر */
+  opacity: 0;
+  font-family: var(--font-ar);
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  font-weight: 900;
+  color: var(--hero-text-h);
+  line-height: 1.35;
+  letter-spacing: -0.5px;
   margin: 0;
-  font-weight: 800;
-  line-height: 1.3;
-   animation: fadeInLeft 0.8s ease-out forwards;
-   
+  animation: fadeInRight 0.8s ease-out 0.2s forwards;
 }
+
+/* Teal accent word(s) in the heading */
+.hero-h1-accent {
+  color: var(--hero-teal);
+  position: relative;
+}
+
+/* Underline squiggle on accent */
+.hero-h1-accent::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  right: 0; left: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--hero-teal), #82c382);
+  transform: scaleX(0);
+  transform-origin: right;
+  animation: underlineGrow 0.6s ease-out 1s forwards;
+}
+
+@keyframes underlineGrow {
+  to { transform: scaleX(1); }
+}
+
+/* Paragraph */
 .hero-sec p {
-     opacity: 0;
-  font-size: 1.2rem;
-  color: #4a5568;
-  line-height: 1.6;
-  margin-bottom: 20px;
-   animation: fadeInLeft 1.2s ease-out 0.2s forwards;
-   
+  opacity: 0;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  color: var(--hero-text-p);
+  line-height: 1.75;
+  margin: 0;
+  animation: fadeInRight 0.8s ease-out 0.35s forwards;
 }
-.hero-sec .btn{
-     opacity: 0;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-     animation: fadeInLeft 1.3s ease-out  0.4s forwards;
-   
+
+/* ─────────────────────────────────────────
+   9. CTA BUTTONS  (.btn / .btn1 / .btn2)
+───────────────────────────────────────── */
+.hero-sec .btn {
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  animation: fadeInRight 0.8s ease-out 0.5s forwards;
 }
+
+/* Override MUI button base sizing */
 .hero-sec .btn button {
- padding: 12px 50px;
- border-radius: 10px;
- font-size: 1.2rem;
+  padding: 12px 36px !important;
+  border-radius: var(--radius-btn) !important;
+  font-size: 1rem !important;
+  font-family: var(--font-ar) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px !important;
+  transition: all var(--transition) !important;
 }
+
+/* Primary CTA */
+.hero-sec .btn .btn1 {
+  box-shadow: var(--shadow-btn) !important;
+}
+
 .hero-sec .btn .btn1:hover {
-background-color: #2f6f73
+  background-color: var(--hero-teal-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(59,125,127,0.38) !important;
 }
+
+.hero-sec .btn .btn1:active {
+  transform: translateY(0);
+}
+
+/* Secondary CTA */
+.hero-sec .btn .btn2 {
+  border-color: var(--hero-teal) !important;
+}
+
 .hero-sec .btn .btn2:hover {
-background-color: #e6f4f1
+  background-color: var(--hero-teal-light) !important;
+  border-color: var(--hero-teal-dark) !important;
+  transform: translateY(-2px);
 }
 
-/* animation*/
-@keyframes fadeInUp{
-    from{
-        opacity: 0;
-        transform: translateY(30px)
-    }
-    to{
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ─────────────────────────────────────────
+   10. SOCIAL PROOF STRIP  (.hero-proof)
+───────────────────────────────────────── */
+.hero-proof {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  animation: fadeInRight 0.8s ease-out 0.65s forwards;
 }
 
-@keyframes fadeInLeft{
-    from{
-        opacity: 0;
-        transform: translateX(-40px)
-    }
-    to{
-        opacity: 1;
-        transform: translateX(0);
-    }
+.hero-proof__avatars {
+  display: flex;
+  direction: ltr;          /* emoji faces LTR */
+}
+
+.hero-proof__avatars span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--hero-teal-light);
+  font-size: 16px;
+  box-shadow: var(--shadow-badge);
+  margin-left: -8px;
+  transition: transform var(--transition);
+}
+
+.hero-proof__avatars span:first-child { margin-left: 0; }
+.hero-proof__avatars:hover span { transform: translateY(-3px); }
+
+.hero-proof__text {
+  /* override global p animation */
+  opacity: 1 !important;
+  animation: none !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--hero-text-muted) !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+
+/* ─────────────────────────────────────────
+   11. KEYFRAMES
+───────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+
+/* (kept original fadeInLeft for any external references) */
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+
+/* ─────────────────────────────────────────
+   12. RESPONSIVE — TABLET  (≤ 900px)
+───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .contain {
+    flex-direction: column-reverse;
+    align-items: center;
+    text-align: center;
+    gap: 36px;
+  }
+
+  .hero-content {
+    align-items: center;
+  }
+
+  .hero-sec h1 { text-align: center; }
+  .hero-sec p  { text-align: center; }
+
+  .hero-img {
+    width: 260px;
+    height: 260px;
+  }
+
+  .hero-badge--top    { right: -16px; top: 8px;    }
+  .hero-badge--bottom { left: -16px;  bottom: 14px; }
+}
+
+/* ─────────────────────────────────────────
+   13. RESPONSIVE — MOBILE  (≤ 560px)
+───────────────────────────────────────── */
+@media (max-width: 560px) {
+  .hero-sec {
+    padding: 60px 5vw 60px;
+    min-height: unset;
+  }
+
+  .hero-img {
+    width: 200px;
+    height: 200px;
+  }
+
+  .hero-badge { font-size: 11px; padding: 6px 12px; }
+  .hero-badge--top    { right: -10px; }
+  .hero-badge--bottom { left: -10px;  }
+
+  .hero-sec .btn button {
+    padding: 10px 24px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .hero-proof__avatars span {
+    width: 28px; height: 28px;
+    font-size: 13px;
+  }
 }

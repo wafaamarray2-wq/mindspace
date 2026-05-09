@@ -1,101 +1,450 @@
-.page {
-  height: 100vh;
-  width: 100%;
-  background: #f6f8fb;
-  font-family: system-ui;
+/* =============================================================
+   settings.css — MindSpace Account Settings
+   Refactored: clean card-based professional form
+   Rules:
+     • All original class names preserved
+       (.page, .layout, .side, .avatar, .upload,
+        .content-set, .grid, .box, .box-set, .full, .set-btn)
+     • New classes prefixed with settings- / input- / label-
+     • CSS custom properties for theming
+     • Responsive: tablet + mobile
+   ============================================================= */
+
+/* ─────────────────────────────────────────
+   0. FONT
+───────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap');
+
+/* ─────────────────────────────────────────
+   1. DESIGN TOKENS
+───────────────────────────────────────── */
+:root {
+  --s-teal:          #2f6f73;
+  --s-teal-dark:     #245558;
+  --s-teal-light:    #e6f4f4;
+  --s-teal-glow:     rgba(47,111,115,0.18);
+
+  --s-bg:            #f0f4f8;
+  --s-card:          #ffffff;
+  --s-border:        #e2e8f0;
+  --s-border-focus:  #2f6f73;
+
+  --s-text:          #1a2e2f;
+  --s-text-sub:      #5a7a7b;
+  --s-text-muted:    #94a3b8;
+  --s-label:         #3d5a5c;
+
+  --s-danger:        #ef4444;
+  --s-success:       #10b981;
+
+  --s-font:          'DM Sans', sans-serif;
+  --s-font-ar:       'Tajawal', sans-serif;
+
+  --radius-sm:       8px;
+  --radius-md:       12px;
+  --radius-lg:       16px;
+  --radius-xl:       20px;
+
+  --shadow-card:     0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-input:    0 0 0 3px var(--s-teal-glow);
+  --shadow-btn:      0 4px 20px rgba(47,111,115,0.30);
+  --transition:      0.22s ease;
 }
 
-/* FULL SCREEN LAYOUT */
+/* ─────────────────────────────────────────
+   2. BASE RESET (scoped to .page)
+───────────────────────────────────────── */
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────
+   3. PAGE SHELL  (.page)
+───────────────────────────────────────── */
+.page {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--s-bg);
+  font-family: var(--s-font);
+  color: var(--s-text);
+}
+
+/* ─────────────────────────────────────────
+   4. LAYOUT GRID  (.layout)
+   The sidebar (.side) is kept in the grid
+   even if unused — preserves original structure
+───────────────────────────────────────── */
 .layout {
   display: grid;
   grid-template-columns: 280px 1fr;
-  height: 100vh;
+  min-height: 100vh;
 }
 
-/* LEFT PANEL */
+/* ─────────────────────────────────────────
+   5. LEFT PANEL  (.side)
+───────────────────────────────────────── */
 .side {
-  background: white;
-  border-right: 1px solid #eee;
-  padding: 30px;
+  background: var(--s-card);
+  border-right: 1px solid var(--s-border);
+  padding: 36px 24px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
 .avatar {
-  width: 110px;
-  height: 110px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 10px;
+  border: 3px solid var(--s-teal-light);
+  box-shadow: 0 0 0 4px var(--s-teal-glow);
+  margin-bottom: 8px;
+  transition: transform var(--transition);
 }
 
+.avatar:hover { transform: scale(1.04); }
+
 .side h2 {
-  margin: 5px 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--s-text);
+  margin: 0;
 }
 
 .side p {
-  color: #777;
+  color: var(--s-text-muted);
   font-size: 13px;
+  margin: 0;
 }
 
-/* UPLOAD BUTTON */
 .upload {
-  display: inline-block;
-  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 14px;
   font-size: 13px;
-  color: #2f6f73;
+  font-weight: 600;
+  color: var(--s-teal);
   cursor: pointer;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--s-teal-light);
+  background: var(--s-teal-light);
+  transition: background var(--transition), border-color var(--transition);
 }
 
-/* RIGHT SIDE */
+.upload:hover {
+  background: #cce9e9;
+  border-color: var(--s-teal);
+}
+
+/* ─────────────────────────────────────────
+   6. RIGHT CONTENT  (.content-set)
+───────────────────────────────────────── */
 .content-set {
-  padding: 40px;
+  padding: 40px 48px;
   display: flex;
   flex-direction: column;
 }
 
-.content h1 {
-  margin-bottom: 20px;
+/* ─────────────────────────────────────────
+   7. PAGE HEADER  (.settings-header)
+───────────────────────────────────────── */
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
-/* GRID FORM */
+.settings-header__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: var(--s-teal-light);
+  border: 1px solid rgba(47,111,115,0.20);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.content-set h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--s-text);
+  margin: 0 0 3px;
+  letter-spacing: -0.4px;
+}
+
+.settings-header__sub {
+  font-size: 13px;
+  color: var(--s-text-sub);
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────
+   8. DIVIDER  (.settings-divider)
+───────────────────────────────────────── */
+.settings-divider {
+  height: 1px;
+  background: var(--s-border);
+  margin-bottom: 24px;
+}
+
+/* ─────────────────────────────────────────
+   9. SECTION LABEL  (.settings-section-label)
+───────────────────────────────────────── */
+.settings-section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--s-text-sub);
+  margin: 0 0 20px;
+}
+
+.settings-section-label__bar {
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--s-teal);
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────
+   10. FORM GRID  (.grid)
+───────────────────────────────────────── */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  background: var(--s-card);
+  border: 1px solid var(--s-border);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  box-shadow: var(--shadow-card);
 }
 
-/* INPUT BOX */
-.box label {
+/* ─────────────────────────────────────────
+   11. FIELD BOX  (.box / .box-set)
+───────────────────────────────────────── */
+.box,
+.box-set {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Labels */
+.box label,
+.box-set label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
-  color: #555;
+  font-weight: 600;
+  color: var(--s-label);
+  letter-spacing: 0.1px;
 }
 
-input {
+.label-icon { font-size: 14px; line-height: 1; }
+
+/* ─────────────────────────────────────────
+   12. INPUT WRAPPER  (.input-wrap)
+───────────────────────────────────────── */
+.input-wrap {
+  position: relative;
+}
+
+.input-wrap--password {
+  display: flex;
+  align-items: center;
+}
+
+/* ─────────────────────────────────────────
+   13. INPUTS  (input)
+───────────────────────────────────────── */
+.page input {
   width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+  padding: 11px 14px;
+  border: 1.5px solid var(--s-border);
+  border-radius: var(--radius-md);
+  font-family: var(--s-font);
+  font-size: 14px;
+  color: var(--s-text);
+  background: #fafcfc;
   outline: none;
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    background var(--transition);
 }
 
-input:focus {
-  border-color: #2f6f73;
+.page input::placeholder { color: var(--s-text-muted); }
+
+.page input:hover {
+  border-color: #b0c8c9;
+  background: #ffffff;
 }
 
-/* FULL WIDTH */
-.full {
-  grid-column: span 2;
+.page input:focus {
+  border-color: var(--s-border-focus);
+  box-shadow: var(--shadow-input);
+  background: #ffffff;
 }
 
-/* BUTTON */
-.set-btn {
-  margin-top: 25px;
-  padding: 12px;
+/* Password input — leaves room for toggle button */
+.input-wrap--password input { padding-left: 46px; }
+
+/* ─────────────────────────────────────────
+   14. PASSWORD TOGGLE  (.pass-toggle)
+───────────────────────────────────────── */
+.pass-toggle {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
   border: none;
-  border-radius: 10px;
-  background: #2f6f73;
-  color: white;
+  font-size: 16px;
   cursor: pointer;
+  padding: 2px;
+  line-height: 1;
+  transition: opacity var(--transition);
+  color: var(--s-text-muted);
+}
+
+.pass-toggle:hover { opacity: 0.7; }
+.pass-toggle:focus { outline: none; }
+
+/* ─────────────────────────────────────────
+   15. INPUT HINT  (.input-hint)
+───────────────────────────────────────── */
+.input-hint {
+  font-size: 11.5px;
+  color: var(--s-text-muted);
+  margin: 4px 0 0;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────
+   16. FULL-WIDTH FIELD  (.full)
+───────────────────────────────────────── */
+.full { grid-column: span 2; }
+
+/* ─────────────────────────────────────────
+   17. SAVE BUTTON  (.set-btn)
+───────────────────────────────────────── */
+.set-btn {
+  margin-top: 24px;
+  padding: 13px 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--s-teal);
+  color: #ffffff;
+  cursor: pointer;
+  font-family: var(--s-font);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
   width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  box-shadow: var(--shadow-btn);
+  transition:
+    background var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.set-btn:hover:not(:disabled) {
+  background: var(--s-teal-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(47,111,115,0.36);
+}
+
+.set-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-btn);
+}
+
+.set-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Spinner inside button */
+.set-btn__spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─────────────────────────────────────────
+   18. RESPONSIVE — TABLET  (≤ 1024px)
+───────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .content-set { padding: 32px 32px; }
+}
+
+/* ─────────────────────────────────────────
+   19. RESPONSIVE — MOBILE  (≤ 768px)
+───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;      /* stack sidebar below (or hide) */
+  }
+
+  /* Hide left panel on mobile — settings takes full width */
+  .side { display: none; }
+
+  .content-set { padding: 24px 20px; }
+
+  .grid {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .full { grid-column: span 1; }
+
+  .settings-header { gap: 12px; }
+  .settings-header__icon { width: 44px; height: 44px; font-size: 18px; }
+  .content-set h1 { font-size: 19px; }
+}
+
+/* ─────────────────────────────────────────
+   20. RESPONSIVE — SMALL MOBILE  (≤ 480px)
+───────────────────────────────────────── */
+@media (max-width: 480px) {
+  .content-set { padding: 16px 14px; }
+  .grid { padding: 16px; }
+  .set-btn { font-size: 14px; padding: 12px; }
 }

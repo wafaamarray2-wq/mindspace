@@ -13,7 +13,7 @@ import DashbordContent from "./Dashbords/DashbordContent";
 import Messages from "./Dashbords/Messages";
 import Sessions from "./Dashbords/Sessions";
 import Setting from "./Dashbords/Setting";
-import LogOut from "./Dashbords/LogOut";
+import LogOut from "./Registers/LogOut";
 import PatientProfile from "./Dashbords/PatientProfile";
 import SessionDetails from "./Dashbords/SessionDetails";
 import DoctorProfile from "./Dashbords/DoctorProfile";
@@ -22,8 +22,31 @@ import PatientHome from "./Dashbords/PatientHome";
 import MessagePatient from "./Dashbords/MessagePatient";
 import SettingPatients from "./Dashbords/SettingPatients";
  import VerifyOtp from "./Registers/VerifyOtp";
-
+import ForgetPassword from "./Registers/ForgetPassword";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import ProtectedRoute from "./Registers/ProtectedRoute";
+import PatientFullProfile from "./Dashbords/PatientFullprofile";
 function App() {
+  const navigate = useNavigate();
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+
+  // لو مفيش token → يفضل في login
+  if (!token) {
+    navigate("/login");
+    return;
+  }
+
+  // لو موجود token → روح حسب الدور
+  if (role === "therapist") {
+    navigate("/doctor-dashboard");
+  } else {
+    navigate("/patient-dashboard");
+  }
+}, []);
   return (
     <Routes>
       <Route
@@ -66,15 +89,22 @@ function App() {
           </>
         }
       />
-      <Route path="/doctor-dashboard" element={<DoctorDashbord />}>
-        <Route index element={<DashbordContent />} /> {/* صفحة الرئيسية */}
-        <Route path="dash" element={<DashbordContent />} />
-        <Route path="patients" element={<Patients />} />
-        <Route path="message" element={<Messages />} />
-        <Route path="session" element={<Sessions />} />
-        <Route path="setting" element={<Setting />} />
-        <Route path="logOut" element={<LogOut />} />
-      </Route>
+     <Route
+  path="/doctor-dashboard"
+  element={
+    <ProtectedRoute>
+      <DoctorDashbord />
+    </ProtectedRoute>
+  }
+>
+  <Route index element={<DashbordContent />} />
+  <Route path="dash" element={<DashbordContent />} />
+  <Route path="patients" element={<Patients />} />
+  <Route path="message" element={<Messages />} />
+  <Route path="session" element={<Sessions />} />
+  <Route path="setting" element={<Setting />} />
+  {/* <Route path="logOut" element={<LogOut />} /> */}
+</Route>
 
 
       <Route path="/patient-dashboard" element={<PatientDashbord />} >
@@ -83,6 +113,7 @@ function App() {
         <Route path="message" element={<MessagePatient />} />
         <Route path="setting" element={<SettingPatients />} />
       <Route path="logOut" element={<LogOut />} />
+      <Route path="profile" element={<PatientFullProfile />} />
       </Route> 
       <Route path="/PatientHome" element={<PatientHome />} />
       <Route path="/patient/:id" element={<PatientProfile />} />
@@ -92,6 +123,7 @@ function App() {
       <Route path="/booking/:id" element={<Booking />} />
 
       <Route path="/doctor" element={<Therapists />} />
+      <Route path="/forget-password" element={<ForgetPassword />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
    
       <Route path="*" element={<h1>Page Not Found</h1>} />

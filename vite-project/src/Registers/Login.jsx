@@ -117,8 +117,12 @@ function Login() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+ 
 
             <button type="submit">تسجيل الدخول</button>
+                       <div className="forget-pass">
+  <Link to="/forget-password">  هل نسيت كلمة المرور؟ </Link>
+</div>
 
             <div className="cnt-lg">
               <Link to="/register">انشاء حساب</Link>
