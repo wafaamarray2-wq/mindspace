@@ -23,30 +23,31 @@ import MessagePatient from "./Dashbords/MessagePatient";
 import SettingPatients from "./Dashbords/SettingPatients";
  import VerifyOtp from "./Registers/VerifyOtp";
 import ForgetPassword from "./Registers/ForgetPassword";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "./Registers/ProtectedRoute";
 import PatientFullProfile from "./Dashbords/PatientFullprofile";
+import Therapistfeed from "./Dashbords/Therapistfeed";
 function App() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+// useEffect(() => {
+//   const token = localStorage.getItem("token");
+//   const role = localStorage.getItem("role");
 
-  // لو مفيش token → يفضل في login
-  if (!token) {
-    navigate("/login");
-    return;
-  }
+//   // لو مفيش token → يفضل في login
+//   if (!token) {
+//     navigate("/login");
+//     return;
+//   }
 
-  // لو موجود token → روح حسب الدور
-  if (role === "therapist") {
-    navigate("/doctor-dashboard");
-  } else {
-    navigate("/patient-dashboard");
-  }
-}, []);
+//   // لو موجود token → روح حسب الدور
+//   if (role === "therapist") {
+//     navigate("/doctor-dashboard");
+//   } else {
+//     navigate("/patient-dashboard");
+//   }
+// }, []);
   return (
     <Routes>
       <Route
@@ -97,13 +98,13 @@ useEffect(() => {
     </ProtectedRoute>
   }
 >
-  <Route index element={<DashbordContent />} />
-  <Route path="dash" element={<DashbordContent />} />
+  <Route index element={<Therapistfeed />} />
+  <Route path="dash" element={<Therapistfeed />} />
   <Route path="patients" element={<Patients />} />
   <Route path="message" element={<Messages />} />
   <Route path="session" element={<Sessions />} />
   <Route path="setting" element={<Setting />} />
-  {/* <Route path="logOut" element={<LogOut />} /> */}
+  <Route path="logOut" element={<LogOut />} />
 </Route>
 
 

@@ -1,82 +1,112 @@
 import React from "react";
 import "./reg.css";
 import { MdEmail } from "react-icons/md";
-import { IoMdPerson } from "react-icons/io";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { IoMdCalendar } from "react-icons/io";
-import { CgGenderMale } from "react-icons/cg";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Doct from "..//images/photo_2026-03-04_02-40-53.jpg";
-import Sic from "..//images/photo_2026-03-04_02-40-47.jpg";
+import { toast } from "react-toastify";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
-      return alert("من فضلك أدخل البريد الإلكتروني وكلمة المرور");
+      toast.error("من فضلك أدخل البريد الإلكتروني وكلمة المرور");
+      return;
     }
 
     try {
-      const res = await axios.post(
+      setLoading(true);
+
+      // Step 1: تسجيل الدخول
+      const loginRes = await axios.post(
         "https://mind-space-ov3r.onrender.com/auth/login",
         {
           email,
           password,
-        }
+        },
       );
 
-      console.log(res.data);
+      console.log("Login Response:", loginRes.data);
 
-      // ============================
-      // 🔥 التعديل المهم هنا فقط
-      // ============================
-
-      // لو محتاج تفعيل
-      if (res.data?.message === "please activate your account") {
-        alert("لازم تفعيل الحساب الأول");
-
-        navigate("/verify-otp", {
-          state: { email }
-        });
-
+      if (loginRes.data?.message === "please activate your account") {
+        toast.error("يجب تفعيل الحساب أولاً");
+        navigate("/verify-otp", { state: { email } });
         return;
       }
 
-      // ✅ التوكن الصح من الباك
-      const token = res.data?.data?.accessToken;
-      const role = res.data?.data?.role || res.data?.role; 
-      // (احتياط لو الباك رجعه في مكان تاني)
+      const token = loginRes.data?.data?.accessToken;
+      // const userId = loginRes.data?.data?.id; // ✅ احصل على الـ ID
 
       if (!token) {
-        return alert("حدث خطأ في استرجاع التوكن");
+        toast.error("حدث خطأ في استرجاع التوكن");
+        return;
       }
 
+      // ✅ احفظ الـ token
       localStorage.setItem("token", token);
-      localStorage.setItem("role", role || "user");
+      console.log("✅ Token saved:", token);
 
-      alert("تم تسجيل الدخول بنجاح");
+      toast.success("جاري جلب بيانات الملف الشخصي...");
 
-      if (role === "therapist") {
-        navigate("/doctor-dashboard");
-      } else {
-        navigate("/patient-dashboard");
+      // Step 2: جلب الـ profile باستخدام POST
+      try {
+        const profileRes = await axios.get(
+          "https://mind-space-ov3r.onrender.com/user/profile",
+
+          {
+            headers: {
+              Authorization: `dash ${token}`,
+            },
+          },
+        );
+
+        console.log("Profile Response:", profileRes.data);
+
+        const userData =  profileRes.data;
+
+        console.log("User Data:", userData);
+
+        // ✅ استخرج الـ role من الـ response
+        const userRole = userData?.data.role;
+        const userName = userData?.data.userName;
+
+        if (userRole) {
+          localStorage.setItem("role", userRole);
+          localStorage.setItem("userName", userName);
+          console.log("✅ User Role:", userRole);
+          console.log("✅ User Name:", userName);
+        }
+
+        toast.success("تم تسجيل الدخول بنجاح");
+
+        // Step 3: التوجيه حسب الـ role
+        if (userRole === "therapist") {
+          navigate("/doctor-dashboard");
+        } else if (userRole === "user") {
+          navigate("/patient-dashboard");
+        } else {
+          navigate("/");
+        }
+      } catch (profileErr) {
+        console.log("❌ Error fetching profile:", profileErr);
+        toast.error("خطأ في جلب البيانات الشخصية");
+
+        // Fallback: إذا فشل جلب الـ profile، وجّه حسب افتراض
+        navigate("/");
       }
-
     } catch (err) {
-      console.log(err.response?.data || err.message);
-
-      alert(
-        err.response?.data?.message ||
-        "فشل تسجيل الدخول"
-      );
+      console.log("❌ Login Error:", err.response?.data || err.message);
+      toast.error(err.response?.data?.message || "فشل تسجيل الدخول");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,7 +120,7 @@ function Login() {
           </div>
 
           <form className="frm" onSubmit={handleLogin}>
-            <h2> تسجيل الدخول</h2>
+            <h2>تسجيل الدخول</h2>
 
             <div className="inp">
               <span className="icon">
@@ -98,7 +128,7 @@ function Login() {
               </span>
               <input
                 type="email"
-                placeholder=" البريد الالكتروني"
+                placeholder="البريد الالكتروني"
                 className="rad"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -111,22 +141,24 @@ function Login() {
               </span>
               <input
                 type="password"
-                placeholder=" كلمة المرور"
+                placeholder="كلمة المرور"
                 className="rad"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
- 
 
-            <button type="submit">تسجيل الدخول</button>
-                       <div className="forget-pass">
-  <Link to="/forget-password">  هل نسيت كلمة المرور؟ </Link>
-</div>
+            <button type="submit" disabled={loading}>
+              {loading ? "جاري التحميل..." : "تسجيل الدخول"}
+            </button>
+
+            <div className="forget-pass">
+              <Link to="/forget-password">هل نسيت كلمة المرور؟</Link>
+            </div>
 
             <div className="cnt-lg">
               <Link to="/register">انشاء حساب</Link>
-              <h5>ليس لديك حساب؟ </h5>
+              <h5>ليس لديك حساب؟</h5>
             </div>
           </form>
         </div>

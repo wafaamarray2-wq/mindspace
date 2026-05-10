@@ -1,0 +1,350 @@
+/* TherapistFeed.css */
+
+.tf-feed-wrap {
+  /* max-width: 640px; */
+  margin: 0 auto;
+  padding: 1.5rem 0;
+}
+
+/* ── Avatar ─────────────────────────────── */
+.tf-avatar {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 14px;
+  flex-shrink: 0;
+  cursor: default;
+  user-select: none;
+}
+
+/* ── Shared icon button ─────────────────── */
+.tf-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  font-size: 20px;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.tf-icon-btn:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* ── Create card ────────────────────────── */
+.tf-create-card {
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.12);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.tf-create-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.tf-create-input {
+  flex: 1;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 18px;
+  font-size: 14px;
+  color: #999;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+.tf-create-input:hover { background: #ebebeb; }
+
+.tf-create-actions {
+  display: flex;
+  gap: 6px;
+  border-top: 0.5px solid rgba(0,0,0,0.08);
+  padding-top: 10px;
+  flex-wrap: wrap;
+}
+.tf-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.tf-action-btn:hover { background: #f5f5f5; }
+.tf-action-btn.photo { color: #1D9E75; }
+.tf-action-btn.tip   { color: #185FA5; }
+.tf-action-btn.event { color: #BA7517; }
+.tf-action-btn svg   { font-size: 17px; }
+
+/* ── Post card ──────────────────────────── */
+.tf-post-card {
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.1);
+  border-radius: 14px;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.tf-post-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 1rem 1.25rem 0;
+}
+.tf-post-meta { flex: 1; }
+.tf-post-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+.tf-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 400;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #EEEDFE;
+  color: #534AB7;
+  margin-left: 6px;
+}
+.tf-post-time {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+.tf-post-text {
+  padding: 10px 1.25rem 12px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #222;
+}
+.tf-post-img {
+  width: 100%;
+  display: block;
+  max-height: 360px;
+  object-fit: cover;
+}
+.tf-post-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 1.25rem;
+  font-size: 12px;
+  color: #888;
+  border-bottom: 0.5px solid rgba(0,0,0,0.07);
+}
+.tf-stat-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #888;
+  margin-left: auto;
+  padding: 0;
+}
+.tf-stat-link:hover { text-decoration: underline; color: #534AB7; }
+
+/* ── Reactions ──────────────────────────── */
+.tf-reactions {
+  display: flex;
+  padding: 4px 8px;
+}
+.tf-react-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  padding: 8px 4px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+.tf-react-btn:hover { background: #f5f5f5; }
+.tf-react-btn svg { font-size: 17px; }
+.tf-react-btn.liked { color: #D4537E; }
+
+/* ── Comments ───────────────────────────── */
+.tf-comments {
+  padding: 8px 1.25rem 1rem;
+}
+.tf-comment-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.tf-comment-bubble {
+  background: #f5f5f5;
+  border-radius: 14px;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #222;
+  line-height: 1.5;
+}
+.tf-comment-author {
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+.tf-comment-time {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 3px;
+  margin-left: 12px;
+}
+.tf-comment-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.tf-comment-input {
+  flex: 1;
+  background: #f5f5f5;
+  border: 0.5px solid rgba(0,0,0,0.1);
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #222;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.tf-comment-input:focus { border-color: #534AB7; background: #fff; }
+.tf-send-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #534AB7;
+  font-size: 18px;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s;
+}
+.tf-send-btn:hover { background: #EEEDFE; }
+
+/* ── Modal overlay ──────────────────────── */
+.tf-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.tf-modal {
+  background: #fff;
+  border-radius: 14px;
+  width: min(560px, 95vw);
+  padding: 1.5rem;
+  border: 0.5px solid rgba(0,0,0,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+.tf-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 0.5px solid rgba(0,0,0,0.08);
+  padding-bottom: 12px;
+  margin-bottom: 1rem;
+}
+.tf-modal-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+}
+.tf-modal-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.tf-modal-name { font-size: 14px; font-weight: 600; color: #111; }
+.tf-modal-sub { font-size: 12px; color: #888; display: flex; align-items: center; gap: 4px; }
+.tf-modal-textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 15px;
+  color: #222;
+  line-height: 1.6;
+  font-family: inherit;
+  background: transparent;
+}
+.tf-modal-textarea::placeholder { color: #bbb; }
+.tf-preview-wrap {
+  position: relative;
+  margin: 10px 0;
+}
+.tf-preview-wrap img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 0.5px solid rgba(0,0,0,0.1);
+}
+.tf-remove-img {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.55);
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.tf-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 0.5px solid rgba(0,0,0,0.08);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+.tf-modal-tools { display: flex; gap: 4px; }
+.tf-post-btn {
+  background: #534AB7;
+  color: #fff;
+  border: none;
+  padding: 9px 26px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.tf-post-btn:hover:not(:disabled) { background: #3C3489; }
+.tf-post-btn:disabled { opacity: 0.4; cursor: default; }

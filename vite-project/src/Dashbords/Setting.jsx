@@ -1,166 +1,167 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "./settings.css";
 
-export default function Settings() {
+export default function SettingPatients() {
   const [form, setForm] = useState({
-    userName: "",
+    name: "",
     email: "",
     password: "",
+    newPassword: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  // ── UI only: show/hide password ──
-  const [showPass, setShowPass] = useState(false);
+  const [image, setImage] = useState(null);
+
+  const BASE_URL = "https://mind-space-ov3r.onrender.com";
 
   const token = localStorage.getItem("token");
 
-  // ===== GET USER =====
+  // ✅ Authorization FIX (no empty header)
+  const getAuthHeader = () => {
+    if (!token) return null;
+    return { Authorization: `dash ${token}` };
+  };
+
+  // ================= GET PROFILE =================
   useEffect(() => {
-    const getUser = async () => {
+    const getProfile = async () => {
       try {
-        const res = await axios.get(
-          "https://mind-space-ov3r.onrender.com/user/profile",
-          { headers: { Authorization: `dash ${token}` } }
-        );
-        console.log("Current user:", res.data.data);
+        const headers = getAuthHeader();
+        if (!headers) return;
+
+        const res = await axios.get(`${BASE_URL}/user/profile`, {
+          headers,
+        });
+
+        setForm({
+          name: res.data.userName || "",
+          email: res.data.email || "",
+          password: "",
+          newPassword: "",
+        });
       } catch (err) {
-        console.log(err);
+        const msg = err.response?.data?.message;
+
+        console.log("Get profile error:", err.response?.data || err.message);
+
+        if (msg === "jwt expired") {
+          localStorage.removeItem("token");
+          window.location.reload();
+        }
       }
     };
-    getUser();
-  }, []);
 
-  // ===== HANDLE CHANGE =====
+    if (token) getProfile();
+  }, [token]);
+
+  // ================= INPUT =================
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ===== UPDATE USER =====
+  // ================= IMAGE =================
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) setImage(URL.createObjectURL(file));
+  };
+
+  // ================= UPDATE USER =================
   const handleSave = async () => {
     try {
-      setLoading(true);
-      await axios.put(
-        "https://mind-space-ov3r.onrender.com/user/update-user",
-        { userName: form.userName, email: form.email, password: form.password },
-        { headers: { Authorization: `dash ${token}` } }
+      const headers = getAuthHeader();
+      if (!headers) {
+        alert("Please login again");
+        return;
+      }
+
+      const payload = {
+        userName: form.name,
+        password: form.newPassword || form.password,
+      };
+
+      const res = await axios.put(
+        `${BASE_URL}/user/update-user`,
+        payload,
+        {
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+          },
+        }
       );
+
+      setForm((prev) => ({
+        ...prev,
+        name: res.data.user?.userName || prev.name,
+      }));
+
       alert("Profile updated successfully ✅");
-      setForm({ userName: "", email: "", password: "" });
     } catch (err) {
-      console.log(err);
-      alert("Update failed ❌");
-    } finally {
-      setLoading(false);
+      console.log("Update error:", err.response?.data || err.message);
+
+      const msg = err.response?.data?.message;
+
+      if (msg === "jwt expired") {
+        localStorage.removeItem("token");
+        window.location.reload();
+      }
+
+      alert(msg || "Update failed ❌");
     }
   };
 
   return (
     <div className="page">
-      <div className="layout">
-        <div className="content-set">
+      <div className="layout-center">
 
-          {/* ── Page header ── */}
-          <div className="settings-header">
-            <div className="settings-header__icon" aria-hidden="true">⚙️</div>
-            <div>
-              <h1>Account Settings</h1>
-              <p className="settings-header__sub">
-                Update your name, email or password below
-              </p>
-            </div>
-          </div>
+        {/* CONTENT ONLY (no side) */}
+        <div className="content-set full-width">
 
-          {/* ── Divider ── */}
-          <div className="settings-divider" aria-hidden="true" />
-
-          {/* ── Section label ── */}
-          <p className="settings-section-label">
-            <span className="settings-section-label__bar" aria-hidden="true" />
-            Personal Information
-          </p>
+          <h1>Patient Settings</h1>
 
           <div className="grid">
-
-            {/* NAME */}
             <div className="box-set">
-              <label htmlFor="set-name">
-                <span className="label-icon" aria-hidden="true">👤</span>
-                Name
-              </label>
-              <div className="input-wrap">
-                <input
-                  id="set-name"
-                  name="userName"
-                  value={form.userName}
-                  onChange={handleChange}
-                  placeholder="Enter new name"
-                  autoComplete="off"
-                />
-              </div>
+              <label>Name</label>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+              />
             </div>
 
-            {/* EMAIL */}
             <div className="box-set">
-              <label htmlFor="set-email">
-                <span className="label-icon" aria-hidden="true">✉️</span>
-                Email
-              </label>
-              <div className="input-wrap">
-                <input
-                  id="set-email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="Enter new email"
-                  autoComplete="off"
-                />
-              </div>
+              <label>Email</label>
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                disabled
+              />
             </div>
 
-            {/* PASSWORD */}
             <div className="box full">
-              <label htmlFor="set-pass">
-                <span className="label-icon" aria-hidden="true">🔒</span>
-                Password
-              </label>
-              <div className="input-wrap input-wrap--password">
-                <input
-                  id="set-pass"
-                  type={showPass ? "text" : "password"}
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="Enter new password"
-                  autoComplete="new-password"
-                />
-                {/* Toggle visibility — UI only, no state impact on form */}
-                <button
-                  type="button"
-                  className="pass-toggle"
-                  onClick={() => setShowPass(v => !v)}
-                  aria-label={showPass ? "Hide password" : "Show password"}
-                >
-                  {showPass ? "🙈" : "👁️"}
-                </button>
-              </div>
-              <p className="input-hint">
-                Min 8 characters — leave blank to keep current password
-              </p>
+              <label>Current Password</label>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+              />
             </div>
 
+            <div className="box full">
+              <label>New Password</label>
+              <input
+                type="password"
+                name="newPassword"
+                value={form.newPassword}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
-          {/* ── Save button ── */}
-          <button
-            className="set-btn"
-            onClick={handleSave}
-            disabled={loading}
-          >
-            {loading
-              ? <><span className="set-btn__spinner" aria-hidden="true" /> Saving...</>
-              : <><span aria-hidden="true">💾</span> Save Changes</>
-            }
+          <button className="set-btn" onClick={handleSave}>
+            Save Changes
           </button>
 
         </div>
