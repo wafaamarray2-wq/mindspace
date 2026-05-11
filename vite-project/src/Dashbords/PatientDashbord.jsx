@@ -11,12 +11,12 @@ import "./doc.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../UserContext";
+// import { useUser } from "../UserContext";
 import { toast } from "react-toastify";
 
 export default function PatientDashbord() {
   const navigate = useNavigate();
-  const { user, setUser, fetchUser } = useUser();
+  const [user, setUser] = useState (null);
 
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -34,70 +34,87 @@ export default function PatientDashbord() {
   // ================= GET USER =================
   const fetchUserData = async () => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("❌ Token not found, please login");
+        navigate("/login");
+        return;
+      }
       const res = await axios.get(
         "https://mind-space-ov3r.onrender.com/user/profile",
-        { headers: authHeader }
+        { headers: { Authorization: `dash ${token}` } }
       );
-      setUser(res.data.data);
+
+      const userData = res.data.data;
+      setUser(userData);
     } catch (err) {
-      console.log(err);
+      if (err.response?.status === 401) {
+        toast.error("❌ Session expired, please login again");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        toast.error("❌ Failed to load user data");
+      }
     }
   };
 
-  useEffect(() => {
-    if (token) fetchUserData();
-  }, []);
+  useEffect(() => { fetchUserData(); }, []);
 
   // ================= UPLOAD IMAGE =================
-  const uploadImage = async (fileParam) => {
-    const formData = new FormData();
-    formData.append("pfp", fileParam || imageFile);
+ // ================= UPLOAD IMAGE =================
+const uploadImage = async (fileParam) => {
+  const formData = new FormData();
+  formData.append("pfp", fileParam || imageFile);
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
 
-    try {
-      setLoading(true);
+    const res = await axios.post(
+      "https://mind-space-ov3r.onrender.com/user/profile-picture",
+      formData,
+      { headers: { Authorization: `dash ${token}` } }  // ✓ بس كده
+    );
 
-      const res = await axios.post(
-        "https://mind-space-ov3r.onrender.com/user/profile-picture",
-        formData,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      const newPfp = res.data.data.pfp;
-
+    const newPfp = res.data?.data?.pfp || res.data?.pfp;
+    if (newPfp?.secure_url) {
       setUser((prev) => ({
         ...prev,
-        pfp: {
-          ...newPfp,
-          secure_url: newPfp.secure_url + "?t=" + Date.now(),
-        },
+        pfp: { ...newPfp, secure_url: newPfp.secure_url + "?t=" + Date.now() },
       }));
-
-      setPreview(null);
-      await fetchUser();
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
     }
-  };
+    setPreview(null);
+    await fetchUserData();
+    toast.success("✅ Photo uploaded successfully");
+  } catch (err) {
+    console.log("upload error:", err.response?.data);
+    if (err.response?.status === 401) { toast.error("❌ Session expired"); navigate("/login"); }
+    else toast.error("❌ Upload failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
-  // ================= RESET IMAGE =================
-  const resetImage = async () => {
+// ================= RESET IMAGE =================
+const resetImage = async () => {
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
     await axios.patch(
       "https://mind-space-ov3r.onrender.com/user/reset-profile-picture",
       {},
-      { headers: authHeader }
+      { headers: { Authorization: `dash ${token}` } }  // ✓ صح زي ما هو
     );
-
     setUser((prev) => ({ ...prev, pfp: null }));
     setPreview(null);
-    await fetchUser();
-  };
+    await fetchUserData();
+    toast.success("✅ Photo removed successfully");
+  } catch (err) {
+    if (err.response?.status === 401) { toast.error("❌ Session expired"); navigate("/login"); }
+    else toast.error("❌ Failed to remove photo");
+  } finally {
+    setLoading(false);
+  }
+};
 
   // ================= LOGOUT =================
   const handleLogout = async () => {

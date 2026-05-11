@@ -26,8 +26,9 @@ import ForgetPassword from "./Registers/ForgetPassword";
 // import { useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "./Registers/ProtectedRoute";
-import PatientFullProfile from "./Dashbords/PatientFullprofile";
+// import PatientFullProfile from "./Dashbords/PatientFullprofile";
 import Therapistfeed from "./Dashbords/Therapistfeed";
+import ProfileDoctor from "./Dashbords/profileDoctor";
 function App() {
   // const navigate = useNavigate();
 
@@ -99,7 +100,9 @@ function App() {
   }
 >
   <Route index element={<Therapistfeed />} />
-  <Route path="dash" element={<Therapistfeed />} />
+  <Route path="home" element={<Therapistfeed />} />
+  <Route path="dash" element={<DashbordContent />} />
+  <Route path="profile" element={<ProfileDoctor />} />
   <Route path="patients" element={<Patients />} />
   <Route path="message" element={<Messages />} />
   <Route path="session" element={<Sessions />} />
@@ -114,7 +117,7 @@ function App() {
         <Route path="message" element={<MessagePatient />} />
         <Route path="setting" element={<SettingPatients />} />
       <Route path="logOut" element={<LogOut />} />
-      <Route path="profile" element={<PatientFullProfile />} />
+      {/* <Route path="profile" element={<PatientFullProfile />} /> */}
       </Route> 
       <Route path="/PatientHome" element={<PatientHome />} />
       <Route path="/patient/:id" element={<PatientProfile />} />

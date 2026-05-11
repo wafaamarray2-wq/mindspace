@@ -1,35 +1,25 @@
 /* =============================================================
-   doc.css — MindSpace Patient Dashboard
-   Refactored: modern Notion/Stripe-style design
-   Rules:
-     • All original class names preserved
-     • No Tailwind — plain CSS only
-     • CSS custom properties for easy theming
-     • Responsive: mobile → tablet → desktop
+   doc.css — MindSpace Doctor Dashboard
    ============================================================= */
 
-/* ─────────────────────────────────────────
-   0. GOOGLE FONT IMPORT
-───────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 /* ─────────────────────────────────────────
-   1. DESIGN TOKENS  (CSS variables)
+   1. DESIGN TOKENS
 ───────────────────────────────────────── */
 :root {
-  /* Brand palette */
-  --color-primary:        #0cb4d6;
-  --color-primary-dark:   #0a9cbd;
-  --color-primary-deeper: #0886a5;
-  --color-primary-light:  #e0f7fc;
+  --color-primary:        #534AB7;
+  --color-primary-dark:   #3C3489;
+  --color-primary-deeper: #2e2870;
+  --color-primary-light:  #EEEDFE;
 
-  /* Sidebar */
-  --sidebar-bg:           #0f2a35;
-  --sidebar-border:       rgba(255,255,255,0.06);
-  --sidebar-text:         #b8d8e0;
+  /* Sidebar — matched to feed palette */
+  --sidebar-bg:           #1e1a3c;          /* deep purple-navy */
+  --sidebar-border:       rgba(255,255,255,0.07);
+  --sidebar-text:         #b8b4d8;
   --sidebar-text-hover:   #ffffff;
-  --sidebar-hover-bg:     rgba(12,180,214,0.12);
-  --sidebar-active-bg:    rgba(12,180,214,0.20);
+  --sidebar-hover-bg:     rgba(83,74,183,0.20);
+  --sidebar-active-bg:    rgba(83,74,183,0.30);
   --sidebar-width:        260px;
 
   /* Header */
@@ -38,10 +28,10 @@
   --header-border:        #e5eaf0;
   --header-shadow:        0 1px 0 #e5eaf0;
 
-  /* Surface / background */
-  --bg-app:               #f0f4f8;
+  /* Surface */
+  --bg-app:               #f4f3ff;          /* very light purple tint */
   --bg-card:              #ffffff;
-  --bg-card-hover:        #f7faff;
+  --bg-card-hover:        #f9f8ff;
 
   /* Text */
   --text-primary:         #0f1923;
@@ -53,7 +43,6 @@
   --color-danger:         #ef4444;
   --color-warning:        #f59e0b;
 
-  /* Radius, shadows, spacing */
   --radius-sm:            6px;
   --radius-md:            10px;
   --radius-lg:            16px;
@@ -64,17 +53,10 @@
   --transition:           0.22s ease;
 }
 
-
 /* ─────────────────────────────────────────
    2. RESET / BASE
 ───────────────────────────────────────── */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -88,40 +70,32 @@ a { text-decoration: none; color: inherit; }
 ul { list-style: none; }
 button { cursor: pointer; font-family: inherit; }
 
-
 /* ─────────────────────────────────────────
-   3. TOP HEADER  (.dash-header)
-   New element — sits above dash-content
+   3. TOP HEADER
 ───────────────────────────────────────── */
 .dash-header {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 200;
   height: var(--header-h);
-
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 0 24px;
-
   background: var(--header-bg);
   border-bottom: 1px solid var(--header-border);
   box-shadow: var(--header-shadow);
 }
 
-/* Brand (logo + name) */
 .dash-header__brand {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: var(--sidebar-width);          /* aligns with sidebar */
+  width: var(--sidebar-width);
   flex-shrink: 0;
 }
 
-.dash-header__logo {
-  font-size: 24px;
-  line-height: 1;
-}
+.dash-header__logo { font-size: 24px; line-height: 1; }
 
 .dash-header__name {
   font-size: 18px;
@@ -130,7 +104,6 @@ button { cursor: pointer; font-family: inherit; }
   letter-spacing: -0.4px;
 }
 
-/* Right cluster */
 .dash-header__right {
   display: flex;
   align-items: center;
@@ -138,24 +111,16 @@ button { cursor: pointer; font-family: inherit; }
   margin-left: auto;
 }
 
-.dash-header__greeting {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
+.dash-header__greeting { font-size: 14px; color: var(--text-secondary); }
+.dash-header__greeting strong { color: var(--text-primary); font-weight: 700; }
 
-.dash-header__greeting strong {
-  color: var(--text-primary);
-  font-weight: 700;
-}
-
-/* Mini avatar in header */
 .dash-header__avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid var(--color-primary-light);
-  background: linear-gradient(135deg, var(--color-primary), #2563eb);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,20 +130,14 @@ button { cursor: pointer; font-family: inherit; }
   flex-shrink: 0;
 }
 
-.dash-header__avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.dash-header__avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Hamburger button (mobile only) */
 .hamburger {
   display: none;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  width: 36px;
-  height: 36px;
+  width: 36px; height: 36px;
   border: none;
   background: transparent;
   padding: 4px;
@@ -188,72 +147,58 @@ button { cursor: pointer; font-family: inherit; }
 
 .hamburger span {
   display: block;
-  height: 2px;
-  width: 100%;
+  height: 2px; width: 100%;
   background: var(--text-secondary);
   border-radius: 2px;
   transition: var(--transition);
 }
 
-.hamburger:hover span { background: var(--color-primary-dark); }
-
+.hamburger:hover span { background: var(--color-primary); }
 
 /* ─────────────────────────────────────────
-   4. OUTER SHELL  (.dashbord)
-   Note: original typo "dashbord" preserved
+   4. OUTER SHELL
 ───────────────────────────────────────── */
 .dashbord {
   min-height: 100vh;
   background: var(--bg-app);
-  /* Push content below fixed header */
   padding-top: var(--header-h);
 }
 
-
 /* ─────────────────────────────────────────
-   5. LAYOUT WRAPPER  (.dash-content)
+   5. LAYOUT WRAPPER
 ───────────────────────────────────────── */
 .dash-content {
   display: flex;
   min-height: calc(100vh - var(--header-h));
 }
 
-
 /* ─────────────────────────────────────────
-   6. SIDEBAR  (.sidebar)
+   6. SIDEBAR
 ───────────────────────────────────────── */
 .dashbord .sidebar {
-  /* Fixed on left, full height below header */
   position: fixed;
   top: var(--header-h);
-  left: 0;
-  bottom: 0;
+  left: 0; bottom: 0;
   z-index: 100;
-
   width: var(--sidebar-width);
   overflow-y: auto;
-
   background: var(--sidebar-bg);
   border-right: 1px solid var(--sidebar-border);
   padding: 28px 16px 24px;
-
   display: flex;
   flex-direction: column;
-
   transition: transform var(--transition);
 }
 
-/* Scrollbar inside sidebar */
 .dashbord .sidebar::-webkit-scrollbar { width: 4px; }
 .dashbord .sidebar::-webkit-scrollbar-track { background: transparent; }
 .dashbord .sidebar::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.10);
   border-radius: 4px;
 }
 
-
 /* ─────────────────────────────────────────
-   7. SIDEBAR PROFILE BLOCK  (.head)
+   7. SIDEBAR PROFILE BLOCK
 ───────────────────────────────────────── */
 .dashbord .sidebar .head {
   display: flex;
@@ -261,43 +206,33 @@ button { cursor: pointer; font-family: inherit; }
   align-items: center;
   text-align: center;
   padding-bottom: 20px;
+  border-bottom: 1px solid var(--sidebar-border);
+  margin-bottom: 16px;
 }
 
-/* ─── Profile image wrapper ─── */
 .image-box {
   position: relative;
-  width: 90px;
-  height: 90px;
+  width: 86px; height: 86px;
   border-radius: 50%;
   overflow: hidden;
   margin: 0 auto 14px;
   flex-shrink: 0;
-
-  /* Glass ring */
-  border: 3px solid rgba(12,180,214,0.50);
-  box-shadow:
-    0 0 0 4px rgba(12,180,214,0.15),
-    var(--shadow-md);
-
+  border: 3px solid rgba(83,74,183,0.55);
+  box-shadow: 0 0 0 4px rgba(83,74,183,0.15), var(--shadow-md);
   cursor: pointer;
   transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .image-box:hover {
   transform: scale(1.04);
-  box-shadow:
-    0 0 0 4px rgba(12,180,214,0.30),
-    var(--shadow-lg);
+  box-shadow: 0 0 0 4px rgba(83,74,183,0.30), var(--shadow-lg);
 }
 
-.image-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
+.image-box img {  width: 100%;
+width: 100%;
+    height: 100%;
+    object-fit: cover;}
 
-/* Camera overlay on hover */
 .image-box__overlay {
   position: absolute;
   inset: 0;
@@ -313,22 +248,18 @@ button { cursor: pointer; font-family: inherit; }
 
 .image-box:hover .image-box__overlay { opacity: 1; }
 
-/* Default avatar (no photo) */
 .empty-avatar {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background: linear-gradient(135deg, var(--color-primary), #2563eb);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   color: #ffffff;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 800;
   letter-spacing: -1px;
 }
 
-/* Animated loading dots */
 .loading {
   position: absolute;
   bottom: -20px;
@@ -340,8 +271,7 @@ button { cursor: pointer; font-family: inherit; }
 
 .loading span {
   display: block;
-  width: 5px;
-  height: 5px;
+  width: 5px; height: 5px;
   border-radius: 50%;
   background: var(--color-primary);
   animation: pulse-dot 1.2s infinite ease-in-out both;
@@ -355,34 +285,34 @@ button { cursor: pointer; font-family: inherit; }
   40%            { transform: scale(1);   opacity: 1;   }
 }
 
-/* Username */
 .dashbord .sidebar .head h3 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #ffffff;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   letter-spacing: -0.3px;
 }
 
-/* Role badge (replaces plain <p>) */
+/* role badge — matches tf-badge style */
+.dashbord .sidebar .head p,
 .role-badge {
   display: inline-block;
-  padding: 3px 10px;
+  padding: 3px 12px;
   border-radius: 20px;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   text-transform: uppercase;
-  color: var(--color-primary);
-  background: rgba(12,180,214,0.15);
-  border: 1px solid rgba(12,180,214,0.25);
+  color: #CECBF6;
+  background: rgba(83,74,183,0.25);
+  border: 1px solid rgba(83,74,183,0.40);
   margin-bottom: 14px;
 }
 
-/* Remove photo button */
-.remove-photo-btn {
+.remove-photo-btn,
+.dashbord .sidebar .head button {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-muted);
   background: transparent;
   border: 1px solid rgba(255,255,255,0.12);
@@ -391,12 +321,12 @@ button { cursor: pointer; font-family: inherit; }
   transition: color var(--transition), border-color var(--transition), background var(--transition);
 }
 
-.remove-photo-btn:hover {
-  color: var(--color-danger);
-  border-color: var(--color-danger);
+.remove-photo-btn:hover,
+.dashbord .sidebar .head button:hover {
+  color: #ff6b6b;
+  border-color: rgba(239,68,68,0.50);
   background: rgba(239,68,68,0.08);
 }
-
 
 /* ─────────────────────────────────────────
    8. SIDEBAR DIVIDER
@@ -406,7 +336,6 @@ button { cursor: pointer; font-family: inherit; }
   background: var(--sidebar-border);
   margin: 4px 0 16px;
 }
-
 
 /* ─────────────────────────────────────────
    9. SIDEBAR NAV LINKS
@@ -419,50 +348,57 @@ button { cursor: pointer; font-family: inherit; }
   gap: 2px;
 }
 
-/* Nav item wrapper */
 .dashbord .sidebar ul li {
   border-radius: var(--radius-md);
   overflow: hidden;
 }
 
-/* Link style */
 .dashbord .sidebar ul li a {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
   border-radius: var(--radius-md);
-
   color: var(--sidebar-text);
   font-size: 14px;
   font-weight: 500;
-
-  transition: background var(--transition), color var(--transition);
+  transition: background var(--transition), color var(--transition), padding-left var(--transition);
 }
 
 .dashbord .sidebar ul li a:hover {
   background: var(--sidebar-hover-bg);
   color: var(--sidebar-text-hover);
+  padding-left: 18px;           /* subtle slide effect */
 }
 
-/* Icon */
-.dashbord .sidebar ul li span {
+/* Active link — add this class via NavLink */
+.dashbord .sidebar ul li a.active {
+  background: var(--sidebar-active-bg);
+  color: #fff;
+  border-left: 3px solid var(--color-primary);
+  padding-left: 11px;
+}
+
+/* Icon wrapper */
+.dashbord .sidebar ul li a svg {
   font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
   flex-shrink: 0;
-  opacity: 0.8;
+  opacity: 0.75;
+  transition: opacity var(--transition);
 }
 
-/* Label */
-.dashbord .sidebar ul li h5 {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1;
-}
+.dashbord .sidebar ul li a:hover svg,
+.dashbord .sidebar ul li a.active svg { opacity: 1; }
 
+/* ─── Section label inside nav ─── */
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  padding: 14px 14px 6px;
+}
 
 /* ─────────────────────────────────────────
    10. LOGOUT BUTTON
@@ -478,16 +414,13 @@ button { cursor: pointer; font-family: inherit; }
   display: flex;
   align-items: center;
   gap: 12px;
-
   background: transparent;
   border: none;
   color: var(--sidebar-text);
-
   font-size: 14px;
   font-weight: 500;
   padding: 10px 14px;
   border-radius: var(--radius-md);
-
   transition: background var(--transition), color var(--transition);
 }
 
@@ -498,32 +431,28 @@ button { cursor: pointer; font-family: inherit; }
 
 .log-out button:focus { outline: none; }
 
-/* Logout icon colour */
-.log-out span svg { fill: #ef4444; }
+.log-out button svg { font-size: 18px; opacity: 0.8; }
+.log-out button:hover svg { opacity: 1; }
 
-/* Logout label */
 .log-out button h5 {
   font-size: 14px;
   font-weight: 500;
   line-height: 1;
 }
 
-
 /* ─────────────────────────────────────────
    11. MAIN CONTENT AREA  (.details)
 ───────────────────────────────────────── */
 .dash-content .details {
   margin-left: var(--sidebar-width);
-    min-height: calc(100vh - var(--header-h));
-    overflow-y: auto;
-    /* padding: 1.5rem; */
-    /* width: 80%; */
-    width: 90%;
+  min-height: calc(100vh - var(--header-h));
+  overflow-y: auto;
+  padding: 1.5rem;
+  flex: 1;
 }
 
-
 /* ─────────────────────────────────────────
-   12. STAT / SUMMARY BOXES  (.boxes / .box)
+   12. STAT / SUMMARY BOXES
 ───────────────────────────────────────── */
 .dash-content .boxes {
   display: grid;
@@ -572,11 +501,8 @@ button { cursor: pointer; font-family: inherit; }
   letter-spacing: -1px;
 }
 
-.dash-content .boxes .box .number span svg { fill: var(--color-warning); }
-
-
 /* ─────────────────────────────────────────
-   13. TABLE  (.table-container / .dashboard-table)
+   13. TABLE
 ───────────────────────────────────────── */
 .table-container {
   background: var(--bg-card);
@@ -585,10 +511,6 @@ button { cursor: pointer; font-family: inherit; }
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   margin-bottom: 32px;
-
-  /* Reset old positioning */
-  margin-left: 0;
-  margin-top: 0;
   width: 100%;
 }
 
@@ -599,7 +521,6 @@ button { cursor: pointer; font-family: inherit; }
   font-size: 14px;
 }
 
-/* Head */
 .dashboard-table thead {
   background: #f4f6fa;
   border-bottom: 1px solid #e5eaf0;
@@ -616,7 +537,6 @@ button { cursor: pointer; font-family: inherit; }
   white-space: nowrap;
 }
 
-/* Body */
 .dashboard-table tbody { background: var(--bg-card); }
 
 .dashboard-table tbody td {
@@ -628,14 +548,9 @@ button { cursor: pointer; font-family: inherit; }
 
 .dashboard-table tbody tr:last-child td { border-bottom: none; }
 
-.dashboard-table tbody tr {
-  transition: background var(--transition);
-}
+.dashboard-table tbody tr { transition: background var(--transition); }
 
-.dashboard-table tbody tr:hover {
-  background: var(--color-primary-light);
-}
-
+.dashboard-table tbody tr:hover { background: var(--color-primary-light); }
 
 /* ─────────────────────────────────────────
    14. STATUS BADGES
@@ -682,9 +597,8 @@ button { cursor: pointer; font-family: inherit; }
   flex-shrink: 0;
 }
 
-
 /* ─────────────────────────────────────────
-   15. MOBILE OVERLAY (sidebar backdrop)
+   15. MOBILE OVERLAY
 ───────────────────────────────────────── */
 .sidebar-overlay {
   display: none;
@@ -695,19 +609,16 @@ button { cursor: pointer; font-family: inherit; }
   backdrop-filter: blur(2px);
 }
 
-
 /* ─────────────────────────────────────────
-   16. RESPONSIVE — TABLET  (≤ 1024px)
+   16. RESPONSIVE — TABLET (≤ 1024px)
 ───────────────────────────────────────── */
 @media (max-width: 1024px) {
   :root { --sidebar-width: 220px; }
 
-   .dash-content .details {
-    margin-left: var(--sidebar-width);  /* 220px على tablet */
-    padding: 1.5rem;
-    
+  .dash-content .details {
+    margin-left: var(--sidebar-width);
+    padding: 1.25rem;
   }
-
 
   .dash-content .boxes {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -715,61 +626,46 @@ button { cursor: pointer; font-family: inherit; }
   }
 }
 
-
 /* ─────────────────────────────────────────
-   17. RESPONSIVE — MOBILE  (≤ 768px)
+   17. RESPONSIVE — MOBILE (≤ 768px)
 ───────────────────────────────────────── */
 @media (max-width: 768px) {
-
-  /* Show hamburger, hide greeting */
   .hamburger { display: flex; }
   .dash-header__greeting { display: none; }
   .dash-header__brand { width: auto; }
 
-  /* Slide sidebar off-screen by default */
   .dashbord .sidebar {
     transform: translateX(-100%);
-    width: 260px;          /* fixed width when open */
+    width: 260px;
     box-shadow: none;
   }
 
-  /* Slide in when .sidebar--open */
   .dashbord .sidebar.sidebar--open {
     transform: translateX(0);
     box-shadow: var(--shadow-lg);
   }
 
-  /* Show overlay when sidebar is open */
-  .dashbord .sidebar.sidebar--open ~ * .sidebar-overlay,
   .sidebar-overlay { display: block; }
 
-  /* Content takes full width on mobile */
   .dash-content .details {
-    margin-left: 0;   /* موجود بالفعل ✓ */
+    margin-left: 0;
     padding: 16px;
-    width: 100%;
   }
 
-  /* Stack boxes */
   .dash-content .boxes {
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
 
-  /* Table: horizontal scroll */
   .table-container { overflow-x: auto; }
   .dashboard-table { min-width: 560px; }
 }
 
-/* الـ main اللي جوا الداشبورد */
-
 /* ─────────────────────────────────────────
-   18. RESPONSIVE — SMALL MOBILE  (≤ 480px)
+   18. RESPONSIVE — SMALL MOBILE (≤ 480px)
 ───────────────────────────────────────── */
 @media (max-width: 480px) {
   .dash-content .boxes { grid-template-columns: 1fr; }
-
-  .dash-content .details { padding: 12px; width: 100%; }
-
+  .dash-content .details { padding: 12px; }
   .dash-header { padding: 0 14px; }
 }

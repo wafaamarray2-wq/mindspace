@@ -5,9 +5,10 @@ import {
   FiCalendar, FiZap, FiGlobe,
 } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
-import "./Therapistfeed.css"
+import { useDashUser } from "../Dashbords/DoctorDashbord"; // ← الـ context
+import "./Therapistfeed.css";
 
-/* ─── helpers ──────────────────────────────────── */
+/* ─── Avatar — حرف لو مفيش صورة ──────────────── */
 function Avatar({ text = "?", size = 42, bg = "#CECBF6", color = "#3C3489" }) {
   return (
     <div
@@ -17,6 +18,31 @@ function Avatar({ text = "?", size = 42, bg = "#CECBF6", color = "#3C3489" }) {
       {text}
     </div>
   );
+}
+
+/* ─── UserAvatar — صورة السايدبار أو حرف ──────── */
+function UserAvatar({ size = 42 }) {
+  const { user } = useDashUser();
+
+  if (user?.pfp?.secure_url) {
+    return (
+      <img
+        src={user.pfp.secure_url}
+        alt="avatar"
+        style={{
+          width: size,
+          height: size,
+          minWidth: size,
+          borderRadius: "50%",
+          objectFit: "cover",
+          flexShrink: 0,
+        }}
+      />
+    );
+  }
+
+  const initial = user?.userName?.charAt(0)?.toUpperCase() || "D";
+  return <Avatar text={initial} size={size} />;
 }
 
 /* ─── comment item ──────────────────────────────── */
@@ -104,7 +130,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments }) {
           ))}
 
           <div className="tf-comment-input-row">
-            <Avatar text="Dr" size={32} />
+            <UserAvatar size={32} />  {/* ← صورة السايدبار */}
             <input
               className="tf-comment-input"
               placeholder="Write a comment..."
@@ -157,7 +183,7 @@ function CreateModal({ open, onClose, onSubmit, docName }) {
 
         {/* author row */}
         <div className="tf-modal-author">
-          <Avatar text="Dr" />
+          <UserAvatar size={42} />  {/* ← صورة السايدبار */}
           <div>
             <div className="tf-modal-name">Dr. {docName || "Ahmed"}</div>
             <div className="tf-modal-sub">
@@ -219,7 +245,7 @@ function CreateModal({ open, onClose, onSubmit, docName }) {
   );
 }
 
-/* ─── MAIN FEED ─────────────────────────────────── */
+/* ─── DEMO POSTS ────────────────────────────────── */
 const DEMO_POSTS = [
   {
     id: 1,
@@ -231,8 +257,8 @@ const DEMO_POSTS = [
     likes: 47,
     liked: false,
     comments: [
-      { author: "Sara M.", initials: "SM", text: "Thank you for the reminder, doctor!", time: "1h ago" },
-      { author: "Khaled R.", initials: "KR", text: "Really needed to hear this today.", time: "45m ago" },
+      { author: "Sara M.",   initials: "SM", text: "Thank you for the reminder, doctor!", time: "1h ago" },
+      { author: "Khaled R.", initials: "KR", text: "Really needed to hear this today.",   time: "45m ago" },
     ],
     showComments: true,
   },
@@ -252,15 +278,13 @@ const DEMO_POSTS = [
   },
 ];
 
-export default function TherapistFeed({ user }) {
+/* ─── MAIN FEED ─────────────────────────────────── */
+export default function TherapistFeed() {
+  const { user } = useDashUser();  // ← بياخد الـ user من الداشبورد
   const [posts, setPosts] = useState(DEMO_POSTS);
   const [modalOpen, setModalOpen] = useState(false);
-  const [triggerPhoto, setTriggerPhoto] = useState(false);
 
-  const openModal = (withPhoto = false) => {
-    setTriggerPhoto(withPhoto);
-    setModalOpen(true);
-  };
+  const openModal = () => setModalOpen(true);
 
   const handleLike = (id) => {
     setPosts((prev) =>
@@ -286,7 +310,12 @@ export default function TherapistFeed({ user }) {
               ...p,
               comments: [
                 ...p.comments,
-                { author: `Dr. ${user?.userName || "Ahmed"}`, initials: "Dr", text, time: "Just now" },
+                {
+                  author: `Dr. ${user?.userName || "Ahmed"}`,
+                  initials: user?.userName?.charAt(0)?.toUpperCase() || "D",
+                  text,
+                  time: "Just now",
+                },
               ],
               showComments: true,
             }
@@ -300,7 +329,7 @@ export default function TherapistFeed({ user }) {
       {
         id: Date.now(),
         author: `Dr. ${user?.userName || "Ahmed"}`,
-        initials: "Dr",
+        initials: user?.userName?.charAt(0)?.toUpperCase() || "D",
         time: "Just now",
         text,
         img,
@@ -313,26 +342,24 @@ export default function TherapistFeed({ user }) {
     ]);
   };
 
-  const docName = user?.userName || "Ahmed";
-
   return (
     <div className="tf-feed-wrap">
       {/* ── Create post bar ── */}
       <div className="tf-create-card">
         <div className="tf-create-top">
-          <Avatar text="Dr" />
-          <button className="tf-create-input" onClick={() => openModal()}>
+          <UserAvatar size={42} />  {/* ← صورة السايدبار */}
+          <button className="tf-create-input" onClick={openModal}>
             What would you like to share today?
           </button>
         </div>
         <div className="tf-create-actions">
-          <button className="tf-action-btn photo" onClick={() => openModal(true)}>
+          <button className="tf-action-btn photo" onClick={openModal}>
             <FiImage /> Photo
           </button>
-          <button className="tf-action-btn tip" onClick={() => openModal()}>
+          <button className="tf-action-btn tip" onClick={openModal}>
             <FiZap /> Mental health tip
           </button>
-          <button className="tf-action-btn event" onClick={() => openModal()}>
+          <button className="tf-action-btn event" onClick={openModal}>
             <FiCalendar /> Session announcement
           </button>
         </div>
@@ -354,8 +381,7 @@ export default function TherapistFeed({ user }) {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={handleSubmitPost}
-        docName={docName}
-        autoPhoto={triggerPhoto}
+        docName={user?.userName}
       />
     </div>
   );

@@ -135,10 +135,11 @@
   line-height: 1.65;
   color: #222;
 }
+/* في TherapistFeed.css */
 .tf-post-img {
   width: 100%;
   display: block;
-  max-height: 360px;
+  aspect-ratio: 16 / 9;    /* نسبة ثابتة — مش هتبقى طويلة ولا قصيرة */
   object-fit: cover;
 }
 .tf-post-stats {
