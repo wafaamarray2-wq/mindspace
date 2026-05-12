@@ -76,7 +76,7 @@ function UserAvatar({ size = 42 }) {
 function CommentItem({ comment }) {
   return (
     <div className="tf-comment-item">
-      <Avatar text={comment.initials} size={30} />
+      <UserAvatar size={30} />
 
       <div>
         <div className="tf-comment-bubble">
@@ -116,7 +116,7 @@ function PostCard({
     <div className="tf-post-card">
       {/* Header */}
       <div className="tf-post-top">
-        <Avatar text={post.initials} />
+        <UserAvatar size={30} />
 
         <div className="tf-post-meta">
           <div className="tf-post-name">
@@ -427,13 +427,53 @@ function CreateModal({
   );
 }
 
+/* ─── Helper: format comments from API ── */
+function formatComments(rawComments = []) {
+  return rawComments.map((c) => ({
+    author:
+      c.author?.userName ||
+      c.userId?.userName ||
+      c.user?.userName ||
+      "User",
+    text: c.content,
+    time: c.createdAt
+      ? new Date(c.createdAt).toLocaleDateString()
+      : "Recently",
+  }));
+}
+
+/* ─── Helper: format single article ──── */
+function formatArticle(article, extra = {}) {
+  return {
+    ...article,
+    id: article._id,
+    author: `Dr. ${
+      article.publisher?.userName || "Ahmed"
+    }`,
+    initials:
+      article.publisher?.userName
+        ?.charAt(0)
+        ?.toUpperCase() || "D",
+    text: article.content,
+    img:
+      article.attachments?.[0]?.secure_url ||
+      null,
+    likes: article.likes?.length || 0,
+    liked: false,
+    comments: formatComments(article.comments),
+    showComments: false,
+    time: article.createdAt
+      ? new Date(article.createdAt).toLocaleDateString()
+      : "Recently",
+    ...extra,
+  };
+}
+
 /* ─── MAIN FEED ───────────────────────── */
 export default function TherapistFeed() {
   const { user } = useDashUser();
 
-  const [posts, setPosts] = useState(
-    []
-  );
+  const [posts, setPosts] = useState([]);
 
   const [modalOpen, setModalOpen] =
     useState(false);
@@ -456,38 +496,10 @@ export default function TherapistFeed() {
       console.log(res.data);
 
       const formattedPosts =
-        res.data.data.map((article) => ({
-          ...article,
-
-          id: article._id,
-
-          author: `Dr. ${
-            article.publisher
-              ?.userName || "Ahmed"
-          }`,
-
-          initials:
-            article.publisher?.userName
-              ?.charAt(0)
-              ?.toUpperCase() || "D",
-
-          text: article.content,
-
-          img:
-            article.attachments?.[0]
-              ?.secure_url || null,
-
-          likes:
-            article.likes?.length || 0,
-
-          liked: false,
-
-          comments: [],
-
-          showComments: false,
-
-          time: "Recently",
-        }));
+        res.data.data.map((article) =>
+          formatArticle(article)
+        
+        );
 
       setPosts(formattedPosts);
     } catch (err) {
@@ -496,6 +508,7 @@ export default function TherapistFeed() {
       );
     }
   };
+  
 
   useEffect(() => {
     fetchPosts();
@@ -519,16 +532,13 @@ export default function TherapistFeed() {
   };
 
   /* ─── Toggle Comments ─────────── */
-  const handleToggleComments = (
-    id
-  ) => {
+  const handleToggleComments = (id) => {
     setPosts((prev) =>
       prev.map((p) =>
         p.id === id
           ? {
               ...p,
-              showComments:
-                !p.showComments,
+              showComments: !p.showComments,
             }
           : p
       )
@@ -536,42 +546,45 @@ export default function TherapistFeed() {
   };
 
   /* ─── Add Comment ─────────────── */
-  const handleAddComment = (
+  const handleAddComment = async (
     id,
     text
   ) => {
-    setPosts((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? {
-              ...p,
+    try {
+      const token =
+        localStorage.getItem("token");
 
-              comments: [
-                ...p.comments,
+      const userId = user?._id;
 
-                {
-                  author: `Dr. ${
-                    user?.userName ||
-                    "Ahmed"
-                  }`,
+      await axios.post(
+        `https://mind-space-ov3r.onrender.com/article/${id}/comment/${userId}`,
+        { content: text },
+        {
+          headers: {
+            Authorization: `dash ${token}`,
+          },
+        }
+      );
 
-                  initials:
-                    user?.userName
-                      ?.charAt(0)
-                      ?.toUpperCase() ||
-                    "D",
+      // احفظ اللي فاتح comments قبل fetchPosts
+      const openComments = posts
+        .filter((p) => p.showComments)
+        .map((p) => p.id);
 
-                  text,
+      await fetchPosts();
 
-                  time: "Just now",
-                },
-              ],
-
-              showComments: true,
-            }
-          : p
-      )
-    );
+      // رجّع showComments للبوستات اللي كانت فاتحة
+      setPosts((prev) =>
+        prev.map((p) => ({
+          ...p,
+          showComments: openComments.includes(p.id),
+        }))
+      );
+    } catch (err) {
+      console.log(
+        err.response?.data || err
+      );
+    }
   };
 
   /* ─── Create Post ─────────────── */
@@ -585,16 +598,10 @@ export default function TherapistFeed() {
 
       const formData = new FormData();
 
-      formData.append(
-        "content",
-        text
-      );
+      formData.append("content", text);
 
       if (img) {
-        formData.append(
-          "attachments",
-          img
-        );
+        formData.append("attachments", img);
       }
 
       const res = await axios.post(
@@ -612,40 +619,19 @@ export default function TherapistFeed() {
       console.log(res.data);
 
       if (res.data?.data) {
-        const article =
-          res.data.data;
-
-        const newPost = {
-          ...article,
-
-          id: article._id,
-
-          author: `Dr. ${
-            user?.userName || "Ahmed"
-          }`,
-
-          initials:
-            user?.userName
-              ?.charAt(0)
-              ?.toUpperCase() || "D",
-
-          text: article.content,
-
-          img:
-            article.attachments?.[0]
-              ?.secure_url || null,
-
-          likes:
-            article.likes?.length || 0,
-
-          liked: false,
-
-          comments: [],
-
-          showComments: false,
-
-          time: "Just now",
-        };
+        const newPost = formatArticle(
+          res.data.data,
+          {
+            author: `Dr. ${
+              user?.userName || "Ahmed"
+            }`,
+            initials:
+              user?.userName
+                ?.charAt(0)
+                ?.toUpperCase() || "D",
+            time: "Just now",
+          }
+        );
 
         setPosts((prev) => [
           newPost,
@@ -713,9 +699,7 @@ export default function TherapistFeed() {
           key={p.id}
           post={p}
           onLike={handleLike}
-          onAddComment={
-            handleAddComment
-          }
+          onAddComment={handleAddComment}
           onToggleComments={
             handleToggleComments
           }
@@ -728,9 +712,7 @@ export default function TherapistFeed() {
         onClose={() =>
           setModalOpen(false)
         }
-        onSubmit={
-          handleSubmitPost
-        }
+        onSubmit={handleSubmitPost}
         docName={user?.userName}
       />
     </div>
