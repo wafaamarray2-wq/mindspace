@@ -18,17 +18,11 @@ import "./doc.css";
 const DashContext = createContext(null);
 
 export const useDashUser = () => useContext(DashContext);
-//  ↑ ده الـ hook اللي هتستورده في TherapistFeed:
-//  import { useDashUser } from "../Dashbords/DoctorDashboard";
-//  const { user } = useDashUser();
 
 // ═══════════════════════════════════════════════
 export default function DoctorDashbord() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // ================= GET USER DATA =================
@@ -58,59 +52,6 @@ export default function DoctorDashbord() {
   };
 
   useEffect(() => { fetchUserData(); }, []);
-
-  // ================= UPLOAD IMAGE =================
-  const uploadImage = async (fileParam) => {
-    const formData = new FormData();
-    formData.append("pfp", fileParam || imageFile);
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      const res = await axios.post(
-        "https://mind-space-ov3r.onrender.com/user/profile-picture",
-        formData,
-        { headers: { Authorization: `dash ${token}` } }
-      );
-      const newPfp = res.data?.data?.pfp || res.data?.pfp;
-      if (newPfp?.secure_url) {
-        setUser((prev) => ({
-          ...prev,
-          pfp: { ...newPfp, secure_url: newPfp.secure_url + "?t=" + Date.now() },
-        }));
-      }
-      setPreview(null);
-      await fetchUserData();
-      toast.success("✅ Photo uploaded successfully");
-    } catch (err) {
-      console.log("upload error:", err.response?.data);
-      if (err.response?.status === 401) { toast.error("❌ Session expired"); navigate("/login"); }
-      else toast.error("❌ Upload failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ================= RESET IMAGE =================
-  const resetImage = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      await axios.patch(
-        "https://mind-space-ov3r.onrender.com/user/reset-profile-picture",
-        {},
-        { headers: { Authorization: `dash ${token}` } }
-      );
-      setUser((prev) => ({ ...prev, pfp: null }));
-      setPreview(null);
-      await fetchUserData();
-      toast.success("✅ Photo removed successfully");
-    } catch (err) {
-      if (err.response?.status === 401) { toast.error("❌ Session expired"); navigate("/login"); }
-      else toast.error("❌ Failed to remove photo");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // ================= LOGOUT =================
   const handleLogout = async () => {
@@ -156,11 +97,11 @@ export default function DoctorDashbord() {
 
           <div className="dash-header__right">
             <div className="dash-header__greeting">
-              Welcome back,&nbsp;<strong>{user?.userName || "..."}</strong>
+              Welcome back,&nbsp;<strong>Dr. {user?.userName || "..."}</strong>
             </div>
             <div className="dash-header__avatar">
               {user?.pfp?.secure_url
-                ? <img src={user.pfp.secure_url} alt="avatar" />
+                ? <img src={user.pfp.secure_url} alt="" />
                 : <span>{user?.userName?.charAt(0)?.toUpperCase()}</span>
               }
             </div>
@@ -172,35 +113,19 @@ export default function DoctorDashbord() {
           {/* ── SIDEBAR ── */}
           <aside className={`sidebar${sidebarOpen ? " sidebar--open" : ""}`}>
             <div className="head">
-              <div className="image-box">
-                <label>
-                  <input
-                    type="file"
-                    hidden
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (!file) return;
-                      setImageFile(file);
-                      setPreview(URL.createObjectURL(file));
-                      uploadImage(file);
-                    }}
-                  />
-                  {preview || user?.pfp?.secure_url ? (
-                    <img src={preview || user?.pfp?.secure_url} alt="doctor" />
-                  ) : (
-                    <div className="empty-avatar">{user?.userName?.charAt(0)}</div>
-                  )}
-                </label>
-                {loading && (
-                  <div className="loading">
-                    <span /><span /><span />
-                  </div>
-                )}
-              </div>
 
+              {/* الصورة — read only — التحكم فيها من البروفايل */}
+              <div className="image-box">
+                {user?.pfp?.secure_url
+                  ? <img src={user.pfp.secure_url} alt="" />
+                  : <div className="empty-avatar">
+                      {user?.userName?.charAt(0)?.toUpperCase() || "D"}
+                    </div>
+                }
+              </div>
+{/* 
               <h3>Dr. {user?.userName || "Doctor"}</h3>
-              <p>{user?.role || "Therapist"}</p>
-              <button onClick={resetImage}>Remove Photo</button>
+              <p>{user?.role || "Therapist"}</p> */}
             </div>
 
             <nav>
