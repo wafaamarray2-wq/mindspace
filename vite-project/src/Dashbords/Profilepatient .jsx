@@ -4,12 +4,13 @@ import { toast } from "react-toastify";
 import { useDashUser } from "../Dashbords/DoctorDashbord";
 import {
   FiEdit2, FiCamera, FiMail, FiPhone, FiMapPin,
-  FiGlobe, FiDollarSign, FiPlus, FiCheck, FiTrash2, FiX,
+  FiGlobe, FiCalendar, FiPlus, FiCheck, FiTrash2, FiX,
+  FiAward, FiBarChart2,
 } from "react-icons/fi";
-import "./ProfileDoctor.css";
+import "./ProfilePatient.css";
 
 /* ══════════════════════════════════════════════
-   CROP MODAL — بسيط بدون library
+   CROP MODAL
 ══════════════════════════════════════════════ */
 function CropModal({ src, onCrop, onCancel }) {
   const canvasRef = useRef();
@@ -42,24 +43,24 @@ function CropModal({ src, onCrop, onCancel }) {
   };
 
   return (
-    <div className="dp-crop-overlay" onClick={onCancel}>
-      <div className="dp-crop-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="dp-crop-header">
+    <div className="pp-crop-overlay" onClick={onCancel}>
+      <div className="pp-crop-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="pp-crop-header">
           <h3>Crop photo</h3>
-          <button className="dp-crop-close" onClick={onCancel}><FiX /></button>
+          <button className="pp-crop-close" onClick={onCancel}><FiX /></button>
         </div>
 
-        <div className="dp-crop-preview">
+        <div className="pp-crop-preview">
           <img
             ref={imgRef}
             src={src}
             alt="crop"
             style={{ transform: `scale(${scale})`, transition: "transform 0.2s" }}
           />
-          <div className="dp-crop-circle" />
+          <div className="pp-crop-circle" />
         </div>
 
-        <div className="dp-crop-controls">
+        <div className="pp-crop-controls">
           <span>Zoom</span>
           <input
             type="range" min="1" max="3" step="0.05"
@@ -71,9 +72,9 @@ function CropModal({ src, onCrop, onCancel }) {
 
         <canvas ref={canvasRef} hidden />
 
-        <div className="dp-crop-actions">
-          <button className="dp-crop-cancel" onClick={onCancel}>Cancel</button>
-          <button className="dp-crop-save" onClick={handleCrop}>Apply</button>
+        <div className="pp-crop-actions">
+          <button className="pp-crop-cancel" onClick={onCancel}>Cancel</button>
+          <button className="pp-crop-save" onClick={handleCrop}>Apply</button>
         </div>
       </div>
     </div>
@@ -85,7 +86,7 @@ function CropModal({ src, onCrop, onCancel }) {
 ══════════════════════════════════════════════ */
 function RevAvatar({ initials }) {
   return (
-    <div className="dp-rev-av" style={{ background: "#CECBF6", color: "#3C3489" }}>
+    <div className="pp-rev-av" style={{ background: "#CECBF6", color: "#3C3489" }}>
       {initials}
     </div>
   );
@@ -94,31 +95,27 @@ function RevAvatar({ initials }) {
 /* ══════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════ */
-export default function ProfileDoctor() {
+export default function ProfilePatient() {
   const dashUser = useDashUser() || {};
   const user = dashUser.user || {};
   const setUser = dashUser.setUser || (() => {});
   const fetchUserData = dashUser.fetchUserData || (() => {});
 
-  // refs للـ file inputs
   const galleryRef  = useRef();
   const cameraRef   = useRef();
   const coverRef    = useRef();
 
-  // states
   const [loading, setLoading]       = useState(false);
   const [coverImg, setCoverImg]     = useState(null);
   const [cropSrc, setCropSrc]       = useState(null);
   const [cropTarget, setCropTarget] = useState(null);
 
-  // ── فتح الـ crop modal ──
   const openCrop = (file, target) => {
     const url = URL.createObjectURL(file);
     setCropSrc(url);
     setCropTarget(target);
   };
 
-  // ── بعد الـ crop ──
   const handleCropped = async (file) => {
     setCropSrc(null);
     if (cropTarget === "cover") {
@@ -128,9 +125,6 @@ export default function ProfileDoctor() {
     await uploadAvatar(file);
   };
 
-  // ══════════════════════════════════════════
-  //  UPLOAD AVATAR → API → تحديث الـ context
-  // ══════════════════════════════════════════
   const uploadAvatar = async (file) => {
     try {
       setLoading(true);
@@ -162,9 +156,6 @@ export default function ProfileDoctor() {
     }
   };
 
-  // ══════════════════════════════════════════
-  //  REMOVE AVATAR → API → تحديث الـ context
-  // ══════════════════════════════════════════
   const removeAvatar = async () => {
     try {
       setLoading(true);
@@ -184,49 +175,41 @@ export default function ProfileDoctor() {
     }
   };
 
-  // ── الصورة الحالية ──
   const pfpUrl = user?.pfp?.secure_url;
-  const initial = user?.userName?.charAt(0)?.toUpperCase() || "D";
+  const initial = user?.userName?.charAt(0)?.toUpperCase() || "P";
 
-  // ── static demo data ──
   const info = [
     { icon: <FiMail />,       label: "Email",       val: user?.email || "—" },
     { icon: <FiPhone />,      label: "Phone",       val: "+20 100 123 4567" },
     { icon: <FiMapPin />,     label: "Location",    val: "Cairo, Egypt" },
-    { icon: <FiGlobe />,      label: "Languages",   val: "Arabic, English" },
-    { icon: <FiDollarSign />, label: "Session fee", val: "500 EGP / 60 min" },
+    { icon: <FiGlobe />,      label: "Language",    val: "Arabic, English" },
   ];
 
-  const specializations = [
-    "Anxiety disorders", "Depression", "Trauma & PTSD",
-    "CBT", "Mindfulness", "Relationship issues",
+  const concerns = [
+    "Anxiety", "Depression", "Sleep issues",
+    "Stress management", "Relationship issues", "Self-esteem",
   ];
 
-  const availability = [
-    { day: "Sun", time: "10am – 5pm", off: false },
-    { day: "Mon", time: "9am – 6pm",  off: false },
-    { day: "Tue", time: "Unavailable", off: true  },
-    { day: "Wed", time: "10am – 4pm", off: false },
-    { day: "Thu", time: "9am – 5pm",  off: false },
-    { day: "Fri", time: "Unavailable", off: true  },
-    { day: "Sat", time: "10am – 2pm", off: false },
+  const therapists = [
+    { name: "Dr. Ahmed Mahmoud", specialty: "Anxiety & CBT", sessions: 12 },
+    { name: "Dr. Amira Hassan", specialty: "Depression", sessions: 8 },
   ];
 
-  const certifications = [
-    { name: "Licensed Clinical Psychologist", org: "Egyptian Psychological Association · 2018" },
-    { name: "CBT Practitioner",               org: "Beck Institute · 2020" },
-    { name: "Trauma-Focused Therapy",          org: "EMDR International · 2022" },
+  const progress = [
+    { metric: "Sessions attended", value: 20, goal: 30 },
+    { metric: "Mood improvement", value: 65, goal: 100 },
+    { metric: "Sleep quality", value: 72, goal: 100 },
   ];
 
-  const reviews = [
-    { initials: "SM", name: "Sara M.",   time: "2 weeks ago", stars: 5,
-      text: "Dr. Ahmed is incredibly patient and understanding. After just a few sessions I noticed a real difference in how I handle stress." },
-    { initials: "KR", name: "Khaled R.", time: "1 month ago",  stars: 5,
-      text: "Very professional and compassionate. The CBT techniques he taught me have been life-changing." },
+  const milestones = [
+    { date: "Jan 2024", text: "Started therapy journey" },
+    { date: "Feb 2024", text: "Completed anxiety management course" },
+    { date: "Mar 2024", text: "First 10 sessions milestone" },
+    { date: "Apr 2024", text: "Noticed significant mood improvement" },
   ];
 
   return (
-    <div className="dp-page">
+    <div className="pp-page">
 
       {/* ══ HIDDEN FILE INPUTS ══ */}
       <input ref={galleryRef} type="file" accept="image/*" hidden
@@ -247,37 +230,36 @@ export default function ProfileDoctor() {
 
       {/* ══ COVER ══ */}
       <div
-        className="dp-cover"
+        className="pp-cover"
         style={coverImg ? { backgroundImage: `url(${coverImg})`, backgroundSize: "cover", backgroundPosition: "center" } : {}}
         onClick={() => coverRef.current.click()}
         title="Click to change cover"
       >
-        <button className="dp-edit-cover" onClick={(e) => { e.stopPropagation(); coverRef.current.click(); }}>
+        <button className="pp-edit-cover" onClick={(e) => { e.stopPropagation(); coverRef.current.click(); }}>
           <FiCamera size={13} /> Edit cover
         </button>
 
         {/* ── AVATAR ── */}
-        <div className="dp-avatar-wrap" onClick={(e) => e.stopPropagation()}>
-       
-          <div className="dp-avatar-ring">
+        <div className="pp-avatar-wrap" onClick={(e) => e.stopPropagation()}>
+          <div className="pp-avatar-ring">
             {pfpUrl
-              ? <img src={pfpUrl} alt="" className="dp-avatar-img" />
-              : <div className="dp-avatar-fallback">{initial}</div>
+              ? <img src={pfpUrl} alt="" className="pp-avatar-img" />
+              : <div className="pp-avatar-fallback">{initial}</div>
             }
-            {loading && <div className="dp-avatar-loading"><span /><span /><span /></div>}
+            {loading && <div className="pp-avatar-loading"><span /><span /><span /></div>}
           </div>
 
           {/* أزرار الأفاتار */}
-          <div className="dp-avatar-btns">
-            <button className="dp-av-btn" title="Choose from gallery"
+          <div className="pp-avatar-btns">
+            <button className="pp-av-btn" title="Choose from gallery"
               onClick={() => galleryRef.current.click()}>
               <FiEdit2 size={12} />
             </button>
-            <button className="dp-av-btn" title="Take a photo"
+            <button className="pp-av-btn" title="Take a photo"
               onClick={() => cameraRef.current.click()}>
               <FiCamera size={12} />
             </button>
-            <button className="dp-av-btn danger" title="Remove photo"
+            <button className="pp-av-btn danger" title="Remove photo"
               onClick={removeAvatar} disabled={loading || !pfpUrl}>
               <FiTrash2 size={12} />
             </button>
@@ -286,108 +268,113 @@ export default function ProfileDoctor() {
       </div>
 
       {/* ══ NAME CARD ══ */}
-      <div className="dp-card">
-        <div className="dp-name-row">
+      <div className="pp-card">
+        <div className="pp-name-row">
           <div>
-            <div className="dp-name">Dr. {user?.userName || "—"}</div>
-            <div className="dp-role">
-              <span>{user?.role || "Therapist"}</span>
-              <span className="dp-verified"><FiCheck size={10} /> Verified</span>
+            <div className="pp-name">{user?.userName || "—"}</div>
+            <div className="pp-role">
+              <span>Patient</span>
+              <span className="pp-member"><FiCheck size={10} /> Member since Jan 2024</span>
             </div>
           </div>
-          <button className="dp-edit-btn"><FiEdit2 size={13} /> Edit profile</button>
+          <button className="pp-edit-btn"><FiEdit2 size={13} /> Edit profile</button>
         </div>
-        <div className="dp-stats">
-          {[{ n: 124, l: "Patients" }, { n: "4.9", l: "Rating" }, { n: "6 yrs", l: "Experience" }]
+        <div className="pp-stats">
+          {[{ n: 20, l: "Sessions" }, { n: 2, l: "Therapists" }, { n: "3 mo", l: "Active" }]
             .map(({ n, l }) => (
-              <div className="dp-stat" key={l}>
-                <div className="dp-stat-n">{n}</div>
-                <div className="dp-stat-l">{l}</div>
+              <div className="pp-stat" key={l}>
+                <div className="pp-stat-n">{n}</div>
+                <div className="pp-stat-l">{l}</div>
               </div>
             ))}
         </div>
       </div>
 
       {/* ══ PERSONAL INFO ══ */}
-      <div className="dp-card">
-        <div className="dp-sec-title">Personal information
-          <button className="dp-sec-edit"><FiEdit2 size={12} /> Edit</button>
+      <div className="pp-card">
+        <div className="pp-sec-title">Personal information
+          <button className="pp-sec-edit"><FiEdit2 size={12} /> Edit</button>
         </div>
         {info.map(({ icon, label, val }) => (
-          <div className="dp-info-row" key={label}>
-            <span className="dp-info-icon">{icon}</span>
-            <span className="dp-info-label">{label}</span>
-            <span className="dp-info-val">{val}</span>
+          <div className="pp-info-row" key={label}>
+            <span className="pp-info-icon">{icon}</span>
+            <span className="pp-info-label">{label}</span>
+            <span className="pp-info-val">{val}</span>
           </div>
         ))}
       </div>
 
       {/* ══ ABOUT ══ */}
-      <div className="dp-card">
-        <div className="dp-sec-title">About
-          <button className="dp-sec-edit"><FiEdit2 size={12} /> Edit</button>
+      <div className="pp-card">
+        <div className="pp-sec-title">About
+          <button className="pp-sec-edit"><FiEdit2 size={12} /> Edit</button>
         </div>
-        <p className="dp-about-text">
-          Experienced clinical psychologist specializing in anxiety, depression, and trauma recovery.
-          I use evidence-based approaches including CBT and mindfulness to help clients build lasting mental resilience.
+        <p className="pp-about-text">
+          I'm on a journey to improve my mental health and overall well-being. 
+          I'm working with my therapists to develop healthier coping strategies and build resilience. 
+          Open to learning and growing every day.
         </p>
       </div>
 
-      {/* ══ SPECIALIZATIONS ══ */}
-      <div className="dp-card">
-        <div className="dp-sec-title">Specializations
-          <button className="dp-sec-edit"><FiPlus size={12} /> Add</button>
+      {/* ══ PRIMARY CONCERNS ══ */}
+      <div className="pp-card">
+        <div className="pp-sec-title">Primary concerns
+          <button className="pp-sec-edit"><FiEdit2 size={12} /> Edit</button>
         </div>
-        <div className="dp-tags">
-          {specializations.map((s) => <span className="dp-tag" key={s}>{s}</span>)}
+        <div className="pp-tags">
+          {concerns.map((c) => <span className="pp-tag" key={c}>{c}</span>)}
         </div>
       </div>
 
-      {/* ══ AVAILABILITY ══ */}
-      <div className="dp-card">
-        <div className="dp-sec-title">Weekly availability
-          <button className="dp-sec-edit"><FiEdit2 size={12} /> Edit</button>
+      {/* ══ CURRENT THERAPISTS ══ */}
+      <div className="pp-card">
+        <div className="pp-sec-title">Current therapists
+          <button className="pp-sec-edit"><FiPlus size={12} /> Add</button>
         </div>
-        <div className="dp-avail-grid">
-          {availability.map(({ day, time, off }) => (
-            <div className={`dp-day-box${off ? " off" : ""}`} key={day}>
-              <div className="dp-day-name">{day}</div>
-              <div className="dp-day-time">{time}</div>
+        {therapists.map(({ name, specialty, sessions }) => (
+          <div className="pp-therapist-item" key={name}>
+            <div className="pp-ther-avatar">
+              {name.charAt(0)}
+            </div>
+            <div>
+              <div className="pp-ther-name">{name}</div>
+              <div className="pp-ther-specialty">{specialty}</div>
+              <div className="pp-ther-sessions">{sessions} sessions completed</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ══ PROGRESS TRACKING ══ */}
+      <div className="pp-card">
+        <div className="pp-sec-title">Progress tracking <FiBarChart2 size={14} style={{ marginLeft: 'auto' }} /></div>
+        {progress.map(({ metric, value, goal }) => (
+          <div className="pp-progress-item" key={metric}>
+            <div className="pp-progress-label">
+              <span>{metric}</span>
+              <span className="pp-progress-pct">{value}%</span>
+            </div>
+            <div className="pp-progress-bar">
+              <div className="pp-progress-fill" style={{ width: `${value}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ══ MILESTONES ══ */}
+      <div className="pp-card">
+        <div className="pp-sec-title">Your journey <FiAward size={14} style={{ marginLeft: 'auto' }} /></div>
+        <div className="pp-timeline">
+          {milestones.map(({ date, text }, i) => (
+            <div className="pp-milestone" key={i}>
+              <div className="pp-milestone-dot" />
+              <div>
+                <div className="pp-milestone-date">{date}</div>
+                <div className="pp-milestone-text">{text}</div>
+              </div>
             </div>
           ))}
         </div>
-      </div>
-
-      {/* ══ CERTIFICATIONS ══ */}
-      <div className="dp-card">
-        <div className="dp-sec-title">Certifications
-          <button className="dp-sec-edit"><FiPlus size={12} /> Add</button>
-        </div>
-        {certifications.map(({ name, org }) => (
-          <div className="dp-cert-item" key={name}>
-            <div className="dp-cert-icon">🎓</div>
-            <div>
-              <div className="dp-cert-name">{name}</div>
-              <div className="dp-cert-org">{org}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* ══ REVIEWS ══ */}
-      <div className="dp-card">
-        <div className="dp-sec-title">Patient reviews</div>
-        {reviews.map(({ initials, name, time, stars, text }) => (
-          <div className="dp-review-item" key={name}>
-            <div className="dp-rev-top">
-              <RevAvatar initials={initials} />
-              <span className="dp-rev-name">{name}</span>
-              <span className="dp-rev-time">{time}</span>
-            </div>
-            <div className="dp-stars">{"★".repeat(stars)}</div>
-            <div className="dp-rev-text">{text}</div>
-          </div>
-        ))}
       </div>
 
     </div>

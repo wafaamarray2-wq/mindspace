@@ -1,24 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import {
-  FiImage,
   FiSmile,
-  FiLink,
   FiSend,
   FiMoreHorizontal,
   FiHeart,
   FiMessageCircle,
   FiShare2,
   FiX,
-  FiCalendar,
-  FiZap,
-  FiGlobe,
+  FiFilter,
+  FiSearch,
 } from "react-icons/fi";
 
 import { FaHeart } from "react-icons/fa";
 
 import { useDashUser } from "../Dashbords/DoctorDashbord";
 
-import "./Therapistfeed.css";
+import "./PatientFeed.css";
 
 import axios from "axios";
 
@@ -51,7 +48,7 @@ function Avatar({
 }) {
   return (
     <div
-      className="tf-avatar"
+      className="pf-avatar"
       style={{ width: size, height: size, minWidth: size, background: bg, color }}
     >
       {text}
@@ -59,14 +56,12 @@ function Avatar({
   );
 }
 
-/* ─── User Avatar ─────────────────────── */
-function UserAvatar({ size = 42, userImage = null }) {
-  const { user } = useDashUser();
-
-  if (userImage) {
+/* ─── Doctor Avatar ─────────────────────── */
+function DoctorAvatar({ doctor, size = 42 }) {
+  if (doctor?.pfp?.secure_url) {
     return (
       <img
-        src={userImage}
+        src={doctor.pfp.secure_url}
         alt="avatar"
         style={{
           width: size,
@@ -80,34 +75,17 @@ function UserAvatar({ size = 42, userImage = null }) {
     );
   }
 
-  if (user?.pfp?.secure_url) {
-    return (
-      <img
-        src={user.pfp.secure_url}
-        alt="avatar"
-        style={{
-          width: size,
-          height: size,
-          minWidth: size,
-          borderRadius: "50%",
-          objectFit: "cover",
-          flexShrink: 0,
-        }}
-      />
-    );
-  }
-
-  const initial = user?.userName?.charAt(0)?.toUpperCase() || "D";
+  const initial = doctor?.userName?.charAt(0)?.toUpperCase() || "D";
   return <Avatar text={initial} size={size} />;
 }
 
 /* ─── Comment Item ────────────────────── */
-function CommentItem({ comment }) {
+function CommentItem({ comment, userImage }) {
   return (
-    <div className="tf-comment-item">
-      {comment.userImage ? (
+    <div className="pf-comment-item">
+      {userImage ? (
         <img
-          src={comment.userImage}
+          src={userImage}
           alt="avatar"
           style={{
             width: 30,
@@ -122,18 +100,18 @@ function CommentItem({ comment }) {
         <Avatar text={comment.author.charAt(0)} size={30} />
       )}
       <div>
-        <div className="tf-comment-bubble">
-          <div className="tf-comment-author">{comment.author}</div>
+        <div className="pf-comment-bubble">
+          <div className="pf-comment-author">{comment.author}</div>
           <div>{comment.text}</div>
         </div>
-        <div className="tf-comment-time">{comment.time}</div>
+        <div className="pf-comment-time">{comment.time}</div>
       </div>
     </div>
   );
 }
 
 /* ─── Post Card ───────────────────────── */
-function PostCard({ post, onLike, onAddComment, onToggleComments }) {
+function PostCard({ post, onLike, onAddComment, onToggleComments, userImage, userName }) {
   const [draft, setDraft] = useState("");
 
   const submit = () => {
@@ -143,39 +121,39 @@ function PostCard({ post, onLike, onAddComment, onToggleComments }) {
   };
 
   return (
-    <div className="tf-post-card">
+    <div className="pf-post-card">
       {/* Header */}
-      <div className="tf-post-top">
-        <UserAvatar size={30} />
-        <div className="tf-post-meta">
-          <div className="tf-post-name">
-            {post.author}
-            <span className="tf-badge">Therapist</span>
+      <div className="pf-post-top">
+        <DoctorAvatar doctor={post.publisher} size={30} />
+        <div className="pf-post-meta">
+          <div className="pf-post-name">
+            Dr. {post.publisher?.userName || "Doctor"}
+            <span className="pf-badge">{post.publisher?.specialization || "Therapist"}</span>
           </div>
-          <div className="tf-post-time">{post.time}</div>
+          <div className="pf-post-time">{post.time}</div>
         </div>
-        <button className="tf-icon-btn">
+        <button className="pf-icon-btn">
           <FiMoreHorizontal />
         </button>
       </div>
 
       {/* Text */}
-      {post.text && <p className="tf-post-text">{post.text}</p>}
+      {post.text && <p className="pf-post-text">{post.text}</p>}
 
       {/* Image */}
       {post.img && (
-        <img className="tf-post-img" src={post.img} alt="post" />
+        <img className="pf-post-img" src={post.img} alt="post" />
       )}
 
       {/* Stats */}
-      <div className="tf-post-stats">
+      <div className="pf-post-stats">
         <span>
           <FaHeart style={{ color: "#D4537E", fontSize: 12, verticalAlign: -1 }} />{" "}
           {post.likes} like{post.likes !== 1 ? "s" : ""}
         </span>
 
         <button
-          className="tf-stat-link"
+          className="pf-stat-link"
           onClick={() => onToggleComments(post.id)}
         >
           {post.commentsCount ?? post.comments.length} comment
@@ -184,9 +162,9 @@ function PostCard({ post, onLike, onAddComment, onToggleComments }) {
       </div>
 
       {/* Reactions */}
-      <div className="tf-reactions">
+      <div className="pf-reactions">
         <button
-          className={`tf-react-btn${post.liked ? " liked" : ""}`}
+          className={`pf-react-btn${post.liked ? " liked" : ""}`}
           onClick={() => onLike(post.id)}
           disabled={post.likeLoading}
         >
@@ -199,28 +177,43 @@ function PostCard({ post, onLike, onAddComment, onToggleComments }) {
         </button>
 
         <button
-          className="tf-react-btn"
+          className="pf-react-btn"
           onClick={() => onToggleComments(post.id)}
         >
           <FiMessageCircle /> Comment
         </button>
 
-        <button className="tf-react-btn">
+        <button className="pf-react-btn">
           <FiShare2 /> Share
         </button>
       </div>
 
       {/* Comments */}
       {post.showComments && (
-        <div className="tf-comments">
+        <div className="pf-comments">
           {post.comments.map((c, i) => (
-            <CommentItem key={i} comment={c} />
+            <CommentItem key={i} comment={c} userImage={c.userImage} />
           ))}
 
-          <div className="tf-comment-input-row">
-            <UserAvatar size={32} />
+          <div className="pf-comment-input-row">
+            {userImage ? (
+              <img
+                src={userImage}
+                alt="avatar"
+                style={{
+                  width: 32,
+                  height: 32,
+                  minWidth: 32,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  flexShrink: 0,
+                }}
+              />
+            ) : (
+              <Avatar text={userName?.charAt(0) || "U"} size={32} />
+            )}
             <input
-              className="tf-comment-input"
+              className="pf-comment-input"
               placeholder="Write a comment..."
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
@@ -231,7 +224,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments }) {
                 }
               }}
             />
-            <button className="tf-send-btn" onClick={submit}>
+            <button className="pf-send-btn" onClick={submit}>
               <FiSend />
             </button>
           </div>
@@ -241,117 +234,8 @@ function PostCard({ post, onLike, onAddComment, onToggleComments }) {
   );
 }
 
-/* ─── Create Modal ────────────────────── */
-function CreateModal({ open, onClose, onSubmit, docName }) {
-  const [text, setText] = useState("");
-  const [img, setImg] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const fileRef = useRef();
-
-  const handleFile = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setImg(file);
-    setPreview(URL.createObjectURL(file));
-  };
-
-  const submit = () => {
-    if (!text.trim() && !img) return;
-    onSubmit({ text: text.trim(), img });
-    setText("");
-    setImg(null);
-    setPreview(null);
-    onClose();
-  };
-
-  if (!open) return null;
-
-  return (
-    <div className="tf-modal-overlay" onClick={onClose}>
-      <div className="tf-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="tf-modal-header">
-          <h3>Create post</h3>
-          <button className="tf-icon-btn" onClick={onClose}>
-            <FiX />
-          </button>
-        </div>
-
-        {/* Author */}
-        <div className="tf-modal-author">
-          <UserAvatar size={42} />
-          <div>
-            <div className="tf-modal-name">Dr. {docName || "Ahmed"}</div>
-            <div className="tf-modal-sub">
-              <FiGlobe style={{ verticalAlign: -2 }} /> Public · Therapist
-            </div>
-          </div>
-        </div>
-
-        {/* Textarea */}
-        <textarea
-          className="tf-modal-textarea"
-          placeholder="Share a tip, session highlight, or mental health insight..."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          rows={5}
-          autoFocus
-        />
-
-        {/* Preview */}
-        {preview && (
-          <div className="tf-preview-wrap">
-            <img src={preview} alt="preview" />
-            <button
-              className="tf-remove-img"
-              onClick={() => { setImg(null); setPreview(null); }}
-            >
-              <FiX />
-            </button>
-          </div>
-        )}
-
-        {/* Footer */}
-        <div className="tf-modal-footer">
-          <div className="tf-modal-tools">
-            <button
-              className="tf-icon-btn"
-              title="Add photo"
-              onClick={() => fileRef.current.click()}
-            >
-              <FiImage />
-            </button>
-            <button className="tf-icon-btn" title="Add emoji">
-              <FiSmile />
-            </button>
-            <button className="tf-icon-btn" title="Add link">
-              <FiLink />
-            </button>
-          </div>
-
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handleFile}
-          />
-
-          <button
-            className="tf-post-btn"
-            disabled={!text.trim() && !img}
-            onClick={submit}
-          >
-            Post
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ─── Helper: format comments ─────────── */
-function formatComments(rawComments = []) {
+function formatComments(rawComments = [], userImage = null) {
   return rawComments.map((c) => ({
     author:
       c.author?.userName ||
@@ -362,7 +246,7 @@ function formatComments(rawComments = []) {
     time: c.createdAt
       ? new Date(c.createdAt).toLocaleDateString()
       : "Recently",
-    userImage: c.userId?.pfp?.secure_url || c.author?.pfp?.secure_url || c.user?.pfp?.secure_url || null,
+    userImage: userImage,
   }));
 }
 
@@ -377,8 +261,7 @@ function formatArticle(article, extra = {}) {
   return {
     ...article,
     id: article._id,
-    author: `Dr. ${article.publisher?.userName || "Ahmed"}`,
-    initials: article.publisher?.userName?.charAt(0)?.toUpperCase() || "D",
+    publisher: article.publisher,
     text: article.content,
     img: article.attachments?.[0]?.secure_url || null,
     likes: article.likes?.length || 0,
@@ -395,10 +278,12 @@ function formatArticle(article, extra = {}) {
 }
 
 /* ─── MAIN FEED ───────────────────────── */
-export default function TherapistFeed() {
-  const { user } = useDashUser();
+export default function PatientFeed() {
+  const dashUser = useDashUser() || {};
+  const user = dashUser.user || {};
   const [posts, setPosts] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
 
   /* ─── 1. Fetch Comments ─────────── */
   const fetchComments = async (articleId) => {
@@ -411,7 +296,9 @@ export default function TherapistFeed() {
         { headers: authHeader() }
       );
 
-      return formatComments(res.data?.data || res.data || []);
+      const comments = res.data?.data || res.data || [];
+      
+      return formatComments(comments, user?.pfp?.secure_url);
     } catch (err) {
       console.log(err.response?.data || err);
       return [];
@@ -470,7 +357,7 @@ export default function TherapistFeed() {
         { headers: authHeader() }
       );
 
-      // نجح - ما نرجع للقديم
+      // الـ like نجح - ما نرجع للقديم
       setPosts((prev) =>
         prev.map((p) =>
           p.id === id ? { ...p, likeLoading: false } : p
@@ -479,7 +366,7 @@ export default function TherapistFeed() {
     } catch (err) {
       console.log(err.response?.data || err);
 
-      // فشل - ارجع للقديم
+      // لو فشل - ارجع للحالة القديمة
       setPosts((prev) =>
         prev.map((p) =>
           p.id === id
@@ -530,7 +417,7 @@ export default function TherapistFeed() {
         { headers: authHeader() }
       );
 
-      // الإنتظار قليلاً قبل refresh
+      // الإنتظار قليلاً قبل Refresh الكومنتات
       setTimeout(async () => {
         const comments = await fetchComments(id);
 
@@ -547,92 +434,68 @@ export default function TherapistFeed() {
     }
   };
 
-  /* ─── 6. Create Post ────────────── */
-  const handleSubmitPost = async ({ text, img }) => {
-    try {
-      const formData = new FormData();
-      formData.append("content", text);
-      if (img) formData.append("attachments", img);
-
-      const res = await axios.post(`${BASE_URL}/article`, formData, {
-        headers: {
-          ...authHeader(),
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (res.data?.data) {
-        const newPost = formatArticle(res.data.data, {
-          author: `Dr. ${user?.userName || "Ahmed"}`,
-          initials: user?.userName?.charAt(0)?.toUpperCase() || "D",
-          time: "Just now",
-          comments: [],
-          commentsCount: 0,
-        });
-
-        setPosts((prev) => [newPost, ...prev]);
-      }
-    } catch (err) {
-      console.log(err.response?.data || err);
-    }
-  };
+  /* ─── Filtered Posts ─────────────── */
+  const filteredPosts = posts.filter((p) => {
+    const matchesSearch = 
+      p.text?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.publisher?.userName?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesSearch;
+  });
 
   return (
-    <div className="tf-feed-wrap">
-      {/* Create Card */}
-      <div className="tf-create-card">
-        <div className="tf-create-top">
-          <UserAvatar size={42} />
-          <button
-            className="tf-create-input"
-            onClick={() => setModalOpen(true)}
-          >
-            What would you like to share today?
-          </button>
-        </div>
-
-        <div className="tf-create-actions">
-          <button
-            className="tf-action-btn photo"
-            onClick={() => setModalOpen(true)}
-          >
-            <FiImage /> Photo
-          </button>
-
-          <button
-            className="tf-action-btn tip"
-            onClick={() => setModalOpen(true)}
-          >
-            <FiZap /> Mental health tip
-          </button>
-
-          <button
-            className="tf-action-btn event"
-            onClick={() => setModalOpen(true)}
-          >
-            <FiCalendar /> Session announcement
+    <div className="pf-feed-wrap">
+      {/* Header */}
+      <div className="pf-header">
+        <h2>Therapist feed</h2>
+        <div className="pf-header-actions">
+          <div className="pf-search-box">
+            {user?.pfp?.secure_url ? (
+              <img
+                src={user.pfp.secure_url}
+                alt="avatar"
+                style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  flexShrink: 0,
+                }}
+              />
+            ) : (
+              <FiSearch />
+            )}
+            <input
+              type="text"
+              placeholder="Search doctors or topics..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <button className="pf-filter-btn">
+            <FiFilter /> Filter
           </button>
         </div>
       </div>
 
       {/* Posts */}
-      {posts.map((p) => (
-        <PostCard
-          key={p.id}
-          post={p}
-          onLike={handleLike}
-          onAddComment={handleAddComment}
-          onToggleComments={handleToggleComments}
-        />
-      ))}
-
-      {/* Modal */}
-      <CreateModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={handleSubmitPost}
-        docName={user?.userName}
-      />
+      {filteredPosts.length > 0 ? (
+        filteredPosts.map((p) => (
+          <PostCard
+            key={p.id}
+            post={p}
+            onLike={handleLike}
+            onAddComment={handleAddComment}
+            onToggleComments={handleToggleComments}
+            userImage={user?.pfp?.secure_url}
+            userName={user?.userName}
+          />
+        ))
+      ) : (
+        <div className="pf-empty">
+          <p>No posts found</p>
+        </div>
+      )}
     </div>
   );
 }

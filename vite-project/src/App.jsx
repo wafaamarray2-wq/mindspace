@@ -18,7 +18,7 @@ import PatientProfile from "./Dashbords/PatientProfile";
 import SessionDetails from "./Dashbords/SessionDetails";
 import DoctorProfile from "./Dashbords/DoctorProfile";
 import Booking from "./Dashbords/Booking";
-import PatientHome from "./Dashbords/PatientHome";
+// import PatientHome from "./Dashbords/PatientHome";
 import MessagePatient from "./Dashbords/MessagePatient";
 import SettingPatients from "./Dashbords/SettingPatients";
  import VerifyOtp from "./Registers/VerifyOtp";
@@ -29,6 +29,8 @@ import ProtectedRoute from "./Registers/ProtectedRoute";
 // import PatientFullProfile from "./Dashbords/PatientFullprofile";
 import Therapistfeed from "./Dashbords/Therapistfeed";
 import ProfileDoctor from "./Dashbords/profileDoctor";
+import Patientfeed from "./Dashbords/Patientfeed";
+import Profilepatient from "./Dashbords/Profilepatient ";
 function App() {
   // const navigate = useNavigate();
 
@@ -113,13 +115,13 @@ function App() {
 
       <Route path="/patient-dashboard" element={<PatientDashbord />} >
 
-     <Route index element={<PatientHome />} />
+     <Route index element={<Patientfeed/>} />
         <Route path="message" element={<MessagePatient />} />
         <Route path="setting" element={<SettingPatients />} />
       <Route path="logOut" element={<LogOut />} />
-      {/* <Route path="profile" element={<PatientFullProfile />} /> */}
+      <Route path="profile" element={<Profilepatient/>} />
       </Route> 
-      <Route path="/PatientHome" element={<PatientHome />} />
+      <Route path="/PatientHome" element={<Patientfeed  />} />
       <Route path="/patient/:id" element={<PatientProfile />} />
       <Route path="/session/:id" element={<SessionDetails />} />
       <Route path="/doctor/:id" element={<DoctorProfile />} />

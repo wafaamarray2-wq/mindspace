@@ -1,0 +1,366 @@
+/* PatientFeed.css */
+
+.pf-feed-wrap {
+  margin: 0 auto;
+  padding: 1.5rem 0;
+}
+
+/* ── Avatar ─────────────────────────────── */
+.pf-avatar {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 14px;
+  flex-shrink: 0;
+  cursor: default;
+  user-select: none;
+}
+
+/* ── Header ─────────────────────────────── */
+.pf-header {
+  background: #fff;
+  border-bottom: 0.5px solid rgba(0,0,0,0.12);
+  padding: 1.5rem 1.25rem;
+  margin-bottom: 1.25rem;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.pf-header h2 {
+  margin: 0 0 1rem;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111;
+}
+
+.pf-header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pf-search-box {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5f5f5;
+  border: 0.5px solid rgba(0,0,0,0.1);
+  border-radius: 20px;
+  padding: 0 12px;
+  color: #888;
+}
+
+.pf-search-box img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.pf-search-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  padding: 10px 0;
+  color: #222;
+  font-family: inherit;
+}
+
+.pf-search-box input::placeholder {
+  color: #bbb;
+}
+
+.pf-search-box:focus-within {
+  border-color: #1D9E75;
+  background: #fff;
+  color: #1D9E75;
+}
+
+.pf-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f5f5f5;
+  border: 0.5px solid rgba(0,0,0,0.1);
+  border-radius: 20px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #666;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.pf-filter-btn:hover {
+  background: #ebebeb;
+  border-color: #534AB7;
+  color: #534AB7;
+}
+
+/* ── Shared icon button ─────────────────── */
+.pf-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  font-size: 20px;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.pf-icon-btn:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* ── Post card ──────────────────────────── */
+.pf-post-card {
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.1);
+  border-radius: 14px;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.pf-post-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 1rem 1.25rem 0;
+}
+
+.pf-post-meta {
+  flex: 1;
+}
+
+.pf-post-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+.pf-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 400;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #EEEDFE;
+  color: #534AB7;
+  margin-left: 6px;
+}
+
+.pf-post-time {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.pf-post-text {
+  padding: 10px 1.25rem 12px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #222;
+}
+
+.pf-post-img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.pf-post-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 1.25rem;
+  font-size: 12px;
+  color: #888;
+  border-bottom: 0.5px solid rgba(0,0,0,0.07);
+}
+
+.pf-stat-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #888;
+  margin-left: auto;
+  padding: 0;
+}
+
+.pf-stat-link:hover {
+  text-decoration: underline;
+  color: #534AB7;
+}
+
+/* ── Reactions ──────────────────────────── */
+.pf-reactions {
+  display: flex;
+  padding: 4px 8px;
+}
+
+.pf-react-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  padding: 8px 4px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.pf-react-btn:hover {
+  background: #f5f5f5;
+}
+
+.pf-react-btn svg {
+  font-size: 17px;
+}
+
+.pf-react-btn.liked {
+  color: #D4537E;
+}
+
+/* ── Comments ───────────────────────────── */
+.pf-comments {
+  padding: 8px 1.25rem 1rem;
+}
+
+.pf-comment-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.pf-comment-bubble {
+  background: #f5f5f5;
+  border-radius: 14px;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #222;
+  line-height: 1.5;
+}
+
+.pf-comment-author {
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.pf-comment-time {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 3px;
+  margin-left: 12px;
+}
+
+.pf-comment-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pf-comment-input {
+  flex: 1;
+  background: #f5f5f5;
+  border: 0.5px solid rgba(0,0,0,0.1);
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #222;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+
+.pf-comment-input:focus {
+  border-color: #534AB7;
+  background: #fff;
+}
+
+.pf-send-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #534AB7;
+  font-size: 18px;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s;
+}
+
+.pf-send-btn:hover {
+  background: #EEEDFE;
+}
+
+/* ── Empty State ────────────────────────── */
+.pf-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: #fff;
+  border-radius: 14px;
+  border: 0.5px solid rgba(0,0,0,0.1);
+  color: #888;
+}
+
+.pf-empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 640px) {
+  .pf-header-actions {
+    flex-direction: column;
+  }
+
+  .pf-search-box {
+    min-width: unset;
+  }
+
+  .pf-post-top {
+    padding: 0.75rem 1rem 0;
+  }
+
+  .pf-post-text {
+    padding: 8px 1rem 10px;
+  }
+
+  .pf-post-stats {
+    padding: 6px 1rem;
+  }
+
+  .pf-reactions {
+    padding: 3px 6px;
+  }
+
+  .pf-comments {
+    padding: 6px 1rem 0.75rem;
+  }
+}
