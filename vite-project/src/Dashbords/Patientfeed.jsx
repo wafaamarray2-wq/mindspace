@@ -21,6 +21,7 @@ import axios from "axios";
 
 const BASE_URL = "https://mind-space-ov3r.onrender.com";
 
+
 /* ─── Helper: get userId from JWT ────── */
 function getUserIdFromToken() {
   try {
@@ -114,6 +115,9 @@ function CommentItem({ comment, userImage }) {
 function PostCard({ post, onLike, onAddComment, onToggleComments, userImage, userName }) {
   const [draft, setDraft] = useState("");
 
+
+console.log("USER IMAGE:", userImage);
+
   const submit = () => {
     if (!draft.trim()) return;
     onAddComment(post.id, draft.trim());
@@ -196,6 +200,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, userImage, use
           ))}
 
           <div className="pf-comment-input-row">
+            
             {userImage ? (
               <img
                 src={userImage}
@@ -234,19 +239,64 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, userImage, use
   );
 }
 
+
+
+
+
+function formatTime(date) {
+  const now = new Date();
+  const postDate = new Date(date);
+
+  const diffInSeconds = Math.floor((now - postDate) / 1000);
+
+  if (diffInSeconds < 60) {
+    return "Just now";
+  }
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}m`;
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+
+  if (diffInHours < 24) {
+    return `${diffInHours}h`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInDays === 1) {
+    return "Yesterday";
+  }
+
+  if (diffInDays < 7) {
+    return `${diffInDays}d`;
+  }
+
+  return postDate.toLocaleDateString();
+}
+
 /* ─── Helper: format comments ─────────── */
-function formatComments(rawComments = [], userImage = null) {
+function formatComments(rawComments = []) {
   return rawComments.map((c) => ({
     author:
       c.author?.userName ||
       c.userId?.userName ||
       c.user?.userName ||
       "User",
+
     text: c.content,
+
     time: c.createdAt
-      ? new Date(c.createdAt).toLocaleDateString()
-      : "Recently",
-    userImage: userImage,
+  ? formatTime(c.createdAt)
+  : "Recently",
+    userImage:
+      c.author?.pfp?.secure_url ||
+      c.userId?.pfp?.secure_url ||
+      c.user?.pfp?.secure_url ||
+      null,
   }));
 }
 
@@ -279,6 +329,7 @@ function formatArticle(article, extra = {}) {
 
 /* ─── MAIN FEED ───────────────────────── */
 export default function PatientFeed() {
+  console.log(useDashUser())
   const dashUser = useDashUser() || {};
   const user = dashUser.user || {};
   const [posts, setPosts] = useState([]);
