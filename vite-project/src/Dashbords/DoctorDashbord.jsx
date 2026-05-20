@@ -5,6 +5,7 @@ import { MdSettings } from "react-icons/md";
 import { BiMessageSquareDots } from "react-icons/bi";
 import { MdLogout } from "react-icons/md";
 import { MdEventNote } from "react-icons/md";
+import { FiUsers } from "react-icons/fi";
 import { useEffect, useState, createContext, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -36,7 +37,7 @@ export default function DoctorDashbord() {
       }
       const res = await axios.get(
         "https://mind-space-ov3r.onrender.com/user/profile",
-        { headers: { Authorization: `dash ${token}` } }
+        { headers: { Authorization: `dash ${token}` } },
       );
       const userData = res.data.data;
       setUser(userData);
@@ -51,7 +52,9 @@ export default function DoctorDashbord() {
     }
   };
 
-  useEffect(() => { fetchUserData(); }, []);
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   // ================= LOGOUT =================
   const handleLogout = async () => {
@@ -60,7 +63,7 @@ export default function DoctorDashbord() {
       await axios.post(
         "https://mind-space-ov3r.onrender.com/auth/logout",
         { flag: "logoutFromAllDevices" },
-        { headers: { Authorization: `dash ${token}` } }
+        { headers: { Authorization: `dash ${token}` } },
       );
       toast.success("تم تسجيل الخروج بنجاح 👋");
     } catch (err) {
@@ -71,13 +74,16 @@ export default function DoctorDashbord() {
     setTimeout(() => navigate("/login"), 1000);
   };
 
-  const navClass = ({ isActive }) => isActive ? "active" : "";
+  const navClass = ({ isActive }) => (isActive ? "active" : "");
 
   return (
     <DashContext.Provider value={{ user, setUser, fetchUserData }}>
       <div className="dashbord">
         {sidebarOpen && (
-          <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+          <div
+            className="sidebar-overlay"
+            onClick={() => setSidebarOpen(false)}
+          />
         )}
 
         {/* ── HEADER ── */}
@@ -87,7 +93,9 @@ export default function DoctorDashbord() {
             onClick={() => setSidebarOpen((v) => !v)}
             aria-label="Toggle sidebar"
           >
-            <span /><span /><span />
+            <span />
+            <span />
+            <span />
           </button>
 
           <div className="dash-header__brand">
@@ -100,30 +108,30 @@ export default function DoctorDashbord() {
               Welcome back,&nbsp;<strong>Dr. {user?.userName || "..."}</strong>
             </div>
             <div className="dash-header__avatar">
-              {user?.pfp?.secure_url
-                ? <img src={user.pfp.secure_url} alt="" />
-                : <span>{user?.userName?.charAt(0)?.toUpperCase()}</span>
-              }
+              {user?.pfp?.secure_url ? (
+                <img src={user.pfp.secure_url} alt="" />
+              ) : (
+                <span>{user?.userName?.charAt(0)?.toUpperCase()}</span>
+              )}
             </div>
           </div>
         </header>
 
         <div className="dash-content">
-
           {/* ── SIDEBAR ── */}
           <aside className={`sidebar${sidebarOpen ? " sidebar--open" : ""}`}>
             <div className="head">
-
               {/* الصورة — read only — التحكم فيها من البروفايل */}
               <div className="image-box">
-                {user?.pfp?.secure_url
-                  ? <img src={user.pfp.secure_url} alt="" />
-                  : <div className="empty-avatar">
-                      {user?.userName?.charAt(0)?.toUpperCase() || "D"}
-                    </div>
-                }
+                {user?.pfp?.secure_url ? (
+                  <img src={user.pfp.secure_url} alt="" />
+                ) : (
+                  <div className="empty-avatar">
+                    {user?.userName?.charAt(0)?.toUpperCase() || "D"}
+                  </div>
+                )}
               </div>
-{/* 
+              {/* 
               <h3>Dr. {user?.userName || "Doctor"}</h3>
               <p>{user?.role || "Therapist"}</p> */}
             </div>
@@ -155,14 +163,26 @@ export default function DoctorDashbord() {
                     <BiMessageSquareDots /> Messages
                   </NavLink>
                 </li>
+
                 <li>
                   <NavLink to="session" className={navClass}>
                     <MdEventNote /> Sessions
                   </NavLink>
                 </li>
+
+                <li>
+                  <NavLink to="groups" className={navClass}>
+                    <FiUsers /> Groups
+                  </NavLink>
+                </li>
                 <li>
                   <NavLink to="setting" className={navClass}>
                     <MdSettings /> Settings
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="admin" className={navClass}>
+                    <MdSettings /> Admin
                   </NavLink>
                 </li>
 
@@ -180,7 +200,6 @@ export default function DoctorDashbord() {
           <main className="details">
             <Outlet />
           </main>
-
         </div>
       </div>
     </DashContext.Provider>

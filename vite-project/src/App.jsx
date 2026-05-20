@@ -31,6 +31,10 @@ import Therapistfeed from "./Dashbords/Therapistfeed";
 import ProfileDoctor from "./Dashbords/profileDoctor";
 import Patientfeed from "./Dashbords/Patientfeed";
 import Profilepatient from "./Dashbords/Profilepatient ";
+import AdminDashboard from "./Dashbords/Admindashboard";
+import PatientGroups from "./Dashbords/Groups/Patientgroups";
+import TherapistGroups from "./Dashbords/Groups/Therapistgroups";
+import TestPage from "./Dashbords/Tests/Testpage";
 function App() {
   // const navigate = useNavigate();
 
@@ -108,7 +112,9 @@ function App() {
   <Route path="patients" element={<Patients />} />
   <Route path="message" element={<Messages />} />
   <Route path="session" element={<Sessions />} />
+  <Route path="groups" element={<TherapistGroups />} />
   <Route path="setting" element={<Setting />} />
+  <Route path="admin" element={<AdminDashboard />} />
   <Route path="logOut" element={<LogOut />} />
 </Route>
 
@@ -117,6 +123,8 @@ function App() {
 
      <Route index element={<Patientfeed/>} />
         <Route path="message" element={<MessagePatient />} />
+        <Route path="groups" element={<PatientGroups />} />
+        <Route path="test" element={<TestPage />} />
         <Route path="setting" element={<SettingPatients />} />
       <Route path="logOut" element={<LogOut />} />
       <Route path="profile" element={<Profilepatient/>} />

@@ -5,6 +5,7 @@ import { IoHome } from "react-icons/io5";
 import { MdSettings } from "react-icons/md";
 import { BiMessageSquareDots } from "react-icons/bi";
 import { MdLogout } from "react-icons/md";
+import { FiUsers, FiActivity } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import "./doc.css";
 
@@ -16,7 +17,7 @@ import { toast } from "react-toastify";
 
 export default function PatientDashbord() {
   const navigate = useNavigate();
-  const [user, setUser] = useState (null);
+  const [user, setUser] = useState(null);
 
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -42,7 +43,7 @@ export default function PatientDashbord() {
       }
       const res = await axios.get(
         "https://mind-space-ov3r.onrender.com/user/profile",
-        { headers: { Authorization: `dash ${token}` } }
+        { headers: { Authorization: `dash ${token}` } },
       );
 
       const userData = res.data.data;
@@ -58,63 +59,72 @@ export default function PatientDashbord() {
     }
   };
 
-  useEffect(() => { fetchUserData(); }, []);
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   // ================= UPLOAD IMAGE =================
- // ================= UPLOAD IMAGE =================
-const uploadImage = async (fileParam) => {
-  const formData = new FormData();
-  formData.append("pfp", fileParam || imageFile);
-  try {
-    setLoading(true);
-    const token = localStorage.getItem("token");
+  // ================= UPLOAD IMAGE =================
+  const uploadImage = async (fileParam) => {
+    const formData = new FormData();
+    formData.append("pfp", fileParam || imageFile);
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-    const res = await axios.post(
-      "https://mind-space-ov3r.onrender.com/user/profile-picture",
-      formData,
-      { headers: { Authorization: `dash ${token}` } }  // ✓ بس كده
-    );
+      const res = await axios.post(
+        "https://mind-space-ov3r.onrender.com/user/profile-picture",
+        formData,
+        { headers: { Authorization: `dash ${token}` } }, // ✓ بس كده
+      );
 
-    const newPfp = res.data?.data?.pfp || res.data?.pfp;
-    if (newPfp?.secure_url) {
-      setUser((prev) => ({
-        ...prev,
-        pfp: { ...newPfp, secure_url: newPfp.secure_url + "?t=" + Date.now() },
-      }));
+      const newPfp = res.data?.data?.pfp || res.data?.pfp;
+      if (newPfp?.secure_url) {
+        setUser((prev) => ({
+          ...prev,
+          pfp: {
+            ...newPfp,
+            secure_url: newPfp.secure_url + "?t=" + Date.now(),
+          },
+        }));
+      }
+      setPreview(null);
+      await fetchUserData();
+      toast.success("✅ Photo uploaded successfully");
+    } catch (err) {
+      console.log("upload error:", err.response?.data);
+      if (err.response?.status === 401) {
+        toast.error("❌ Session expired");
+        navigate("/login");
+      } else toast.error("❌ Upload failed");
+    } finally {
+      setLoading(false);
     }
-    setPreview(null);
-    await fetchUserData();
-    toast.success("✅ Photo uploaded successfully");
-  } catch (err) {
-    console.log("upload error:", err.response?.data);
-    if (err.response?.status === 401) { toast.error("❌ Session expired"); navigate("/login"); }
-    else toast.error("❌ Upload failed");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-// ================= RESET IMAGE =================
-const resetImage = async () => {
-  try {
-    setLoading(true);
-    const token = localStorage.getItem("token");
-    await axios.patch(
-      "https://mind-space-ov3r.onrender.com/user/reset-profile-picture",
-      {},
-      { headers: { Authorization: `dash ${token}` } }  // ✓ صح زي ما هو
-    );
-    setUser((prev) => ({ ...prev, pfp: null }));
-    setPreview(null);
-    await fetchUserData();
-    toast.success("✅ Photo removed successfully");
-  } catch (err) {
-    if (err.response?.status === 401) { toast.error("❌ Session expired"); navigate("/login"); }
-    else toast.error("❌ Failed to remove photo");
-  } finally {
-    setLoading(false);
-  }
-};
+  // ================= RESET IMAGE =================
+  const resetImage = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        "https://mind-space-ov3r.onrender.com/user/reset-profile-picture",
+        {},
+        { headers: { Authorization: `dash ${token}` } }, // ✓ صح زي ما هو
+      );
+      setUser((prev) => ({ ...prev, pfp: null }));
+      setPreview(null);
+      await fetchUserData();
+      toast.success("✅ Photo removed successfully");
+    } catch (err) {
+      if (err.response?.status === 401) {
+        toast.error("❌ Session expired");
+        navigate("/login");
+      } else toast.error("❌ Failed to remove photo");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // ================= LOGOUT =================
   const handleLogout = async () => {
@@ -126,7 +136,7 @@ const resetImage = async () => {
         { flag: "logoutFromAllDevices" },
         {
           headers: { Authorization: `dash ${token || ""}` },
-        }
+        },
       );
       toast.success("تم تسجيل الخروج بنجاح 👋");
     } catch (err) {
@@ -144,7 +154,6 @@ const resetImage = async () => {
 
   return (
     <div className="dashbord">
-
       {/* ── MOBILE OVERLAY (closes sidebar on tap) ── */}
       {sidebarOpen && (
         <div
@@ -161,7 +170,9 @@ const resetImage = async () => {
           onClick={() => setSidebarOpen((v) => !v)}
           aria-label="Toggle sidebar"
         >
-          <span /><span /><span />
+          <span />
+          <span />
+          <span />
         </button>
 
         <div className="dash-header__brand">
@@ -175,20 +186,19 @@ const resetImage = async () => {
             <strong>{user?.userName || "..."}</strong>
           </div>
           <div className="dash-header__avatar">
-            {user?.pfp?.secure_url
-              ? <img src={user.pfp.secure_url} alt="avatar" />
-              : <span>{user?.userName?.charAt(0)?.toUpperCase()}</span>
-            }
+            {user?.pfp?.secure_url ? (
+              <img src={user.pfp.secure_url} alt="avatar" />
+            ) : (
+              <span>{user?.userName?.charAt(0)?.toUpperCase()}</span>
+            )}
           </div>
         </div>
       </header>
 
       {/* ── MAIN LAYOUT ── */}
       <div className="dash-content">
-
         {/* ── SIDEBAR ── */}
         <aside className={`sidebar${sidebarOpen ? " sidebar--open" : ""}`}>
-
           {/* Profile block */}
           <div className="head">
             <div className="image-box">
@@ -219,7 +229,13 @@ const resetImage = async () => {
                 </div>
               </label>
 
-              {loading && <span className="loading"><span/><span/><span/></span>}
+              {loading && (
+                <span className="loading">
+                  <span />
+                  <span />
+                  <span />
+                </span>
+              )}
             </div>
 
             <h3>{user?.userName || "Loading..."}</h3>
@@ -238,41 +254,70 @@ const resetImage = async () => {
             <ul>
               <li>
                 <Link to="/">
-                  <span><IoHome /></span>
+                  <span>
+                    <IoHome />
+                  </span>
                   <h5>Home</h5>
                 </Link>
               </li>
 
               <li>
                 <Link to="/PatientHome">
-                  <span><IoHome /></span>
+                  <span>
+                    <IoHome />
+                  </span>
                   <h5>PatientHome</h5>
                 </Link>
               </li>
               <li>
-  <Link to="profile">
-    <span><IoPerson /></span>
-    <h5>My Profile</h5>
-  </Link>
-</li>
+                <Link to="profile">
+                  <span>
+                    <IoPerson />
+                  </span>
+                  <h5>My Profile</h5>
+                </Link>
+              </li>
 
               <li>
                 <Link to="/doctor">
-                  <span><IoPerson /></span>
+                  <span>
+                    <IoPerson />
+                  </span>
                   <h5>Doctors</h5>
                 </Link>
               </li>
 
               <li>
                 <Link to="message">
-                  <span><BiMessageSquareDots /></span>
+                  <span>
+                    <BiMessageSquareDots />
+                  </span>
                   <h5>Messages</h5>
                 </Link>
               </li>
 
               <li>
+                <Link to="groups">
+                  <span>
+                    <FiUsers />
+                  </span>
+                  <h5>Groups</h5>
+                </Link>
+              </li>
+
+              <li>
+                <Link to="test">
+                  <span>
+                    <FiActivity />
+                  </span>
+                  <h5>Stress Test</h5>
+                </Link>
+              </li>
+              <li>
                 <Link to="setting">
-                  <span><MdSettings /></span>
+                  <span>
+                    <MdSettings />
+                  </span>
                   <h5>Settings</h5>
                 </Link>
               </li>
@@ -280,7 +325,9 @@ const resetImage = async () => {
               {/* Logout */}
               <li className="log-out">
                 <button onClick={handleLogout}>
-                  <span><MdLogout /></span>
+                  <span>
+                    <MdLogout />
+                  </span>
                   <h5>Log Out</h5>
                 </button>
               </li>
@@ -292,7 +339,6 @@ const resetImage = async () => {
         <main className="details">
           <Outlet />
         </main>
-
       </div>
     </div>
   );

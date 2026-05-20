@@ -7,24 +7,19 @@ import {
   FiMoreHorizontal,
   FiHeart,
   FiMessageCircle,
-  FiShare2,
+  FiBookmark,
   FiX,
-  FiCalendar,
   FiZap,
   FiGlobe,
 } from "react-icons/fi";
-
 import { FaHeart } from "react-icons/fa";
-
 import { useDashUser } from "../Dashbords/DoctorDashbord";
-
 import "./Therapistfeed.css";
-
 import axios from "axios";
 
 const BASE_URL = "https://mind-space-ov3r.onrender.com";
 
-/* ─── Helper: get userId from JWT ────── */
+/* ─── Helper Functions ─── */
 function getUserIdFromToken() {
   try {
     const token = localStorage.getItem("token");
@@ -36,104 +31,87 @@ function getUserIdFromToken() {
   }
 }
 
-/* ─── Helper: get auth header ────────── */
 function authHeader() {
   const token = localStorage.getItem("token");
   return { Authorization: `dash ${token}` };
 }
 
-/* ─── Avatar ───────────────────────────── */
-function Avatar({
-  text = "?",
-  size = 42,
-  bg = "#CECBF6",
-  color = "#3C3489",
-}) {
+function formatTime(date) {
+  const now = new Date();
+  const postDate = new Date(date);
+  const diffInSeconds = Math.floor((now - postDate) / 1000);
+
+  if (diffInSeconds < 60) return "Just now";
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours}h ago`;
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays === 1) return "Yesterday";
+  if (diffInDays < 7) return `${diffInDays}d ago`;
+  return postDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+/* ─── Avatar Component ─── */
+function Avatar({ initials, size = 44 }) {
   return (
     <div
-      className="tf-avatar"
-      style={{ width: size, height: size, minWidth: size, background: bg, color }}
+      className="avatar"
+      style={{
+        width: size,
+        height: size,
+        fontSize: size * 0.4,
+      }}
     >
-      {text}
+      {initials}
     </div>
   );
 }
 
-/* ─── User Avatar ─────────────────────── */
-function UserAvatar({ size = 42, userImage = null }) {
+/* ─── User Avatar ─── */
+function UserAvatar({ size = 44 }) {
   const { user } = useDashUser();
-
-  if (userImage) {
-    return (
-      <img
-        src={userImage}
-        alt="avatar"
-        style={{
-          width: size,
-          height: size,
-          minWidth: size,
-          borderRadius: "50%",
-          objectFit: "cover",
-          flexShrink: 0,
-        }}
-      />
-    );
-  }
 
   if (user?.pfp?.secure_url) {
     return (
       <img
         src={user.pfp.secure_url}
-        alt="avatar"
-        style={{
-          width: size,
-          height: size,
-          minWidth: size,
-          borderRadius: "50%",
-          objectFit: "cover",
-          flexShrink: 0,
-        }}
+        alt={user.userName}
+        className="avatar-img"
+        style={{ width: size, height: size }}
       />
     );
   }
 
   const initial = user?.userName?.charAt(0)?.toUpperCase() || "D";
-  return <Avatar text={initial} size={size} />;
+  return <Avatar initials={initial} size={size} />;
 }
 
-/* ─── Comment Item ────────────────────── */
+/* ─── Comment Item ─── */
 function CommentItem({ comment }) {
   return (
-    <div className="tf-comment-item">
-      {comment.userImage ? (
-        <img
-          src={comment.userImage}
-          alt="avatar"
-          style={{
-            width: 30,
-            height: 30,
-            minWidth: 30,
-            borderRadius: "50%",
-            objectFit: "cover",
-            flexShrink: 0,
-          }}
-        />
-      ) : (
-        <Avatar text={comment.author.charAt(0)} size={30} />
-      )}
-      <div>
-        <div className="tf-comment-bubble">
-          <div className="tf-comment-author">{comment.author}</div>
-          <div>{comment.text}</div>
+    <div className="comment-item">
+      <div className="comment-avatar">
+        {comment.userImage ? (
+          <img src={comment.userImage} alt={comment.author} />
+        ) : (
+          <Avatar initials={comment.author.charAt(0)} size={32} />
+        )}
+      </div>
+      <div className="comment-content">
+        <div className="comment-bubble">
+          <div className="comment-author">{comment.author}</div>
+          <div className="comment-text">{comment.text}</div>
         </div>
-        <div className="tf-comment-time">{comment.time}</div>
+        <div className="comment-time">{comment.time}</div>
       </div>
     </div>
   );
 }
 
-/* ─── Post Card ───────────────────────── */
+/* ─── Post Card ─── */
 function PostCard({ post, onLike, onAddComment, onToggleComments }) {
+  const { user } = useDashUser();
   const [draft, setDraft] = useState("");
 
   const submit = () => {
@@ -143,105 +121,128 @@ function PostCard({ post, onLike, onAddComment, onToggleComments }) {
   };
 
   return (
-    <div className="tf-post-card">
+    <article className="post-card">
       {/* Header */}
-      <div className="tf-post-top">
-        <UserAvatar size={30} />
-        <div className="tf-post-meta">
-          <div className="tf-post-name">
-            {post.author}
-            <span className="tf-badge">Therapist</span>
+      <div className="post-header">
+        <UserAvatar size={48} />
+        <div className="post-header-meta">
+          <div className="post-author-name">
+            Dr. {user?.userName || "Therapist"}
+            <span className="therapist-badge">Verified</span>
           </div>
-          <div className="tf-post-time">{post.time}</div>
+          <div className="post-role">{user?.role || "Mental Health Professional"}</div>
+          <div className="post-time">{post.time}</div>
         </div>
-        <button className="tf-icon-btn">
+        <button className="post-menu-btn" title="More options">
           <FiMoreHorizontal />
         </button>
       </div>
 
-      {/* Text */}
-      {post.text && <p className="tf-post-text">{post.text}</p>}
+      {/* Content */}
+      {post.text && (
+        <div className="post-content">
+          <p className="post-text">{post.text}</p>
+        </div>
+      )}
 
       {/* Image */}
       {post.img && (
-        <img className="tf-post-img" src={post.img} alt="post" />
+        <div className="post-image-container">
+          <img src={post.img} alt="post" className="post-image" />
+        </div>
       )}
 
       {/* Stats */}
-      <div className="tf-post-stats">
-        <span>
-          <FaHeart style={{ color: "#D4537E", fontSize: 12, verticalAlign: -1 }} />{" "}
-          {post.likes} like{post.likes !== 1 ? "s" : ""}
-        </span>
-
+      <div className="post-stats">
+        <div className="stat-item">
+          <FaHeart className="stat-icon liked" />
+          <span className="stat-number">{post.likes}</span>
+          <span className="stat-label">likes</span>
+        </div>
         <button
-          className="tf-stat-link"
+          className="stat-item stat-button"
           onClick={() => onToggleComments(post.id)}
         >
-          {post.commentsCount ?? post.comments.length} comment
-          {(post.commentsCount ?? post.comments.length) !== 1 ? "s" : ""}
+          <FiMessageCircle className="stat-icon" />
+          <span className="stat-number">{post.commentsCount ?? post.comments.length}</span>
+          <span className="stat-label">comments</span>
         </button>
       </div>
 
-      {/* Reactions */}
-      <div className="tf-reactions">
+      {/* Actions */}
+      <div className="post-actions">
         <button
-          className={`tf-react-btn${post.liked ? " liked" : ""}`}
+          className={`action-btn ${post.liked ? "liked" : ""}`}
           onClick={() => onLike(post.id)}
           disabled={post.likeLoading}
         >
           {post.liked ? (
-            <FaHeart style={{ color: "#D4537E" }} />
+            <FaHeart className="icon liked" />
           ) : (
-            <FiHeart />
+            <FiHeart className="icon" />
           )}
-          {post.liked ? "Liked" : "Like"}
+          <span>{post.liked ? "Liked" : "Like"}</span>
         </button>
 
         <button
-          className="tf-react-btn"
+          className="action-btn"
           onClick={() => onToggleComments(post.id)}
         >
-          <FiMessageCircle /> Comment
+          <FiMessageCircle className="icon" />
+          <span>Comment</span>
         </button>
 
-        <button className="tf-react-btn">
-          <FiShare2 /> Share
+        <button className="action-btn">
+          <FiBookmark className="icon" />
+          <span>Save</span>
         </button>
       </div>
 
       {/* Comments */}
       {post.showComments && (
-        <div className="tf-comments">
-          {post.comments.map((c, i) => (
-            <CommentItem key={i} comment={c} />
-          ))}
+        <div className="comments-section">
+          <div className="comments-list">
+            {post.comments.length > 0 ? (
+              post.comments.map((c, i) => (
+                <CommentItem key={i} comment={c} />
+              ))
+            ) : (
+              <div className="no-comments">No comments yet. Be the first!</div>
+            )}
+          </div>
 
-          <div className="tf-comment-input-row">
-            <UserAvatar size={32} />
-            <input
-              className="tf-comment-input"
-              placeholder="Write a comment..."
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  submit();
-                }
-              }}
-            />
-            <button className="tf-send-btn" onClick={submit}>
-              <FiSend />
-            </button>
+          <div className="comment-input-section">
+            <UserAvatar size={36} />
+            <div className="comment-input-wrapper">
+              <input
+                type="text"
+                className="comment-input"
+                placeholder="Write a response..."
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    submit();
+                  }
+                }}
+              />
+              <button
+                className="comment-submit-btn"
+                onClick={submit}
+                disabled={!draft.trim()}
+              >
+                <FiSend />
+              </button>
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </article>
   );
 }
 
-/* ─── Create Modal ────────────────────── */
+/* ─── Create Modal ─── */
 function CreateModal({ open, onClose, onSubmit, docName }) {
   const [text, setText] = useState("");
   const [img, setImg] = useState(null);
@@ -267,64 +268,63 @@ function CreateModal({ open, onClose, onSubmit, docName }) {
   if (!open) return null;
 
   return (
-    <div className="tf-modal-overlay" onClick={onClose}>
-      <div className="tf-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="tf-modal-header">
-          <h3>Create post</h3>
-          <button className="tf-icon-btn" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>Share a post</h3>
+          <button className="modal-close" onClick={onClose}>
             <FiX />
           </button>
         </div>
 
-        {/* Author */}
-        <div className="tf-modal-author">
+        <div className="modal-author">
           <UserAvatar size={42} />
           <div>
-            <div className="tf-modal-name">Dr. {docName || "Ahmed"}</div>
-            <div className="tf-modal-sub">
-              <FiGlobe style={{ verticalAlign: -2 }} /> Public · Therapist
+            <div className="modal-author-name">Dr. {docName || "Therapist"}</div>
+            <div className="modal-author-status">
+              <FiGlobe style={{ verticalAlign: -2, marginRight: 4 }} /> 
+              Public • Mental Health Professional
             </div>
           </div>
         </div>
 
-        {/* Textarea */}
         <textarea
-          className="tf-modal-textarea"
-          placeholder="Share a tip, session highlight, or mental health insight..."
+          className="modal-textarea"
+          placeholder="Share insights, tips, or mental health information with your audience..."
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={5}
           autoFocus
         />
 
-        {/* Preview */}
         {preview && (
-          <div className="tf-preview-wrap">
+          <div className="modal-preview">
             <img src={preview} alt="preview" />
             <button
-              className="tf-remove-img"
-              onClick={() => { setImg(null); setPreview(null); }}
+              className="modal-remove-img"
+              onClick={() => {
+                setImg(null);
+                setPreview(null);
+              }}
             >
               <FiX />
             </button>
           </div>
         )}
 
-        {/* Footer */}
-        <div className="tf-modal-footer">
-          <div className="tf-modal-tools">
+        <div className="modal-footer">
+          <div className="modal-tools">
             <button
-              className="tf-icon-btn"
+              className="modal-tool-btn"
               title="Add photo"
               onClick={() => fileRef.current.click()}
             >
               <FiImage />
             </button>
-            <button className="tf-icon-btn" title="Add emoji">
+            <button className="modal-tool-btn" title="Add emoji">
               <FiSmile />
             </button>
-            <button className="tf-icon-btn" title="Add link">
+            <button className="modal-tool-btn" title="Add link">
               <FiLink />
             </button>
           </div>
@@ -338,11 +338,11 @@ function CreateModal({ open, onClose, onSubmit, docName }) {
           />
 
           <button
-            className="tf-post-btn"
+            className="modal-post-btn"
             disabled={!text.trim() && !img}
             onClick={submit}
           >
-            Post
+            Share Post
           </button>
         </div>
       </div>
@@ -350,26 +350,18 @@ function CreateModal({ open, onClose, onSubmit, docName }) {
   );
 }
 
-/* ─── Helper: format comments ─────────── */
+/* ─── Format Helpers ─── */
 function formatComments(rawComments = []) {
   return rawComments.map((c) => ({
-    author:
-      c.author?.userName ||
-      c.userId?.userName ||
-      c.user?.userName ||
-      "User",
+    author: c.author?.userName || c.userId?.userName || c.user?.userName || "User",
     text: c.content,
-    time: c.createdAt
-      ? new Date(c.createdAt).toLocaleDateString()
-      : "Recently",
+    time: c.createdAt ? formatTime(c.createdAt) : "Recently",
     userImage: c.userId?.pfp?.secure_url || c.author?.pfp?.secure_url || c.user?.pfp?.secure_url || null,
   }));
 }
 
-/* ─── Helper: format article ──────────── */
-function formatArticle(article, extra = {}) {
+function formatArticle(article) {
   const userId = getUserIdFromToken();
-
   const liked = Array.isArray(article.likes)
     ? article.likes.some((l) => l === userId || l?._id === userId)
     : false;
@@ -377,30 +369,26 @@ function formatArticle(article, extra = {}) {
   return {
     ...article,
     id: article._id,
-    author: `Dr. ${article.publisher?.userName || "Ahmed"}`,
-    initials: article.publisher?.userName?.charAt(0)?.toUpperCase() || "D",
     text: article.content,
     img: article.attachments?.[0]?.secure_url || null,
     likes: article.likes?.length || 0,
     liked,
     likeLoading: false,
     comments: [],
-    commentsCount: 0,
+    commentsCount: article.comments?.length || 0,
     showComments: false,
-    time: article.createdAt
-      ? new Date(article.createdAt).toLocaleDateString()
-      : "Recently",
-    ...extra,
+    time: formatTime(article.createdAt),
   };
 }
 
-/* ─── MAIN FEED ───────────────────────── */
-export default function TherapistFeed() {
+/* ─── MAIN COMPONENT ─── */
+export default function ProfessionalTherapistFeed() {
   const { user } = useDashUser();
   const [posts, setPosts] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  /* ─── 1. Fetch Comments ─────────── */
+  /* ─── Fetch Comments ─── */
   const fetchComments = async (articleId) => {
     try {
       const userId = getUserIdFromToken();
@@ -413,33 +401,30 @@ export default function TherapistFeed() {
 
       return formatComments(res.data?.data || res.data || []);
     } catch (err) {
-      console.log(err.response?.data || err);
+      console.log("Error fetching comments:", err.response?.data || err);
       return [];
     }
   };
 
-  /* ─── 2. Fetch Posts ────────────── */
+  /* ─── Fetch Posts ─── */
   const fetchPosts = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(`${BASE_URL}/article`, {
         headers: authHeader(),
       });
 
-      const articles = res.data.data;
+      const articles = res.data.data || [];
 
-      const formattedPosts = await Promise.all(
-        articles.map(async (article) => {
-          const comments = await fetchComments(article._id);
-          return formatArticle(article, {
-            comments,
-            commentsCount: comments.length,
-          });
-        })
-      );
+      const formattedPosts = articles.map((article) => {
+        return formatArticle(article);
+      });
 
       setPosts(formattedPosts);
     } catch (err) {
-      console.log(err.response?.data || err);
+      console.log("Error fetching posts:", err.response?.data || err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -447,9 +432,8 @@ export default function TherapistFeed() {
     fetchPosts();
   }, []);
 
-  /* ─── 3. Like / Unlike ──────────── */
+  /* ─── Handle Like ─── */
   const handleLike = async (id) => {
-    // Optimistic update
     setPosts((prev) =>
       prev.map((p) =>
         p.id === id
@@ -470,16 +454,14 @@ export default function TherapistFeed() {
         { headers: authHeader() }
       );
 
-      // نجح - ما نرجع للقديم
       setPosts((prev) =>
         prev.map((p) =>
           p.id === id ? { ...p, likeLoading: false } : p
         )
       );
     } catch (err) {
-      console.log(err.response?.data || err);
+      console.log("Error liking post:", err.response?.data || err);
 
-      // فشل - ارجع للقديم
       setPosts((prev) =>
         prev.map((p) =>
           p.id === id
@@ -495,7 +477,7 @@ export default function TherapistFeed() {
     }
   };
 
-  /* ─── 4. Toggle Comments ────────── */
+  /* ─── Toggle Comments ─── */
   const handleToggleComments = async (id) => {
     const post = posts.find((p) => p.id === id);
 
@@ -519,7 +501,7 @@ export default function TherapistFeed() {
     );
   };
 
-  /* ─── 5. Add Comment ────────────── */
+  /* ─── Add Comment ─── */
   const handleAddComment = async (id, text) => {
     try {
       const userId = getUserIdFromToken();
@@ -530,7 +512,6 @@ export default function TherapistFeed() {
         { headers: authHeader() }
       );
 
-      // الإنتظار قليلاً قبل refresh
       setTimeout(async () => {
         const comments = await fetchComments(id);
 
@@ -541,13 +522,13 @@ export default function TherapistFeed() {
               : p
           )
         );
-      }, 500);
+      }, 300);
     } catch (err) {
-      console.log(err.response?.data || err);
+      console.log("Error adding comment:", err.response?.data || err);
     }
   };
 
-  /* ─── 6. Create Post ────────────── */
+  /* ─── Create Post ─── */
   const handleSubmitPost = async ({ text, img }) => {
     try {
       const formData = new FormData();
@@ -562,71 +543,85 @@ export default function TherapistFeed() {
       });
 
       if (res.data?.data) {
-        const newPost = formatArticle(res.data.data, {
-          author: `Dr. ${user?.userName || "Ahmed"}`,
-          initials: user?.userName?.charAt(0)?.toUpperCase() || "D",
-          time: "Just now",
-          comments: [],
-          commentsCount: 0,
-        });
-
+        const newPost = formatArticle(res.data.data);
         setPosts((prev) => [newPost, ...prev]);
       }
     } catch (err) {
-      console.log(err.response?.data || err);
+      console.log("Error creating post:", err.response?.data || err);
     }
   };
 
   return (
-    <div className="tf-feed-wrap">
-      {/* Create Card */}
-      <div className="tf-create-card">
-        <div className="tf-create-top">
-          <UserAvatar size={42} />
+    <div className="feed-container">
+      {/* ─── Create Card ─── */}
+      <div className="create-card">
+        <div className="create-top">
+          <UserAvatar size={48} />
           <button
-            className="tf-create-input"
+            className="create-input"
             onClick={() => setModalOpen(true)}
           >
             What would you like to share today?
           </button>
         </div>
 
-        <div className="tf-create-actions">
+        <div className="create-actions">
           <button
-            className="tf-action-btn photo"
+            className="create-action-btn photo"
             onClick={() => setModalOpen(true)}
           >
             <FiImage /> Photo
           </button>
 
           <button
-            className="tf-action-btn tip"
+            className="create-action-btn tip"
             onClick={() => setModalOpen(true)}
           >
             <FiZap /> Mental health tip
           </button>
 
           <button
-            className="tf-action-btn event"
+            className="create-action-btn event"
             onClick={() => setModalOpen(true)}
           >
-            <FiCalendar /> Session announcement
+            <FiZap /> Announcement
           </button>
         </div>
       </div>
 
-      {/* Posts */}
-      {posts.map((p) => (
-        <PostCard
-          key={p.id}
-          post={p}
-          onLike={handleLike}
-          onAddComment={handleAddComment}
-          onToggleComments={handleToggleComments}
-        />
-      ))}
+      {/* ─── Posts Feed ─── */}
+      {loading ? (
+        <div className="loading-state">
+          <div className="spinner"></div>
+          <p>Loading posts...</p>
+        </div>
+      ) : posts.length > 0 ? (
+        <div className="posts-list">
+          {posts.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post}
+              onLike={handleLike}
+              onAddComment={handleAddComment}
+              onToggleComments={handleToggleComments}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="empty-state">
+          <div className="empty-icon">📝</div>
+          <h3>No posts yet</h3>
+          <p>Create your first post to connect with patients and share insights</p>
+          <button
+            className="empty-action-btn"
+            onClick={() => setModalOpen(true)}
+          >
+            <FiZap /> Create Post
+          </button>
+        </div>
+      )}
 
-      {/* Modal */}
+      {/* ─── Modal ─── */}
       <CreateModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
