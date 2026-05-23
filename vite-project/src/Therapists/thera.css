@@ -1,128 +1,525 @@
+/* ══════════════════════════════════════════════════════════════════════════════ */
+/* THERAPIST SEARCH PAGE - PROFESSIONAL & BEAUTIFUL DESIGN */
+/* ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ─── CSS Variables ─── */
+:root {
+  --primary-color: #6366f1;        /* Indigo */
+  --secondary-color: #8b5cf6;      /* Purple */
+  --accent-color: #ec4899;         /* Pink */
+  --success-color: #10b981;        /* Green */
+  --text-dark: #1f2937;            /* Dark text */
+  --text-light: #9ca3af;           /* Light text */
+  --text-lighter: #d1d5db;         /* Even lighter */
+  --border-color: #e5e7eb;         /* Border */
+  --bg-light: #f9fafb;             /* Light background */
+  --bg-white: #ffffff;             /* White */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 20px rgba(99, 102, 241, 0.12);
+  --shadow-lg: 0 20px 40px rgba(99, 102, 241, 0.15);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── MAIN CONTAINER ─── */
 .thera {
   min-height: 100vh;
-  padding: 100px;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, var(--bg-light) 0%, #f3f0ff 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
 .thera .container {
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
+
+/* ─── HEADER SECTION ─── */
 .thera .container h1 {
-  margin-bottom: 10px;
-  color: #2d3e50;
+  margin-bottom: 12px;
+  color: var(--text-dark);
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
+
 .thera .container p {
-  color: #7d8a99;
-  margin-bottom: 30px;
-  font-weight: bold;
+  color: var(--text-light);
+  margin-bottom: 40px;
+  font-weight: 500;
+  font-size: 16px;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.6;
 }
+
+/* ─── SEARCH INPUT SECTION ─── */
 .thera .container .inp {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  margin-bottom: 60px;
+  width: 100%;
+  max-width: 700px;
 }
+
 .thera .container .inp input {
   position: relative;
   direction: rtl;
-  background: white;
-  padding: 15px 25px;
-  width: 50%;
-  border: 1px solid #e3e8ee;
+  background: var(--bg-white);
+  padding: 16px 45px 16px 25px;
+  width: 100%;
+  border: 1.5px solid var(--border-color);
   outline: none;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-.thera .container .inp input::placeholder {
-  color: #8a97a6;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
   font-size: 16px;
-}
-.thera .container .inp input:focus {
-  border: 1px solid #5bb6c9;
-}
-.thera .container .inp span {
-  position: absolute;
-  color: #5bb6c9;
-  z-index: 1;
-  left: 345px;
-  font-size: 20px;
-  cursor: pointer;
+  color: var(--text-dark);
+  transition: var(--transition);
 }
 
+.thera .container .inp input::placeholder {
+  color: var(--text-lighter);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.thera .container .inp input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1),
+              0 8px 20px rgba(99, 102, 241, 0.12);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.02), rgba(139, 92, 246, 0.02));
+}
+
+.thera .container .inp span {
+  position: absolute;
+  color: var(--primary-color);
+  z-index: 2;
+  right: 16px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thera .container .inp span:hover {
+  transform: scale(1.1);
+  color: var(--secondary-color);
+}
+
+/* ─── EMPTY STATE SECTION ─── */
 .thera .container .empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 30px;
-}
-.thera .container .empty img {
-  width: 600px;
-  border-radius: 37%;
-  margin-bottom: 40px;
-}
-.thera .container .empty h2 {
-  color: #2d3e50;
-  font-size: 35px;
-  margin-bottom: 15px;
-}
-.thera .container .empty p {
-  font-size: 24px;
-  font-weight: bold;
-}
-.thera .container .empty button {
-  background: #5bb6c9;
-  color: white;
-  padding: 15px 50px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 20px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-.thera .container .empty button:hover {
-  background: #4aa8bb;
-}
-.thera .container .display-doc {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 100px;
-}
-.thera .container .details {
-  width: 260px;
-  background: white;
-  border: 1px solid #e3e8ee;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 50px;
+  padding: 40px 20px;
+  text-align: center;
 }
 
-.thera .container .details img {
-  width: 80px;
+.thera .container .empty img {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 20px;
+  margin-bottom: 40px;
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition);
 }
-.thera .container .details h3 {
-  color: #2d3e50;
-  font-size: 20px;
-  font-weight: 600;
+
+.thera .container .empty img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 24px 48px rgba(99, 102, 241, 0.2);
 }
-.thera .container .details p {
-  margin: 10px;
+
+.thera .container .empty h2 {
+  color: var(--text-dark);
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
 }
-.thera .container .details button {
-  background: #5bb6c9;
+
+.thera .container .empty p {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-light);
+  margin-bottom: 30px;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.thera .container .empty button {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
-  border-radius: 8px;
-  padding: 8px 16px;
+  padding: 14px 40px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 600;
+  transition: var(--transition);
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
 }
+
+.thera .container .empty button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(99, 102, 241, 0.4);
+}
+
+.thera .container .empty button:active {
+  transform: translateY(0);
+}
+
+/* ─── DOCTORS GRID DISPLAY ─── */
+.thera .container .display-doc {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+  width: 100%;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── DOCTOR CARD ─── */
+.thera .container .details {
+  width: 100%;
+  min-height: 320px;
+  background: var(--bg-white);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Card Hover Effect ─── */
+.thera .container .details::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.03), rgba(139, 92, 246, 0.03));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.thera .container .details:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(99, 102, 241, 0.2);
+  transform: translateY(-6px);
+}
+
+.thera .container .details:hover::before {
+  opacity: 1;
+}
+
+/* ─── Doctor Image ─── */
+.thera .container .details img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 3px solid var(--bg-white);
+  transition: var(--transition);
+}
+
+.thera .container .details:hover img {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+}
+
+/* ─── Doctor Name ─── */
+.thera .container .details h3 {
+  color: var(--text-dark);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.2px;
+  text-align: center;
+}
+
+/* ─── Doctor Specialization ─── */
+.thera .container .details p {
+  margin: 8px 0 20px;
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  max-width: 220px;
+  line-height: 1.5;
+}
+
+/* ─── Book Button ─── */
+.thera .container .details button {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border-radius: 10px;
+  padding: 10px 24px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  text-transform: capitalize;
+  letter-spacing: 0.2px;
+  margin-top: auto;
+}
+
 .thera .container .details button:hover {
-  background: #4aa8bb;
- 
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+}
+
+.thera .container .details button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+/* ─── RESPONSIVE DESIGN ─── */
+@media (max-width: 768px) {
+  .thera {
+    padding: 40px 16px;
+  }
+
+  .thera .container h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .thera .container p {
+    margin-bottom: 30px;
+    font-size: 14px;
+  }
+
+  .thera .container .inp {
+    max-width: 100%;
+    margin-bottom: 40px;
+  }
+
+  .thera .container .inp input {
+    font-size: 14px;
+    padding: 14px 40px 14px 20px;
+  }
+
+  .thera .container .empty {
+    padding: 20px 16px;
+  }
+
+  .thera .container .empty img {
+    max-width: 100%;
+    margin-bottom: 30px;
+  }
+
+  .thera .container .empty h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .thera .container .empty p {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .thera .container .empty button {
+    padding: 12px 32px;
+    font-size: 14px;
+  }
+
+  .thera .container .display-doc {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .thera .container .details {
+    padding: 24px 16px;
+    min-height: auto;
+  }
+
+  .thera .container .details img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .thera .container .details h3 {
+    font-size: 16px;
+  }
+
+  .thera .container .details p {
+    font-size: 12px;
+  }
+
+  .thera .container .details button {
+    font-size: 13px;
+    padding: 8px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .thera {
+    padding: 30px 12px;
+  }
+
+  .thera .container h1 {
+    font-size: 24px;
+  }
+
+  .thera .container .display-doc {
+    grid-template-columns: 1fr;
+  }
+
+  .thera .container .empty img {
+    max-width: 90%;
+  }
+
+  .thera .container .empty h2 {
+    font-size: 20px;
+  }
+
+  .thera .container .empty p {
+    font-size: 13px;
+  }
+
+  .thera .container .inp input {
+    padding: 12px 35px 12px 16px;
+    font-size: 14px;
+  }
+}
+
+/* ─── ACCESSIBILITY ─── */
+.thera .container .details button:focus,
+.thera .container .empty button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.thera .container .inp input:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ─── ANIMATIONS FOR CARDS ─── */
+.thera .container .details {
+  animation: slideUp 0.5s ease-out backwards;
+}
+
+.thera .container .details:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.thera .container .details:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.thera .container .details:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.thera .container .details:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.thera .container .details:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.thera .container .details:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── LOADING STATE ─── */
+.thera .container .display-doc.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ─── DARK MODE SUPPORT (Optional) ─── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-dark: #f3f4f6;
+    --text-light: #d1d5db;
+    --text-lighter: #9ca3af;
+    --bg-light: #111827;
+    --bg-white: #1f2937;
+    --border-color: #374151;
+  }
+
+  .thera {
+    background: linear-gradient(135deg, #111827 0%, #1a1535 100%);
+  }
+}
+
+/* ─── UTILITY CLASSES ─── */
+.thera .container .no-results {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.thera .container .no-results-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.thera .container .no-results h2 {
+  color: var(--text-dark);
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.thera .container .no-results p {
+  color: var(--text-light);
+  font-size: 16px;
+  margin-bottom: 20px;
 }

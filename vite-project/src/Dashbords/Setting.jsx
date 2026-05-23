@@ -15,7 +15,14 @@ export default function Settings() {
   const role = localStorage.getItem("role"); // "therapist" | "patient"
 
   const [profile, setProfile] = useState({ name: "", email: "" });
-  const [form, setForm] = useState({ userName: "", password: "", newPassword: "", confirmPassword: "" });
+const [form, setForm] = useState({
+  userName: "",
+  phoneNumber: "",
+  sessionFee: "",
+  password: "",
+  newPassword: "",
+  confirmPassword: "",
+});
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [twoFaEnabled, setTwoFaEnabled] = useState(false);
@@ -37,7 +44,12 @@ export default function Settings() {
           email: data.email || "",
         });
 
-        setForm((prev) => ({ ...prev, userName: data.userName || "" }));
+        setForm((prev) => ({
+  ...prev,
+  userName: data.userName || "",
+  phoneNumber: data.phoneNumber || "",
+  sessionFee: data.sessionFee || "",
+}));
         setTwoFaEnabled(data.twoFactorEnabled || false);
       } catch (err) {
         console.log(err.response?.data || err);
@@ -71,7 +83,12 @@ export default function Settings() {
       setLoading(true);
       const headers = getAuthHeader();
 
-      const payload = { userName: form.userName, password: form.password };
+      const payload = {
+  userName: form.userName,
+  phoneNumber: form.phoneNumber,
+  sessionFee: form.sessionFee,
+  password: form.password,
+};
       if (form.newPassword) payload.newPassword = form.newPassword;
 
       await axios.put(`${BASE_URL}/user/update-user`, payload, {
@@ -222,6 +239,29 @@ export default function Settings() {
               <label>✉️ Email</label>
               <input value={profile.email} disabled />
             </div>
+
+            <div className="box-set">
+  <label>📞 Phone Number</label>
+  <input
+    name="phoneNumber"
+    value={form.phoneNumber}
+    onChange={handleChange}
+    placeholder="Phone number"
+  />
+</div>
+
+{role === "therapist" && (
+  <div className="box-set">
+    <label>💰 Session Fee</label>
+    <input
+      type="number"
+      name="sessionFee"
+      value={form.sessionFee}
+      onChange={handleChange}
+      placeholder="Session fee"
+    />
+  </div>
+)}
 
             <div className="box full">
               <label>🔒 Current Password <span style={{ color: "red" }}>*</span></label>

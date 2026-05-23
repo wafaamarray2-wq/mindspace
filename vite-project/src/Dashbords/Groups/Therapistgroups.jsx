@@ -189,22 +189,56 @@ export default function TherapistGroups() {
     fetchGroups();
   }, []);
 
-  /* ─── Create ─── */
-  const handleCreate = async ({ name, description }) => {
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/group/create-group`,
-        { name, description },
-        { headers: authHeader() }
-      );
-      const newGroup = res.data?.data || res.data;
-      setGroups((prev) => [newGroup, ...prev]);
-    } catch (e) {
-      setError("فشل إنشاء الجروب");
-      console.log(e.response?.data || e);
-    }
-  };
 
+
+  console.log("TOKEN:", localStorage.getItem("token"));
+console.log("HEADERS:", authHeader());
+console.log("_____________________________________:");
+console.log(
+  JSON.parse(atob(localStorage.getItem("token").split(".")[1]))
+);
+  /* ─── Create ─── */
+
+
+
+
+
+
+
+
+
+const handleCreate = async ({ name, description }) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    console.log("TOKEN =>", token);
+
+    const res = await axios({
+      method: "POST",
+      url: "https://mind-space-ov3r.onrender.com/group/create-group",
+      data: {
+        name,
+        description,
+      },
+      headers: {
+        Authorization: `dash ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("CREATE SUCCESS =>", res.data);
+
+    const newGroup = res.data?.data || res.data;
+
+    setGroups((prev) => [newGroup, ...prev]);
+  } catch (e) {
+    console.log("FULL ERROR =>", e);
+    console.log("ERROR RESPONSE =>", e.response);
+    console.log("ERROR DATA =>", e.response?.data);
+
+    setError(e.response?.data?.message || "فشل إنشاء الجروب");
+  }
+};
   /* ─── Update ─── */
   const handleUpdate = async ({ name, description }) => {
     if (!editTarget) return;

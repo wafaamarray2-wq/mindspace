@@ -25,56 +25,63 @@ function Login() {
     try {
       setLoading(true);
 
-      // Step 1: تسجيل الدخول
       const loginRes = await axios.post(
         "https://mind-space-ov3r.onrender.com/auth/login",
-        {
-          email,
-          password,
-        },
+        { email, password }
       );
 
       console.log("Login Response:", loginRes.data);
 
-      if (loginRes.data?.message === "please activate your account") {
-        toast.error("يجب تفعيل الحساب أولاً");
+      const message = loginRes.data?.message;
+
+      // ✅ لو الأكونت مش متفعل — بعت OTP تلقائياً ووجّه لصفحة التفعيل
+      if (
+        message === "please activate your account" ||
+        message === "account not activated" ||
+        message === "Please verify your email"
+      ) {
+        toast.warn("يجب تفعيل الحساب أولاً، جاري إرسال كود التفعيل...");
+
+        try {
+          await axios.post(
+            "https://mind-space-ov3r.onrender.com/auth/send-otp",
+            { email }
+          );
+          toast.success("تم إرسال كود التفعيل على بريدك الإلكتروني");
+        } catch (otpErr) {
+          console.log("OTP send error:", otpErr.response?.data || otpErr.message);
+          toast.error("حدث خطأ في إرسال الكود");
+        }
+
         navigate("/verify-otp", { state: { email } });
         return;
       }
 
       const token = loginRes.data?.data?.accessToken;
-      // const userId = loginRes.data?.data?.id; // ✅ احصل على الـ ID
 
       if (!token) {
         toast.error("حدث خطأ في استرجاع التوكن");
         return;
       }
 
-      // ✅ احفظ الـ token
       localStorage.setItem("token", token);
       console.log("✅ Token saved:", token);
 
       toast.success("جاري جلب بيانات الملف الشخصي...");
 
-      // Step 2: جلب الـ profile باستخدام POST
       try {
         const profileRes = await axios.get(
           "https://mind-space-ov3r.onrender.com/user/profile",
-
           {
             headers: {
               Authorization: `dash ${token}`,
             },
-          },
+          }
         );
 
         console.log("Profile Response:", profileRes.data);
 
-        const userData =  profileRes.data;
-
-        console.log("User Data:", userData);
-
-        // ✅ استخرج الـ role من الـ response
+        const userData = profileRes.data;
         const userRole = userData?.data.role;
         const userName = userData?.data.userName;
 
@@ -87,7 +94,6 @@ function Login() {
 
         toast.success("تم تسجيل الدخول بنجاح");
 
-        // Step 3: التوجيه حسب الـ role
         if (userRole === "therapist") {
           navigate("/doctor-dashboard");
         } else if (userRole === "user") {
@@ -98,13 +104,36 @@ function Login() {
       } catch (profileErr) {
         console.log("❌ Error fetching profile:", profileErr);
         toast.error("خطأ في جلب البيانات الشخصية");
-
-        // Fallback: إذا فشل جلب الـ profile، وجّه حسب افتراض
         navigate("/");
       }
     } catch (err) {
       console.log("❌ Login Error:", err.response?.data || err.message);
-      toast.error(err.response?.data?.message || "فشل تسجيل الدخول");
+
+      const errMessage = err.response?.data?.message;
+
+      // ✅ لو السيرفر رجّع الـ error في الـ catch مش في الـ success response
+      if (
+        errMessage === "please activate your account" ||
+        errMessage === "account not activated" ||
+        errMessage === "Please verify your email"
+      ) {
+        toast.warn("يجب تفعيل الحساب أولاً، جاري إرسال كود التفعيل...");
+
+        try {
+          await axios.post(
+            "https://mind-space-ov3r.onrender.com/auth/send-otp",
+            { email }
+          );
+          toast.success("تم إرسال كود التفعيل على بريدك الإلكتروني");
+        } catch (otpErr) {
+          console.log("OTP send error:", otpErr.response?.data || otpErr.message);
+        }
+
+        navigate("/Verify", { state: { email } });
+        return;
+      }
+
+      toast.error(errMessage || "فشل تسجيل الدخول");
     } finally {
       setLoading(false);
     }

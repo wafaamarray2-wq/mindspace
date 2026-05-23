@@ -5,16 +5,15 @@ import { MdSettings } from "react-icons/md";
 import { BiMessageSquareDots } from "react-icons/bi";
 import { MdLogout } from "react-icons/md";
 import { MdEventNote } from "react-icons/md";
-import { FiUsers } from "react-icons/fi";
+import { FiUsers, FiActivity, FiArchive } from "react-icons/fi";
 import { useEffect, useState, createContext, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "./doc.css";
+import "./doc.css"; // ← استخدم الـ CSS الجديد
 
 // ═══════════════════════════════════════════════
-//  Context — بيتعمل هنا وبيتصدر عشان الـ Feed
-//  والصفحات التانية تستخدمه
+//  Context — للـ Feed والصفحات التانية
 // ═══════════════════════════════════════════════
 const DashContext = createContext(null);
 
@@ -121,74 +120,97 @@ export default function DoctorDashbord() {
           {/* ── SIDEBAR ── */}
           <aside className={`sidebar${sidebarOpen ? " sidebar--open" : ""}`}>
             <div className="head">
-              {/* الصورة — read only — التحكم فيها من البروفايل */}
+              {/* Profile Image */}
               <div className="image-box">
                 {user?.pfp?.secure_url ? (
-                  <img src={user.pfp.secure_url} alt="" />
+                  <div>
+                    <img src={user.pfp.secure_url} alt="" style={{ borderRadius: '50%', width: '100px', height: '100px', objectFit: 'cover' }} />
+                  </div>
                 ) : (
                   <div className="empty-avatar">
                     {user?.userName?.charAt(0)?.toUpperCase() || "D"}
                   </div>
                 )}
               </div>
-              {/* 
+
+              {/* Doctor Info */}
               <h3>Dr. {user?.userName || "Doctor"}</h3>
-              <p>{user?.role || "Therapist"}</p> */}
+              <p className="role-badge">{user?.role || "Therapist"}</p>
             </div>
 
+            {/* Divider */}
+            <div className="sidebar-divider" />
+
+            {/* Navigation */}
             <nav>
               <ul>
                 <li>
                   <NavLink to="home" className={navClass} end>
-                    <IoHome /> Home
+                    <span><IoHome /></span>
+                    <h5>Home</h5>
                   </NavLink>
                 </li>
+
                 <li>
                   <NavLink to="dash" className={navClass} end>
-                    <IoHome /> Dashboard
+                    <span><IoHome /></span>
+                    <h5>Dashboard</h5>
                   </NavLink>
                 </li>
+
                 <li>
                   <NavLink to="profile" className={navClass}>
-                    <IoPerson /> Profile
+                    <span><IoPerson /></span>
+                    <h5>Profile</h5>
                   </NavLink>
                 </li>
+
                 <li>
                   <NavLink to="patients" className={navClass}>
-                    <IoPerson /> Patients
+                    <span><IoPerson /></span>
+                    <h5>Patients</h5>
                   </NavLink>
                 </li>
+
                 <li>
                   <NavLink to="message" className={navClass}>
-                    <BiMessageSquareDots /> Messages
+                    <span><BiMessageSquareDots /></span>
+                    <h5>Messages</h5>
                   </NavLink>
                 </li>
 
                 <li>
                   <NavLink to="session" className={navClass}>
-                    <MdEventNote /> Sessions
+                    <span><MdEventNote /></span>
+                    <h5>Sessions</h5>
                   </NavLink>
                 </li>
 
                 <li>
                   <NavLink to="groups" className={navClass}>
-                    <FiUsers /> Groups
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="setting" className={navClass}>
-                    <MdSettings /> Settings
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="admin" className={navClass}>
-                    <MdSettings /> Admin
+                    <span><FiUsers /></span>
+                    <h5>Groups</h5>
                   </NavLink>
                 </li>
 
+                <li>
+                  <NavLink to="setting" className={navClass}>
+                    <span><MdSettings /></span>
+                    <h5>Settings</h5>
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink to="admin" className={navClass}>
+                    <span><FiArchive /></span>
+                    <h5>Admin</h5>
+                  </NavLink>
+                </li>
+
+                {/* Logout Button */}
                 <li className="log-out">
                   <button onClick={handleLogout}>
-                    <MdLogout />
+                    <span><MdLogout /></span>
                     <h5>Log Out</h5>
                   </button>
                 </li>

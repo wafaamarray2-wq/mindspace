@@ -35,6 +35,7 @@ import AdminDashboard from "./Dashbords/Admindashboard";
 import PatientGroups from "./Dashbords/Groups/Patientgroups";
 import TherapistGroups from "./Dashbords/Groups/Therapistgroups";
 import TestPage from "./Dashbords/Tests/Testpage";
+import Verify from "./Registers/Verify";
 function App() {
   // const navigate = useNavigate();
 
@@ -95,6 +96,7 @@ function App() {
             <Login />
             <Footer />
           </>
+          
         }
       />
      <Route
@@ -105,6 +107,7 @@ function App() {
     </ProtectedRoute>
   }
 >
+
   <Route index element={<Therapistfeed />} />
   <Route path="home" element={<Therapistfeed />} />
   <Route path="dash" element={<DashbordContent />} />
@@ -139,7 +142,7 @@ function App() {
       <Route path="/doctor" element={<Therapists />} />
       <Route path="/forget-password" element={<ForgetPassword />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
-   
+     <Route path="/Verify" element={<Verify />} />
       <Route path="*" element={<h1>Page Not Found</h1>} />
     </Routes>
   );

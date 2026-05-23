@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./reg.css";
 import { MdEmail } from "react-icons/md";
 import { IoMdPerson } from "react-icons/io";
+import { FaPhoneFlip } from "react-icons/fa6";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { IoMdCalendar } from "react-icons/io";
@@ -11,8 +12,10 @@ import Sic from "..//images/photo_2026-03-04_02-40-47.jpg";
 import axios from "axios";
 import DoctorDashbord from "../Dashbords/doctorDashbord";
 import PatientDashbord from "../Dashbords/PatientDashbord";
+import TherapistInfo from "./TherapistInfo";
 function Regester() {
   const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
   const [email, setemail] = useState("");
   const [password, setBssword] = useState("");
   const [confirmBassword, setConfirmBassword] = useState("");
@@ -23,6 +26,9 @@ function Regester() {
   const navigate = useNavigate();
   const handleName = (e) => {
     setName(e.target.value);
+  };
+  const handleNumber = (e) => {
+    setNumber(e.target.value);
   };
   const hanldeEmail = (e) => {
     setemail(e.target.value);
@@ -48,6 +54,7 @@ const handleSubmit = async (e) => {
 
   if (
     !name ||
+    !number ||
     !email ||
     !password ||
     !confirmBassword ||
@@ -81,6 +88,7 @@ const handleSubmit = async (e) => {
     userName: name.trim(),
     email: email.trim(),
     password,
+   phoneNumber :number,
     cPassword: confirmBassword,
     role,
     age: Number(age),
@@ -105,6 +113,8 @@ const handleSubmit = async (e) => {
     alert("تم إنشاء الحساب بنجاح");
 
  if (role === "therapist") {
+
+  navigate("/TherapistInfo");
   navigate("/login");
 } else {
   navigate("/login");
@@ -170,10 +180,22 @@ const handleSubmit = async (e) => {
             </span>
             <input
               type="text"
-              placeholder=" اسمك"
+              placeholder=" الاسم"
               className="rad"
               value={name}
               onChange={handleName}
+            />
+          </div>
+          <div className="inp">
+            <span className="icon">
+              <FaPhoneFlip />
+            </span>
+            <input
+              type="text"
+              placeholder=" الرقم"
+              className="rad"
+              value={number}
+              onChange={handleNumber}
             />
           </div>
 

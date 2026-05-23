@@ -20,7 +20,11 @@ function getUserIdFromToken() {
   try {
     const token = localStorage.getItem("token");
     if (!token) return null;
+    console.log(token)
+    console.log("token")
     const payload = JSON.parse(atob(token.split(".")[1]));
+    console.log(payload)
+    console.log("payload")
     return payload.id || null;
   } catch {
     return null;
@@ -31,7 +35,11 @@ function authHeader() {
   const token = localStorage.getItem("token");
   return { Authorization: `dash ${token}` };
 }
+console.log(authHeader());
+console.log("authHeader()");
 
+console.log("TOKEN:", localStorage.getItem("token"));
+console.log("ROLE:", localStorage.getItem("role"));
 function formatTime(date) {
   const now = new Date();
   const postDate = new Date(date);
@@ -349,6 +357,14 @@ export default function PatientFeed() {
     fetchPosts();
   }, []);
 
+
+
+
+
+
+
+
+
   /* ─── Handle Like ─── */
   const handleLike = async (id) => {
     setPosts((prev) =>
@@ -394,6 +410,17 @@ export default function PatientFeed() {
     }
   };
 
+
+
+
+
+
+
+
+
+
+
+
   /* ─── Toggle Comments ─── */
   const handleToggleComments = async (id) => {
     const post = posts.find((p) => p.id === id);
@@ -418,6 +445,18 @@ export default function PatientFeed() {
     );
   };
 
+
+
+
+
+
+
+
+
+
+
+
+  
   /* ─── Add Comment ─── */
   const handleAddComment = async (id, text) => {
     try {
@@ -444,6 +483,17 @@ export default function PatientFeed() {
       console.log("Error adding comment:", err.response?.data || err);
     }
   };
+
+
+
+
+
+
+
+
+
+
+
 
   /* ─── Filter Posts ─── */
   const filteredPosts = posts.filter((p) => {

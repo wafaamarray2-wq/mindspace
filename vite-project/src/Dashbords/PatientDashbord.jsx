@@ -305,14 +305,14 @@ export default function PatientDashbord() {
                 </Link>
               </li>
 
-              <li>
+              {/* <li>
                 <Link to="test">
                   <span>
                     <FiActivity />
                   </span>
                   <h5>Stress Test</h5>
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link to="setting">
                   <span>
