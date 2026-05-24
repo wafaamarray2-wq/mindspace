@@ -4,15 +4,17 @@ import { MdEmail } from "react-icons/md";
 import { IoMdPerson } from "react-icons/io";
 import { FaPhoneFlip } from "react-icons/fa6";
 import { RiLockPasswordFill } from "react-icons/ri";
+import { MdAttachMoney } from "react-icons/md";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { IoMdCalendar } from "react-icons/io";
 import { CgGenderMale } from "react-icons/cg";
+import { MdWorkHistory } from "react-icons/md";
 import Doct from "..//images/photo_2026-03-04_02-40-53.jpg";
 import Sic from "..//images/photo_2026-03-04_02-40-47.jpg";
 import axios from "axios";
 import DoctorDashbord from "../Dashbords/doctorDashbord";
 import PatientDashbord from "../Dashbords/PatientDashbord";
-import TherapistInfo from "./TherapistInfo";
+// import TherapistInfo from "./TherapistInfo";
 function Regester() {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
@@ -23,6 +25,9 @@ function Regester() {
   const [age, setAge] = useState("");
   const [role, setRole] = useState("");
   const [specialty, setSpecialty] = useState("");
+  const [sessionFee, setSessionFee] = useState("");
+    const [experience, setExperience] = useState("");
+    const [cv, setCv] = useState(null);
   const navigate = useNavigate();
   const handleName = (e) => {
     setName(e.target.value);
@@ -84,29 +89,51 @@ const handleSubmit = async (e) => {
     return alert("الدور المختار غير صحيح");
   }
 
-  const data = {
-    userName: name.trim(),
-    email: email.trim(),
-    password,
-   phoneNumber :number,
-    cPassword: confirmBassword,
-    role,
-    age: Number(age),
-    gender,
-  };
+  // const data = {
+  //   userName: name.trim(),
+  //   email: email.trim(),
+  //   password,
+  //  phoneNumber :number,
+  //   cPassword: confirmBassword,
+  //   role,
+  //   age: Number(age),
+  //   gender,
+  // };
+const formData = new FormData();
+
+formData.append("userName", name);
+formData.append("email", email);
+formData.append("password", password);
+formData.append("phoneNumber", number);
+formData.append("cPassword", confirmBassword);
+formData.append("role", role);
+formData.append("age", age);
+formData.append("gender", gender);
+
+if (role === "therapist") {
+  formData.append("sessionFee", sessionFee);
+  formData.append("experience", experience);
+  formData.append("cv", cv);
+  formData.append("specialty", "therapist");
+}
 
   // ✅ مهم: therapist لازم specialty من القيم المسموحة
   if (role === "therapist") {
-    data.specialty = "therapist"; 
+    formData.specialty = "therapist"; 
     // ممكن تغيريها لأي قيمة من:
     // "life coach", "relationship coach", "career coach", "therapist", "performance and skill coach"
   }
 
   try {
-    const res = await axios.post(
-      "https://mind-space-ov3r.onrender.com/auth/sign-up",
-      data
-    );
+   const res = await axios.post(
+  "https://mind-space-ov3r.onrender.com/auth/sign-up",
+  formData,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  }
+);
 
     console.log(res.data);
 
@@ -114,7 +141,7 @@ const handleSubmit = async (e) => {
 
  if (role === "therapist") {
 
-  navigate("/TherapistInfo");
+  
   navigate("/login");
 } else {
   navigate("/login");
@@ -172,6 +199,7 @@ const handleSubmit = async (e) => {
                   <div className="tex"> مريض</div>
                 </label>
               </div>
+  
             </div>
           </div>
           <div className="inp">
@@ -191,8 +219,8 @@ const handleSubmit = async (e) => {
               <FaPhoneFlip />
             </span>
             <input
-              type="text"
-              placeholder=" الرقم"
+              type="number"
+              placeholder=" رقم الهاتف"
               className="rad"
               value={number}
               onChange={handleNumber}
@@ -236,6 +264,53 @@ const handleSubmit = async (e) => {
               onChange={handleConfirm}
             />
           </div>
+
+            {role === "therapist" && (
+  <div className="therapist-extra">
+    
+    <div className="inp">
+      <span className="icon">
+             <MdAttachMoney />
+            </span>
+      <input
+        type="number"
+        placeholder="سعر الجلسة"
+        value={sessionFee}
+        onChange={(e) => setSessionFee(e.target.value)}
+      />
+    </div>
+
+    <div className="inp">
+  <span className="icon">
+    <MdWorkHistory />
+  </span>
+
+  <select
+    value={experience}
+    onChange={(e) => setExperience(e.target.value)}
+  >
+    <option value="">سنوات الخبرة</option>
+
+    {Array.from({ length: 40 }, (_, i) => {
+      const year = i + 1;
+      return (
+        <option key={year} value={year}>
+          {year}
+        </option>
+      );
+    })}
+  </select>
+</div>
+
+    <div className="inp">
+      <input
+        type="file"
+        onChange={(e) => setCv(e.target.files[0])}
+      />
+    </div>
+
+  </div>
+)}
 
           <div className="ag-gn">
             <div className="inp">

@@ -328,8 +328,70 @@ color: #6c757d;
 .register .content form .forget-pass a:hover {
   color: #2a9d8f;
 }
+/* therapist extra fields container */
+.register .content form .therapist-extra {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
+/* نفس شكل inputs الأساسي عندك */
+.register .content form .therapist-extra .inp {
+  position: relative;
+  width: 100%;
+}
 
+/* input inside therapist section */
+.register .content form .therapist-extra input,
+.register .content form .therapist-extra select {
+  width: 100%;
+  padding: 10px 25px 10px 10px;
+  border-radius: 8px;
+  border: 1.5px solid #b8cdd2;
+  outline: none;
+  transition: 0.3s ease;
+  font-size: 18px;
+  text-align: right;
+  color: #333;
+  background: #fff;
+}
+
+/* focus effect زي باقي الفورم */
+.register .content form .therapist-extra input:focus,
+.register .content form .therapist-extra select:focus {
+  border-color: #2a9d8f;
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.15);
+}
+
+/* placeholder */
+.register .content form .therapist-extra input::placeholder {
+  color: #8fa3a8;
+  font-size: 16px;
+}
+
+/* file input styling */
+.register .content form .therapist-extra input[type="file"] {
+  padding: 8px;
+  font-size: 15px;
+  color: #6b7280;
+  border: 1.5px dashed #b8cdd2;
+  cursor: pointer;
+}
+
+.register .content form .therapist-extra input[type="file"]:hover {
+  border-color: #2a9d8f;
+}
+
+/* dropdown arrow alignment fix */
+.register .content form .therapist-extra select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.register .content form .inp select option[value=""] {
+  color: #8fa3a8;
+}
 select {
   appearance: none;
   -webkit-appearance: none;

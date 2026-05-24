@@ -6,10 +6,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function TherapistInfo() {
-  const [sessionFee, setSessionFee] = useState("");
-  const [experience, setExperience] = useState("");
+  
   const navigate = useNavigate();
 
+const handleCv = (e) => {
+  setCv(e.target.files[0]);
+};
   const handleSessionFee = (e) => {
     setSessionFee(e.target.value);
   };
@@ -21,7 +23,7 @@ function TherapistInfo() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!sessionFee || !experience) {
+    if (!sessionFee || !experience || !cv) {
       return alert("برجاء استكمال جميع البيانات المطلوبة قبل المتابعة");
     }
 
@@ -29,33 +31,34 @@ function TherapistInfo() {
       return alert("برجاء إدخال سعر سيشن صحيح");
     }
 
-    const data = {
-      sessionFee: Number(sessionFee),
-      experience: Number(experience),
-    };
+    const formData = new FormData();
 
-    // try {
-    //   const token = localStorage.getItem("token");
-    //   const res = await axios.post(
-    //     "https://mind-space-ov3r.onrender.com/therapist/info",
-    //     data,
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     }
-    //   );
+  formData.append("sessionFee", sessionFee);
+  formData.append("experience", experience);
+  formData.append("cv", cv);
 
-    //   console.log(res.data);
-    //   alert("تم حفظ البيانات بنجاح");
-    //   navigate("/doctor-dashboard");
-    // } catch (err) {
-    //   console.log(err.response?.data || err.message);
-    //   alert(
-    //     err.response?.data?.message ||
-    //       "حدث خطأ أثناء حفظ البيانات، برجاء المحاولة لاحقًا"
-    //   );
-    // }
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        "https://mind-space-ov3r.onrender.com/auth/sign-up",
+        formData,
+        {
+         headers: {
+              Authorization: `dash ${token}`,
+            },
+        }
+      );
+
+      console.log(res.data);
+      alert("تم حفظ البيانات بنجاح");
+      navigate("/login");
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+      alert(
+        err.response?.data?.message ||
+          "حدث خطأ أثناء حفظ البيانات، برجاء المحاولة لاحقًا"
+      );
+    }
   };
 
   return (
@@ -100,6 +103,13 @@ function TherapistInfo() {
             </select>
           </div>
 
+<div className="inp">
+  <input
+    type="file"
+    accept=".pdf,.doc,.docx"
+    onChange={handleCv}
+  />
+</div>
           <button type="submit">حفظ البيانات</button>
         </form>
       </div>

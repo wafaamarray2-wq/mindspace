@@ -7,7 +7,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import TherapistInfo from "./TherapistInfo";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -95,6 +95,8 @@ function Login() {
         toast.success("تم تسجيل الدخول بنجاح");
 
         if (userRole === "therapist") {
+
+       
           navigate("/doctor-dashboard");
         } else if (userRole === "user") {
           navigate("/patient-dashboard");

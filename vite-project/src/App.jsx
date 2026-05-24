@@ -36,6 +36,7 @@ import PatientGroups from "./Dashbords/Groups/Patientgroups";
 import TherapistGroups from "./Dashbords/Groups/Therapistgroups";
 import TestPage from "./Dashbords/Tests/Testpage";
 import Verify from "./Registers/Verify";
+// import TherapistInfo from "./Registers/TherapistInfo";
 function App() {
   // const navigate = useNavigate();
 
@@ -143,6 +144,7 @@ function App() {
       <Route path="/forget-password" element={<ForgetPassword />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
      <Route path="/Verify" element={<Verify />} />
+     {/* <Route path="/TherapistInfo" element={<TherapistInfo />} /> */}
       <Route path="*" element={<h1>Page Not Found</h1>} />
     </Routes>
   );

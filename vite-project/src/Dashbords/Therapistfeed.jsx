@@ -635,21 +635,21 @@ export default function TherapistFeed() {
     let postsSet = posts;
     let setterFunc = setPosts;
 
-    if (!posts.find((p) => p.id === id)) {
-      if (archivedPosts.find((p) => p.id === id)) {
+    if (!posts.find((p) => p._id === id)) {
+      if (archivedPosts.find((p) =>p._id === id)) {
         postsSet = archivedPosts;
         setterFunc = setArchivedPosts;
-      } else if (trashedPosts.find((p) => p.id === id)) {
+      } else if (trashedPosts.find((p) =>p._id === id)) {
         postsSet = trashedPosts;
         setterFunc = setTrashedPosts;
       }
     }
 
-    const post = postsSet.find((p) => p.id === id);
+    const post = postsSet.find((p) => p._id === id);
 
     if (post?.showComments) {
       setterFunc((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, showComments: false } : p))
+        prev.map((p) => (p._id === id ? { ...p, showComments: false } : p))
       );
       return;
     }
@@ -658,7 +658,7 @@ export default function TherapistFeed() {
 
     setterFunc((prev) =>
       prev.map((p) =>
-        p.id === id
+        p._id === id
           ? { ...p, showComments: true, comments, commentsCount: comments.length }
           : p
       )
@@ -680,26 +680,26 @@ export default function TherapistFeed() {
         const comments = await fetchComments(id);
 
         // Update in whichever list it's in
-        if (posts.find((p) => p.id === id)) {
+        if (posts.find((p) => p._id === id)) {
           setPosts((prev) =>
             prev.map((p) =>
-              p.id === id
+             p._id === id
                 ? { ...p, showComments: true, comments, commentsCount: comments.length }
                 : p
             )
           );
-        } else if (archivedPosts.find((p) => p.id === id)) {
+        } else if (archivedPosts.find((p) => p._id === id)) {
           setArchivedPosts((prev) =>
             prev.map((p) =>
-              p.id === id
+              p._id === id
                 ? { ...p, showComments: true, comments, commentsCount: comments.length }
                 : p
             )
           );
-        } else if (trashedPosts.find((p) => p.id === id)) {
+        } else if (trashedPosts.find((p) =>p._id === id)) {
           setTrashedPosts((prev) =>
             prev.map((p) =>
-              p.id === id
+              p._id === id
                 ? { ...p, showComments: true, comments, commentsCount: comments.length }
                 : p
             )
@@ -724,7 +724,8 @@ export default function TherapistFeed() {
           "Content-Type": "multipart/form-data",
         },
       });
-
+     console.log(res.data.data)
+     console.log("res.data.data")
       if (res.data?.data) {
         const newPost = formatArticle(res.data.data);
         setPosts((prev) => [newPost, ...prev]);
@@ -738,7 +739,7 @@ export default function TherapistFeed() {
 
   /* ─── Edit Post ─── */
   const handleEditPost = (postId) => {
-    const post = posts.find((p) => p.id === postId);
+    const post = posts.find((p) => p._id === postId);
     if (post) {
       setEditingPost(post);
       setModalOpen(true);
@@ -770,7 +771,7 @@ export default function TherapistFeed() {
       if (res.data?.data) {
         const updatedPost = formatArticle(res.data.data);
         setPosts((prev) =>
-          prev.map((p) => (p.id === postId ? updatedPost : p))
+          prev.map((p) => (p._id === postId ? updatedPost : p))
         );
         alert("Post updated successfully!");
       }
@@ -792,10 +793,10 @@ export default function TherapistFeed() {
       );
 
       if (res.data?.data || res.status === 200) {
-        const post = posts.find((p) => p.id === postId);
+        const post = posts.find((p) => p._id === postId);
         if (post) {
           setArchivedPosts((prev) => [{ ...post, isArchived: true }, ...prev]);
-          setPosts((prev) => prev.filter((p) => p.id !== postId));
+          setPosts((prev) => prev.filter((p) => p._id !== postId));
           alert("Post archived!");
         }
       }
@@ -815,10 +816,10 @@ export default function TherapistFeed() {
       );
 
       if (res.data?.data || res.status === 200) {
-        const post = archivedPosts.find((p) => p.id === postId);
+        const post = archivedPosts.find((p) => p._id === postId);
         if (post) {
           setPosts((prev) => [{ ...post, isArchived: false }, ...prev]);
-          setArchivedPosts((prev) => prev.filter((p) => p.id !== postId));
+          setArchivedPosts((prev) => prev.filter((p) =>p._id !== postId));
           alert("Post restored!");
         }
       }
@@ -837,13 +838,13 @@ export default function TherapistFeed() {
       );
 
       if (res.status === 200 || res.status === 204) {
-        const post = posts.find((p) => p.id === postId) || 
-                     archivedPosts.find((p) => p.id === postId);
+        const post = posts.find((p) => p._id === postId) || 
+                     archivedPosts.find((p) => p._id === postId);
         
         if (post) {
           setTrashedPosts((prev) => [{ ...post, isDeleted: true }, ...prev]);
-          setPosts((prev) => prev.filter((p) => p.id !== postId));
-          setArchivedPosts((prev) => prev.filter((p) => p.id !== postId));
+          setPosts((prev) => prev.filter((p) => p._id !== postId));
+          setArchivedPosts((prev) => prev.filter((p) => p._id !== postId));
           alert("Post moved to trash!");
         }
       }
@@ -862,10 +863,10 @@ export default function TherapistFeed() {
       );
 
       if (res.status === 200 || res.status === 204) {
-        const post = trashedPosts.find((p) => p.id === postId);
+        const post = trashedPosts.find((p) =>p._id === postId);
         if (post) {
           setPosts((prev) => [{ ...post, isDeleted: false }, ...prev]);
-          setTrashedPosts((prev) => prev.filter((p) => p.id !== postId));
+          setTrashedPosts((prev) => prev.filter((p) =>p._id !== postId));
           alert("Post restored from trash!");
         }
       }
@@ -886,7 +887,7 @@ export default function TherapistFeed() {
         );
 
         if (res.status === 200 || res.status === 204) {
-          setTrashedPosts((prev) => prev.filter((p) => p.id !== postId));
+          setTrashedPosts((prev) => prev.filter((p) => p._id !== postId));
           alert("Post permanently deleted!");
         }
       } catch (err) {
