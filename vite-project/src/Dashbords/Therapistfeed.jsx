@@ -149,6 +149,7 @@ function PostMenu({ postId, isArchived, onEdit, onArchive, onRestore, onDelete }
         className="post-menu-btn"
         onClick={() => setShowMenu(!showMenu)}
         title="More options"
+        aria-label="More options"
       >
         <FiMoreHorizontal />
       </button>
@@ -317,6 +318,7 @@ function PostCard({
                 className="comment-submit-btn"
                 onClick={submit}
                 disabled={!draft.trim()}
+                aria-label="Send comment"
               >
                 <FiSend />
               </button>
@@ -380,7 +382,7 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>{editingPost && !isNew ? "Edit post" : "Share a post"}</h3>
-          <button className="modal-close" onClick={onClose}>
+          <button className="modal-close" onClick={onClose} aria-label="Close modal">
             <FiX />
           </button>
         </div>
@@ -414,6 +416,7 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
                 setImg(null);
                 setPreview(null);
               }}
+              aria-label="Remove image"
             >
               <FiX />
             </button>
@@ -426,13 +429,14 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
               className="modal-tool-btn"
               title="Add photo"
               onClick={() => fileRef.current.click()}
+              aria-label="Add photo"
             >
               <FiImage />
             </button>
-            <button className="modal-tool-btn" title="Add emoji">
+            <button className="modal-tool-btn" title="Add emoji" aria-label="Add emoji">
               <FiSmile />
             </button>
-            <button className="modal-tool-btn" title="Add link">
+            <button className="modal-tool-btn" title="Add link" aria-label="Add link">
               <FiLink />
             </button>
           </div>
@@ -518,17 +522,12 @@ export default function TherapistFeed() {
 
       articles.forEach((article) => {
         const formatted = formatArticle(article);
-        
-        // Check for deleted flag FIRST
+
         if (article.isDeleted === true) {
           trashed.push(formatted);
-        }
-        // Then check for archived
-        else if (article.isArchived === true) {
+        } else if (article.isArchived === true) {
           archived.push(formatted);
-        }
-        // Otherwise it's active
-        else {
+        } else {
           active.push(formatted);
         }
       });
@@ -550,7 +549,6 @@ export default function TherapistFeed() {
     }
   };
 
-  // Fetch on component mount
   useEffect(() => {
     fetchAndSeparatePosts();
   }, []);
@@ -575,7 +573,6 @@ export default function TherapistFeed() {
 
   /* ─── Handle Like ─── */
   const handleLike = async (id) => {
-    // Find which list contains this post
     let postsSet = posts;
     let setterFunc = setPosts;
 
@@ -636,10 +633,10 @@ export default function TherapistFeed() {
     let setterFunc = setPosts;
 
     if (!posts.find((p) => p._id === id)) {
-      if (archivedPosts.find((p) =>p._id === id)) {
+      if (archivedPosts.find((p) => p._id === id)) {
         postsSet = archivedPosts;
         setterFunc = setArchivedPosts;
-      } else if (trashedPosts.find((p) =>p._id === id)) {
+      } else if (trashedPosts.find((p) => p._id === id)) {
         postsSet = trashedPosts;
         setterFunc = setTrashedPosts;
       }
@@ -679,11 +676,10 @@ export default function TherapistFeed() {
       setTimeout(async () => {
         const comments = await fetchComments(id);
 
-        // Update in whichever list it's in
         if (posts.find((p) => p._id === id)) {
           setPosts((prev) =>
             prev.map((p) =>
-             p._id === id
+              p._id === id
                 ? { ...p, showComments: true, comments, commentsCount: comments.length }
                 : p
             )
@@ -696,7 +692,7 @@ export default function TherapistFeed() {
                 : p
             )
           );
-        } else if (trashedPosts.find((p) =>p._id === id)) {
+        } else if (trashedPosts.find((p) => p._id === id)) {
           setTrashedPosts((prev) =>
             prev.map((p) =>
               p._id === id
@@ -724,8 +720,7 @@ export default function TherapistFeed() {
           "Content-Type": "multipart/form-data",
         },
       });
-     console.log(res.data.data)
-     console.log("res.data.data")
+
       if (res.data?.data) {
         const newPost = formatArticle(res.data.data);
         setPosts((prev) => [newPost, ...prev]);
@@ -819,7 +814,7 @@ export default function TherapistFeed() {
         const post = archivedPosts.find((p) => p._id === postId);
         if (post) {
           setPosts((prev) => [{ ...post, isArchived: false }, ...prev]);
-          setArchivedPosts((prev) => prev.filter((p) =>p._id !== postId));
+          setArchivedPosts((prev) => prev.filter((p) => p._id !== postId));
           alert("Post restored!");
         }
       }
@@ -829,7 +824,7 @@ export default function TherapistFeed() {
     }
   };
 
-  /* ─── Delete Post (Move to Trash) ─── */
+  /* ─── Delete Post ─── */
   const handleDeletePost = async (postId) => {
     try {
       const res = await axios.delete(
@@ -854,7 +849,7 @@ export default function TherapistFeed() {
     }
   };
 
-  /* ─── Undo (Restore from Trash) ─── */
+  /* ─── Undo Post ─── */
   const handleUndoPost = async (postId) => {
     try {
       const res = await axios.delete(
@@ -863,10 +858,10 @@ export default function TherapistFeed() {
       );
 
       if (res.status === 200 || res.status === 204) {
-        const post = trashedPosts.find((p) =>p._id === postId);
+        const post = trashedPosts.find((p) => p._id === postId);
         if (post) {
           setPosts((prev) => [{ ...post, isDeleted: false }, ...prev]);
-          setTrashedPosts((prev) => prev.filter((p) =>p._id !== postId));
+          setTrashedPosts((prev) => prev.filter((p) => p._id !== postId));
           alert("Post restored from trash!");
         }
       }
@@ -876,11 +871,10 @@ export default function TherapistFeed() {
     }
   };
 
-  /* ─── Permanently Delete from Trash ─── */
+  /* ─── Permanent Delete ─── */
   const handlePermanentDelete = async (postId) => {
     if (window.confirm("Are you sure? This cannot be undone.")) {
       try {
-        // Using undo endpoint to permanently delete
         const res = await axios.delete(
           `${BASE_URL}/article/${postId}`,
           { headers: authHeader() }
@@ -913,15 +907,9 @@ export default function TherapistFeed() {
         >
           <FiArchive size={18} /> Archives ({archivedPosts.length})
         </button>
-        <button
-          className={`tab-btn ${currentTab === "trash" ? "active" : ""}`}
-          onClick={() => setCurrentTab("trash")}
-        >
-          <FiTrash2 size={18} /> Trash ({trashedPosts.length})
-        </button>
       </div>
 
-      {/* ─── CREATE CARD (only in feed tab) ─── */}
+      {/* ─── CREATE CARD ─── */}
       {currentTab === "feed" && (
         <div className="create-card">
           <div className="create-top">
@@ -1014,18 +1002,37 @@ export default function TherapistFeed() {
         archivedPosts.length > 0 ? (
           <div className="posts-list">
             {archivedPosts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                onLike={() => handleLike(post.id)}
-                onAddComment={(id, text) => handleAddComment(id, text)}
-                onToggleComments={(id) => handleToggleComments(id)}
-                onEdit={() => {}}
-                onArchive={() => {}}
-                onRestore={() => handleRestorePost(post.id)}
-                onDelete={handleDeletePost}
-                showMenuOptions={false}
-              />
+              <div key={post.id} className="archive-post-item">
+                <PostCard
+                  post={post}
+                  onLike={() => handleLike(post.id)}
+                  onAddComment={(id, text) => handleAddComment(id, text)}
+                  onToggleComments={(id) => handleToggleComments(id)}
+                  onEdit={() => {}}
+                  onArchive={() => {}}
+                  onRestore={() => handleRestorePost(post.id)}
+                  onDelete={handleDeletePost}
+                  showMenuOptions={false}
+                />
+
+                <div className="archive-post-actions">
+                  <button
+                    className="archive-restore-btn"
+                    onClick={() => handleRestorePost(post.id)}
+                    title="Restore post"
+                  >
+                    <FiRotateCcw /> Restore
+                  </button>
+
+                  <button
+                    className="archive-delete-btn"
+                    onClick={() => handleDeletePost(post.id)}
+                    title="Move to trash"
+                  >
+                    <FiTrash2 /> Delete
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         ) : (
@@ -1035,53 +1042,7 @@ export default function TherapistFeed() {
             <p>Posts you archive will appear here</p>
           </div>
         )
-      ) : (
-        <div className="trash-section">
-          {trashedPosts.length > 0 ? (
-            <div className="posts-list">
-              {trashedPosts.map((post) => (
-                <div key={post.id} className="trash-post-item">
-                  <div className="trash-post-content">
-                    <PostCard
-                      post={post}
-                      onLike={() => handleLike(post.id)}
-                      onAddComment={(id, text) => handleAddComment(id, text)}
-                      onToggleComments={(id) => handleToggleComments(id)}
-                      onEdit={() => {}}
-                      onArchive={() => {}}
-                      onRestore={() => {}}
-                      onDelete={() => {}}
-                      showMenuOptions={false}
-                    />
-                  </div>
-                  <div className="trash-post-actions">
-                    <button
-                      className="trash-restore-btn"
-                      onClick={() => handleUndoPost(post.id)}
-                      title="Restore from trash"
-                    >
-                      <FiRotateCcw /> Restore
-                    </button>
-                    <button
-                      className="trash-delete-btn"
-                      onClick={() => handlePermanentDelete(post.id)}
-                      title="Permanently delete"
-                    >
-                      <FiTrash2 /> Delete Forever
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="empty-state">
-              <div className="empty-icon">🗑️</div>
-              <h3>Trash is empty</h3>
-              <p>Deleted posts will appear here</p>
-            </div>
-          )}
-        </div>
-      )}
+      ) : null}
 
       {/* ─── Modal ─── */}
       <CreateModal

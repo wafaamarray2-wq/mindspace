@@ -27,7 +27,7 @@ function Login() {
 
       const loginRes = await axios.post(
         "https://mind-space-ov3r.onrender.com/auth/login",
-        { email, password }
+        { email, password },
       );
 
       console.log("Login Response:", loginRes.data);
@@ -45,11 +45,14 @@ function Login() {
         try {
           await axios.post(
             "https://mind-space-ov3r.onrender.com/auth/send-otp",
-            { email }
+            { email },
           );
           toast.success("تم إرسال كود التفعيل على بريدك الإلكتروني");
         } catch (otpErr) {
-          console.log("OTP send error:", otpErr.response?.data || otpErr.message);
+          console.log(
+            "OTP send error:",
+            otpErr.response?.data || otpErr.message,
+          );
           toast.error("حدث خطأ في إرسال الكود");
         }
 
@@ -76,14 +79,16 @@ function Login() {
             headers: {
               Authorization: `dash ${token}`,
             },
-          }
+          },
         );
 
+        // const adminEmail = "yazied@gmail.com";
         console.log("Profile Response:", profileRes.data);
 
         const userData = profileRes.data;
         const userRole = userData?.data.role;
         const userName = userData?.data.userName;
+        // const userEmail = userData?.data.email;
 
         if (userRole) {
           localStorage.setItem("role", userRole);
@@ -94,9 +99,10 @@ function Login() {
 
         toast.success("تم تسجيل الدخول بنجاح");
 
-        if (userRole === "therapist") {
-
-       
+        if (userRole === "admin") {
+          navigate("/admin-dashboard");
+        }
+     else  if (userRole === "therapist") {
           navigate("/doctor-dashboard");
         } else if (userRole === "user") {
           navigate("/patient-dashboard");
@@ -124,11 +130,14 @@ function Login() {
         try {
           await axios.post(
             "https://mind-space-ov3r.onrender.com/auth/send-otp",
-            { email }
+            { email },
           );
           toast.success("تم إرسال كود التفعيل على بريدك الإلكتروني");
         } catch (otpErr) {
-          console.log("OTP send error:", otpErr.response?.data || otpErr.message);
+          console.log(
+            "OTP send error:",
+            otpErr.response?.data || otpErr.message,
+          );
         }
 
         navigate("/Verify", { state: { email } });

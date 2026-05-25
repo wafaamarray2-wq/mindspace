@@ -19,6 +19,7 @@ import {
 } from "react-icons/fi";
 import axios from "axios";
 import "./AdminDashboard.css";
+import AdminGroupsPanel from "./Groups/Admingroups";
 
 const BASE_URL = "https://mind-space-ov3r.onrender.com";
 
@@ -586,6 +587,7 @@ const TABS = [
   { id: "cvs", label: "CVs", icon: <FiClipboard /> },
   { id: "reports", label: "Reports", icon: <FiAlertCircle /> },
   { id: "questions", label: "Questions", icon: <FiHelpCircle /> },
+  { id: "groups", label: "groups", icon: <FiUsers /> },
 ];
 
 /* ─── MAIN COMPONENT ─── */
@@ -628,6 +630,7 @@ export default function AdminDashboard() {
           {activeTab === "cvs" && <CVsPanel />}
           {activeTab === "reports" && <ReportsPanel />}
           {activeTab === "questions" && <QuestionsPanel />}
+          {activeTab === "groups" && <AdminGroupsPanel />}
         </div>
       </main>
     </div>

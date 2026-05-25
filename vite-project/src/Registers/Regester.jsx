@@ -83,7 +83,7 @@ const handleSubmit = async (e) => {
     return alert("برجاء إدخال عمر صحيح");
   }
 
-  const allowedRoles = ["user", "admin", "therapist", "guest"];
+  const allowedRoles = ["user", "admin", "therapist"] ;
 
   if (!allowedRoles.includes(role)) {
     return alert("الدور المختار غير صحيح");
