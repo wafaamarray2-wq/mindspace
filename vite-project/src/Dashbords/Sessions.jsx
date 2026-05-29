@@ -1,21 +1,46 @@
-import "./session.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./session.css";
 
 export default function Sessions() {
   const navigate = useNavigate();
 
-  const sessions = [
-    { id: 1, patient: "Ali", date: "2024-02-10", status: "Completed", notes: "Routine check" },
-    { id: 2, patient: "Sara", date: "2024-02-12", status: "Pending", notes: "Follow up" },
-    { id: 3, patient: "Ahmed", date: "2024-02-15", status: "Cancelled", notes: "Missed appointment" },
-    { id: 1, patient: "Ali", date: "2024-02-10", status: "Completed", notes: "Routine check" },
-    { id: 2, patient: "Sara", date: "2024-02-12", status: "Pending", notes: "Follow up" },
-    { id: 3, patient: "Ahmed", date: "2024-02-15", status: "Cancelled", notes: "Missed appointment" },
-  ];
+  const [sessions, setSessions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("https://mind-space-ov3r.onrender.com/session/therapist", {
+          headers: { Authorization: `dash ${token}` }
+        });
+        const data = res.data?.data || res.data;
+        
+        // Map backend format to component needs
+        const mappedSessions = data.map(session => ({
+          id: session._id,
+          patient: session.patientId?.userName || "Unknown",
+          date: session.sessionTime || "N/A",
+          status: session.status || "Pending",
+          notes: session.notes || "No notes"
+        }));
+        
+        setSessions(mappedSessions);
+      } catch (err) {
+        console.error("Error fetching sessions:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchSessions();
+  }, []);
 
   const stats = {
     total: sessions.length,
-    completed: sessions.filter(s => s.status === "Completed").length,
+    completed: sessions.filter(s => s.status === "Confirmed" || s.status === "Completed").length,
     pending: sessions.filter(s => s.status === "Pending").length,
   };
 

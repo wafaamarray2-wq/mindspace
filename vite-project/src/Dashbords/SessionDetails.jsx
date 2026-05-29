@@ -1,28 +1,135 @@
 import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 import "./sessiondetails.css";
 
 export default function SessionDetails() {
   const { id } = useParams();
+  const [loading, setLoading] = useState(false);
+  const [delayLoading, setDelayLoading] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [showDelayInput, setShowDelayInput] = useState(false);
+  const [newTime, setNewTime] = useState("");
 
-  const sessions = [
-    {
-      id: "1",
-      patient: "Ali",
-      date: "2024-02-10",
-      status: "Completed",
-      notes: "Routine check, everything normal. Patient shows good progress and stable condition.",
-    },
-    {
-      id: "2",
-      patient: "Sara",
-      date: "2024-02-12",
-      status: "Pending",
-      notes: "Needs follow-up visit. Recommend additional assessment for progress evaluation.",
-    },
-  ];
+  const [session, setSession] = useState(null);
+  const [fetchLoading, setFetchLoading] = useState(true);
 
-  const session = sessions.find((s) => s.id === id);
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`https://mind-space-ov3r.onrender.com/session/${id}`, {
+          headers: { Authorization: `dash ${token}` }
+        });
+        const data = res.data?.data || res.data;
+        
+        setSession({
+          id: data._id,
+          patient: data.patientId?.userName || "Unknown",
+          date: data.sessionTime || "N/A",
+          status: data.status || "Pending",
+          notes: data.notes || "No notes available."
+        });
+      } catch (err) {
+        console.error("Error fetching session details:", err);
+      } finally {
+        setFetchLoading(false);
+      }
+    };
 
+    fetchSession();
+  }, [id]);
+
+  const handleConfirm = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.patch(
+        `https://mind-space-ov3r.onrender.com/session/confirm/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `dash ${token}`,
+          },
+        }
+      );
+      toast.success("🎉 تم تأكيد الجلسة بنجاح!");
+      console.log("Confirm response:", response.data);
+    } catch (err) {
+      console.error("Confirm error:", err);
+      const errorMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "حدث خطأ أثناء تأكيد الجلسة.";
+      toast.error(`❌ ${errorMsg}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelay = async () => {
+    if (!newTime) {
+      toast.warning("⚠️ الرجاء اختيار موعد جديد");
+      return;
+    }
+    setDelayLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const isoTime = new Date(newTime).toISOString();
+
+      const response = await axios.patch(
+        `https://mind-space-ov3r.onrender.com/session/delay/${id}`,
+        { newTime: isoTime },
+        {
+          headers: {
+            Authorization: `dash ${token}`,
+          },
+        }
+      );
+      toast.success("⏳ تم تأجيل الجلسة بنجاح!");
+      console.log("Delay response:", response.data);
+      setShowDelayInput(false);
+    } catch (err) {
+      console.error("Delay error:", err);
+      const errorMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "حدث خطأ أثناء تأجيل الجلسة.";
+      toast.error(`❌ ${errorMsg}`);
+    } finally {
+      setDelayLoading(false);
+    }
+  };
+
+  const handleCancel = async () => {
+    setCancelLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.patch(
+        `https://mind-space-ov3r.onrender.com/session/cancel/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `dash ${token}`,
+          },
+        }
+      );
+      toast.success("🚫 تم إلغاء الجلسة بنجاح!");
+      console.log("Cancel response:", response.data);
+    } catch (err) {
+      console.error("Cancel error:", err);
+      const errorMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "حدث خطأ أثناء إلغاء الجلسة.";
+      toast.error(`❌ ${errorMsg}`);
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
+  if (fetchLoading) return <h2 className="not-found">Loading Session...</h2>;
   if (!session) return <h2 className="not-found">Session Not Found</h2>;
 
   return (
@@ -73,6 +180,84 @@ export default function SessionDetails() {
           <h4>Doctor Notes</h4>
           <p>{session.notes}</p>
         </div>
+
+        <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
+          <button 
+            className="confirm-btn" 
+            onClick={handleConfirm}
+            disabled={loading || delayLoading}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "#28a745",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: loading || delayLoading || cancelLoading ? "not-allowed" : "pointer",
+              fontSize: "16px"
+            }}
+          >
+            {loading ? "جاري التأكيد..." : "تأكيد الجلسة"}
+          </button>
+
+          <button 
+            className="delay-btn" 
+            onClick={() => setShowDelayInput(!showDelayInput)}
+            disabled={loading || delayLoading || cancelLoading}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "#ffc107",
+              color: "#333",
+              border: "none",
+              borderRadius: "5px",
+              cursor: loading || delayLoading || cancelLoading ? "not-allowed" : "pointer",
+              fontSize: "16px"
+            }}
+          >
+            تأجيل الجلسة
+          </button>
+
+          <button 
+            className="cancel-btn" 
+            onClick={handleCancel}
+            disabled={loading || delayLoading || cancelLoading}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "#dc3545",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: loading || delayLoading || cancelLoading ? "not-allowed" : "pointer",
+              fontSize: "16px"
+            }}
+          >
+            {cancelLoading ? "جاري الإلغاء..." : "إلغاء الجلسة"}
+          </button>
+        </div>
+
+        {showDelayInput && (
+          <div style={{ marginTop: "15px", display: "flex", gap: "10px", alignItems: "center" }}>
+            <input 
+              type="datetime-local" 
+              value={newTime}
+              onChange={(e) => setNewTime(e.target.value)}
+              style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+            />
+            <button 
+              onClick={handleDelay}
+              disabled={delayLoading}
+              style={{
+                padding: "8px 15px",
+                backgroundColor: "#007bff",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: delayLoading ? "not-allowed" : "pointer"
+              }}
+            >
+              {delayLoading ? "جاري التأجيل..." : "حفظ الموعد الجديد"}
+            </button>
+          </div>
+        )}
 
       </div>
     </div>
