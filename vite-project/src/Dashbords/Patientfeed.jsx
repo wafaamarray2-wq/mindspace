@@ -214,10 +214,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, userImage, use
           <span>Comment</span>
         </button>
 
-        <button className="action-btn">
-          <FiBookmark className="icon" />
-          <span>Save</span>
-        </button>
+      
       </div>
 
       {/* Comments Section */}

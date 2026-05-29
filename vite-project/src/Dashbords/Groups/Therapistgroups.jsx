@@ -96,24 +96,40 @@ export default function TherapistGroups() {
   const [error, setError]     = useState("");
   const myId = getMyId();
 
-  const fetchGroups = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(`${BASE_URL}/group`, { headers: authHeader() });
-      setGroups(res.data?.data || res.data || []);
-    } catch {
-      setError("تعذر تحميل الجروبات");
-    } finally {
-      setLoading(false);
-    }
-  };
+   const fetchGroups = async () => {
+  setLoading(true);
+
+  try {
+    const res = await axios.get(`${BASE_URL}/group/get-groups`, {
+      headers: authHeader(),
+    });
+
+    console.log("GET GROUPS RESPONSE:", res.data);
+
+    const data = res.data;
+
+    setGroups(
+      data?.result ||
+      data?.data ||
+      data ||
+      []
+    );
+  } catch (e) {
+    console.log(e.response?.data || e.message);
+    setError("تعذر تحميل الجروبات");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => { fetchGroups(); }, []);
 
   /* Join */
   const handleJoin = async (groupId) => {
     try {
-      await axios.post(`${BASE_URL}/group/join/${groupId}`, {}, { headers: authHeader() });
+    const res =  await axios.post(`${BASE_URL}/group/join/${groupId}`, {}, { headers: authHeader() });
+    console.log("JOIN RESPONSE:", res.data);
       setGroups((prev) =>
         prev.map((g) =>
           g._id === groupId

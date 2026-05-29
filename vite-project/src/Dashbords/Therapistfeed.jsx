@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+ import { useState, useRef, useEffect } from "react";
 import {
-  FiImage,
+ FiImage,
   FiSmile,
   FiLink,
   FiSend,
@@ -57,7 +57,10 @@ function formatTime(date) {
   const diffInDays = Math.floor(diffInHours / 24);
   if (diffInDays === 1) return "Yesterday";
   if (diffInDays < 7) return `${diffInDays}d ago`;
-  return postDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return postDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 }
 
 /* ─── Avatar Component ─── */
@@ -96,7 +99,10 @@ function UserAvatar({ size = 44 }) {
 }
 
 /* ─── Comment Item ─── */
-function CommentItem({ comment }) {
+function CommentItem({ comment, onDelete }) {
+  const currentUserId = getUserIdFromToken();
+  const canDelete = comment.userId === currentUserId;
+
   return (
     <div className="comment-item">
       <div className="comment-avatar">
@@ -111,14 +117,40 @@ function CommentItem({ comment }) {
           <div className="comment-author">{comment.author}</div>
           <div className="comment-text">{comment.text}</div>
         </div>
-        <div className="comment-time">{comment.time}</div>
+        <div className="comment-time" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {comment.time}
+          {canDelete && onDelete && (
+            <button
+              onClick={() => onDelete(comment.id)}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "#e57373",
+                padding: 0,
+                display: "flex",
+                alignItems: "center",
+              }}
+              title="Delete comment"
+            >
+              <FiTrash2 size={13} />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 /* ─── Post Menu ─── */
-function PostMenu({ postId, isArchived, onEdit, onArchive, onRestore, onDelete }) {
+function PostMenu({
+  postId,
+  isArchived,
+  onEdit,
+  onArchive,
+  onRestore,
+  onDelete,
+}) {
   const [showMenu, setShowMenu] = useState(false);
 
   const handleEdit = () => {
@@ -189,10 +221,14 @@ function PostCard({
   onArchive,
   onRestore,
   onDelete,
+  onDeleteComment,
   showMenuOptions = true,
 }) {
   const { user } = useDashUser();
   const [draft, setDraft] = useState("");
+  const currentUserId = getUserIdFromToken();
+
+  const isMyPost = post.publisherId === currentUserId;
 
   const submit = () => {
     if (!draft.trim()) return;
@@ -202,27 +238,52 @@ function PostCard({
 
   return (
     <article className="post-card">
+
       {/* Header */}
       <div className="post-header">
-        <UserAvatar size={48} />
-        <div className="post-header-meta">
-          <div className="post-author-name">
-            Dr. {user?.userName || "Therapist"}
-            <span className="therapist-badge">Verified</span>
+
+        {/* left group: avatar + name */}
+        <div className="post-author">
+          <div className="post-avatar">
+            {post.image ? (
+              <img
+                src={post.image}
+                alt={post.userNamee}
+                className="avatar-img"
+              />
+            ) : (
+              <Avatar
+                initials={post.userNamee?.charAt(0)?.toUpperCase()}
+                size={48}
+              />
+            )}
           </div>
-          <div className="post-role">{user?.role || "Mental Health Professional"}</div>
-          <div className="post-time">{post.time}</div>
+
+          <div className="post-header-meta">
+            <div className="post-author-name">
+              Dr. {post?.userNamee || "Therapist"}
+            </div>
+
+            <div className="post-sub-meta" style={{ display: "flex", flexDirection: "column" }}>
+              <span className="post-role">
+                {user?.role || "Mental Health Professional"}
+              </span>
+              <span className="post-time">{post.time}</span>
+            </div>
+          </div>
+
+          {showMenuOptions && isMyPost && (
+            <PostMenu
+              postId={post.id}
+              isArchived={post.isArchived}
+              onEdit={onEdit}
+              onArchive={onArchive}
+              onRestore={onRestore}
+              onDelete={onDelete}
+            />
+          )}
         </div>
-        {showMenuOptions && (
-          <PostMenu
-            postId={post.id}
-            isArchived={post.isArchived}
-            onEdit={onEdit}
-            onArchive={onArchive}
-            onRestore={onRestore}
-            onDelete={onDelete}
-          />
-        )}
+
       </div>
 
       {/* Content */}
@@ -251,7 +312,9 @@ function PostCard({
           onClick={() => onToggleComments(post.id)}
         >
           <FiMessageCircle className="stat-icon" />
-          <span className="stat-number">{post.commentsCount ?? post.comments.length}</span>
+          <span className="stat-number">
+            {post.commentsCount ?? post.comments.length}
+          </span>
           <span className="stat-label">comments</span>
         </button>
       </div>
@@ -278,11 +341,6 @@ function PostCard({
           <FiMessageCircle className="icon" />
           <span>Comment</span>
         </button>
-
-        <button className="action-btn">
-          <FiBookmark className="icon" />
-          <span>Save</span>
-        </button>
       </div>
 
       {/* Comments */}
@@ -291,7 +349,15 @@ function PostCard({
           <div className="comments-list">
             {post.comments.length > 0 ? (
               post.comments.map((c, i) => (
-                <CommentItem key={i} comment={c} />
+                <CommentItem
+                  key={i}
+                  comment={c}
+                  onDelete={
+                    onDeleteComment
+                      ? (commentId) => onDeleteComment(post.id, commentId)
+                      : undefined
+                  }
+                />
               ))
             ) : (
               <div className="no-comments">No comments yet. Be the first!</div>
@@ -331,7 +397,14 @@ function PostCard({
 }
 
 /* ─── Create Modal ─── */
-function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePost }) {
+function CreateModal({
+  open,
+  onClose,
+  onSubmit,
+  docName,
+  editingPost,
+  onUpdatePost,
+}) {
   const [text, setText] = useState("");
   const [img, setImg] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -382,7 +455,11 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>{editingPost && !isNew ? "Edit post" : "Share a post"}</h3>
-          <button className="modal-close" onClick={onClose} aria-label="Close modal">
+          <button
+            className="modal-close"
+            onClick={onClose}
+            aria-label="Close modal"
+          >
             <FiX />
           </button>
         </div>
@@ -390,7 +467,9 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
         <div className="modal-author">
           <UserAvatar size={42} />
           <div>
-            <div className="modal-author-name">Dr. {docName || "Therapist"}</div>
+            <div className="modal-author-name">
+              Dr. {docName || "Therapist"}
+            </div>
             <div className="modal-author-status">
               <FiGlobe style={{ verticalAlign: -2, marginRight: 4 }} />
               Public • Mental Health Professional
@@ -433,10 +512,18 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
             >
               <FiImage />
             </button>
-            <button className="modal-tool-btn" title="Add emoji" aria-label="Add emoji">
+            <button
+              className="modal-tool-btn"
+              title="Add emoji"
+              aria-label="Add emoji"
+            >
               <FiSmile />
             </button>
-            <button className="modal-tool-btn" title="Add link" aria-label="Add link">
+            <button
+              className="modal-tool-btn"
+              title="Add link"
+              aria-label="Add link"
+            >
               <FiLink />
             </button>
           </div>
@@ -465,15 +552,18 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
 /* ─── Format Helpers ─── */
 function formatComments(rawComments = []) {
   return rawComments.map((c) => ({
-    author: c.author?.userName || c.userId?.userName || c.user?.userName || "User",
+    id: c._id,
+    userId: c.user?._id || null,
+    author: c.user?.userName || c.author?.userName || c.userId?.userName || "User",
     text: c.content,
     time: c.createdAt ? formatTime(c.createdAt) : "Recently",
-    userImage: c.userId?.pfp?.secure_url || c.author?.pfp?.secure_url || c.user?.pfp?.secure_url || null,
+    userImage: c.user?.pfp?.secure_url || c.userId?.pfp?.secure_url || c.author?.pfp?.secure_url || null,
   }));
 }
 
 function formatArticle(article) {
   const userId = getUserIdFromToken();
+
   const liked = Array.isArray(article.likes)
     ? article.likes.some((l) => l === userId || l?._id === userId)
     : false;
@@ -492,6 +582,9 @@ function formatArticle(article) {
     isArchived: article.isArchived || false,
     isDeleted: article.isDeleted || false,
     time: formatTime(article.createdAt),
+    userNamee: article.publisher.userName,
+    image: article.publisher.pfp.secure_url,
+    publisherId: article.publisher._id,
   };
 }
 
@@ -561,7 +654,7 @@ export default function TherapistFeed() {
 
       const res = await axios.get(
         `${BASE_URL}/article/${articleId}/comment/${userId}`,
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
 
       return formatComments(res.data?.data || res.data || []);
@@ -595,19 +688,19 @@ export default function TherapistFeed() {
               likes: p.liked ? p.likes - 1 : p.likes + 1,
               likeLoading: true,
             }
-          : p
-      )
+          : p,
+      ),
     );
 
     try {
       await axios.patch(
         `${BASE_URL}/article/like-unlike/${id}`,
         {},
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
 
       setterFunc((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, likeLoading: false } : p))
+        prev.map((p) => (p.id === id ? { ...p, likeLoading: false } : p)),
       );
     } catch (err) {
       console.log("Error liking post:", err.response?.data || err);
@@ -621,8 +714,8 @@ export default function TherapistFeed() {
                 likes: p.liked ? p.likes - 1 : p.likes + 1,
                 likeLoading: false,
               }
-            : p
-        )
+            : p,
+        ),
       );
     }
   };
@@ -646,7 +739,7 @@ export default function TherapistFeed() {
 
     if (post?.showComments) {
       setterFunc((prev) =>
-        prev.map((p) => (p._id === id ? { ...p, showComments: false } : p))
+        prev.map((p) => (p._id === id ? { ...p, showComments: false } : p)),
       );
       return;
     }
@@ -656,9 +749,14 @@ export default function TherapistFeed() {
     setterFunc((prev) =>
       prev.map((p) =>
         p._id === id
-          ? { ...p, showComments: true, comments, commentsCount: comments.length }
-          : p
-      )
+          ? {
+              ...p,
+              showComments: true,
+              comments,
+              commentsCount: comments.length,
+            }
+          : p,
+      ),
     );
   };
 
@@ -670,7 +768,7 @@ export default function TherapistFeed() {
       await axios.post(
         `${BASE_URL}/article/${id}/comment/${userId}`,
         { content: text },
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
 
       setTimeout(async () => {
@@ -680,30 +778,73 @@ export default function TherapistFeed() {
           setPosts((prev) =>
             prev.map((p) =>
               p._id === id
-                ? { ...p, showComments: true, comments, commentsCount: comments.length }
-                : p
-            )
+                ? {
+                    ...p,
+                    showComments: true,
+                    comments,
+                    commentsCount: comments.length,
+                  }
+                : p,
+            ),
           );
         } else if (archivedPosts.find((p) => p._id === id)) {
           setArchivedPosts((prev) =>
             prev.map((p) =>
               p._id === id
-                ? { ...p, showComments: true, comments, commentsCount: comments.length }
-                : p
-            )
+                ? {
+                    ...p,
+                    showComments: true,
+                    comments,
+                    commentsCount: comments.length,
+                  }
+                : p,
+            ),
           );
         } else if (trashedPosts.find((p) => p._id === id)) {
           setTrashedPosts((prev) =>
             prev.map((p) =>
               p._id === id
-                ? { ...p, showComments: true, comments, commentsCount: comments.length }
-                : p
-            )
+                ? {
+                    ...p,
+                    showComments: true,
+                    comments,
+                    commentsCount: comments.length,
+                  }
+                : p,
+            ),
           );
         }
       }, 300);
     } catch (err) {
       console.log("Error adding comment:", err.response?.data || err);
+    }
+  };
+
+  /* ─── Delete Comment ─── */
+  const handleDeleteComment = async (articleId, commentId) => {
+    try {
+      await axios.delete(
+        `${BASE_URL}/article/${articleId}/comment/${commentId}`,
+        { headers: authHeader() },
+      );
+
+      const removeComment = (prev) =>
+        prev.map((p) =>
+          p.id === articleId
+            ? {
+                ...p,
+                comments: p.comments.filter((c) => c.id !== commentId),
+                commentsCount: Math.max((p.commentsCount || 1) - 1, 0),
+              }
+            : p,
+        );
+
+      setPosts(removeComment);
+      setArchivedPosts(removeComment);
+      setTrashedPosts(removeComment);
+    } catch (err) {
+      console.log("Error deleting comment:", err.response?.data || err);
+      alert("Error deleting comment.");
     }
   };
 
@@ -758,7 +899,7 @@ export default function TherapistFeed() {
             ...authHeader(),
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       console.log("Update response:", res.data);
@@ -766,7 +907,7 @@ export default function TherapistFeed() {
       if (res.data?.data) {
         const updatedPost = formatArticle(res.data.data);
         setPosts((prev) =>
-          prev.map((p) => (p._id === postId ? updatedPost : p))
+          prev.map((p) => (p._id === postId ? updatedPost : p)),
         );
         alert("Post updated successfully!");
       }
@@ -784,7 +925,7 @@ export default function TherapistFeed() {
       const res = await axios.patch(
         `${BASE_URL}/article/archive/${postId}`,
         {},
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
 
       if (res.data?.data || res.status === 200) {
@@ -807,7 +948,7 @@ export default function TherapistFeed() {
       const res = await axios.patch(
         `${BASE_URL}/article/restore/${postId}`,
         {},
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
 
       if (res.data?.data || res.status === 200) {
@@ -827,15 +968,15 @@ export default function TherapistFeed() {
   /* ─── Delete Post ─── */
   const handleDeletePost = async (postId) => {
     try {
-      const res = await axios.delete(
-        `${BASE_URL}/article/${postId}`,
-        { headers: authHeader() }
-      );
+      const res = await axios.delete(`${BASE_URL}/article/${postId}`, {
+        headers: authHeader(),
+      });
 
       if (res.status === 200 || res.status === 204) {
-        const post = posts.find((p) => p._id === postId) || 
-                     archivedPosts.find((p) => p._id === postId);
-        
+        const post =
+          posts.find((p) => p._id === postId) ||
+          archivedPosts.find((p) => p._id === postId);
+
         if (post) {
           setTrashedPosts((prev) => [{ ...post, isDeleted: true }, ...prev]);
           setPosts((prev) => prev.filter((p) => p._id !== postId));
@@ -852,10 +993,9 @@ export default function TherapistFeed() {
   /* ─── Undo Post ─── */
   const handleUndoPost = async (postId) => {
     try {
-      const res = await axios.delete(
-        `${BASE_URL}/article/undo/${postId}`,
-        { headers: authHeader() }
-      );
+      const res = await axios.delete(`${BASE_URL}/article/undo/${postId}`, {
+        headers: authHeader(),
+      });
 
       if (res.status === 200 || res.status === 204) {
         const post = trashedPosts.find((p) => p._id === postId);
@@ -875,10 +1015,9 @@ export default function TherapistFeed() {
   const handlePermanentDelete = async (postId) => {
     if (window.confirm("Are you sure? This cannot be undone.")) {
       try {
-        const res = await axios.delete(
-          `${BASE_URL}/article/${postId}`,
-          { headers: authHeader() }
-        );
+        const res = await axios.delete(`${BASE_URL}/article/${postId}`, {
+          headers: authHeader(),
+        });
 
         if (res.status === 200 || res.status === 204) {
           setTrashedPosts((prev) => prev.filter((p) => p._id !== postId));
@@ -979,6 +1118,7 @@ export default function TherapistFeed() {
                 onArchive={handleArchivePost}
                 onRestore={() => {}}
                 onDelete={handleDeletePost}
+                onDeleteComment={handleDeleteComment}
               />
             ))}
           </div>
@@ -986,7 +1126,9 @@ export default function TherapistFeed() {
           <div className="empty-state">
             <div className="empty-icon">📝</div>
             <h3>No posts yet</h3>
-            <p>Create your first post to connect with patients and share insights</p>
+            <p>
+              Create your first post to connect with patients and share insights
+            </p>
             <button
               className="empty-action-btn"
               onClick={() => {
@@ -1012,6 +1154,7 @@ export default function TherapistFeed() {
                   onArchive={() => {}}
                   onRestore={() => handleRestorePost(post.id)}
                   onDelete={handleDeletePost}
+                  onDeleteComment={handleDeleteComment}
                   showMenuOptions={false}
                 />
 

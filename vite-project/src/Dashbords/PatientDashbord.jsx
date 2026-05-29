@@ -1,36 +1,26 @@
 import { Outlet } from "react-router-dom";
-import Sic from "..//images/photo_2026-03-04_02-40-47.jpg";
 import { IoPerson } from "react-icons/io5";
 import { IoHome } from "react-icons/io5";
 import { MdSettings } from "react-icons/md";
 import { BiMessageSquareDots } from "react-icons/bi";
 import { MdLogout } from "react-icons/md";
-import { FiUsers, FiActivity } from "react-icons/fi";
+import { FiUsers } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import "./doc.css";
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-// import { useUser } from "../UserContext";
 import { toast } from "react-toastify";
 
 export default function PatientDashbord() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  // ── NEW UI state: mobile sidebar toggle ──
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const token = localStorage.getItem("token");
-
-  const authHeader = {
-    Authorization: `dash ${token}`,
-  };
 
   // ================= GET USER =================
   const fetchUserData = async () => {
@@ -43,7 +33,7 @@ export default function PatientDashbord() {
       }
       const res = await axios.get(
         "https://mind-space-ov3r.onrender.com/user/profile",
-        { headers: { Authorization: `dash ${token}` } },
+        { headers: { Authorization: `dash ${token}` } }
       );
 
       const userData = res.data.data;
@@ -63,7 +53,18 @@ export default function PatientDashbord() {
     fetchUserData();
   }, []);
 
-  // ================= UPLOAD IMAGE =================
+  // ================= CLOSE SIDEBAR ON RESIZE =================
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // ================= UPLOAD IMAGE =================
   const uploadImage = async (fileParam) => {
     const formData = new FormData();
@@ -75,7 +76,7 @@ export default function PatientDashbord() {
       const res = await axios.post(
         "https://mind-space-ov3r.onrender.com/user/profile-picture",
         formData,
-        { headers: { Authorization: `dash ${token}` } }, // ✓ بس كده
+        { headers: { Authorization: `dash ${token}` } }
       );
 
       const newPfp = res.data?.data?.pfp || res.data?.pfp;
@@ -96,7 +97,9 @@ export default function PatientDashbord() {
       if (err.response?.status === 401) {
         toast.error("❌ Session expired");
         navigate("/login");
-      } else toast.error("❌ Upload failed");
+      } else {
+        toast.error("❌ Upload failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -110,7 +113,7 @@ export default function PatientDashbord() {
       await axios.patch(
         "https://mind-space-ov3r.onrender.com/user/reset-profile-picture",
         {},
-        { headers: { Authorization: `dash ${token}` } }, // ✓ صح زي ما هو
+        { headers: { Authorization: `dash ${token}` } }
       );
       setUser((prev) => ({ ...prev, pfp: null }));
       setPreview(null);
@@ -120,7 +123,9 @@ export default function PatientDashbord() {
       if (err.response?.status === 401) {
         toast.error("❌ Session expired");
         navigate("/login");
-      } else toast.error("❌ Failed to remove photo");
+      } else {
+        toast.error("❌ Failed to remove photo");
+      }
     } finally {
       setLoading(false);
     }
@@ -136,7 +141,7 @@ export default function PatientDashbord() {
         { flag: "logoutFromAllDevices" },
         {
           headers: { Authorization: `dash ${token || ""}` },
-        },
+        }
       );
       toast.success("تم تسجيل الخروج بنجاح 👋");
     } catch (err) {
@@ -152,23 +157,31 @@ export default function PatientDashbord() {
     }, 1000);
   };
 
+  // ================= CLOSE SIDEBAR ON LINK CLICK =================
+  const handleNavLinkClick = () => {
+    if (window.innerWidth <= 768) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
     <div className="dashbord">
-      {/* ── MOBILE OVERLAY (closes sidebar on tap) ── */}
+      {/* ── MOBILE OVERLAY ── */}
       {sidebarOpen && (
         <div
-          className="sidebar-overlay"
+          className="sidebar-overlay active"
           onClick={() => setSidebarOpen(false)}
+          role="presentation"
         />
       )}
 
-      {/* ── TOP HEADER BAR ── */}
+      {/* ── HEADER ── */}
       <header className="dash-header">
-        {/* Hamburger for mobile */}
         <button
-          className="hamburger"
+          className={`hamburger${sidebarOpen ? " active" : ""}`}
           onClick={() => setSidebarOpen((v) => !v)}
           aria-label="Toggle sidebar"
+          aria-expanded={sidebarOpen}
         >
           <span />
           <span />
@@ -182,8 +195,7 @@ export default function PatientDashbord() {
 
         <div className="dash-header__right">
           <div className="dash-header__greeting">
-            Welcome back,&nbsp;
-            <strong>{user?.userName || "..."}</strong>
+            Welcome back,&nbsp;<strong>{user?.userName || "..."}</strong>
           </div>
           <div className="dash-header__avatar">
             {user?.pfp?.secure_url ? (
@@ -198,7 +210,7 @@ export default function PatientDashbord() {
       {/* ── MAIN LAYOUT ── */}
       <div className="dash-content">
         {/* ── SIDEBAR ── */}
-        <aside className={`sidebar${sidebarOpen ? " sidebar--open" : ""}`}>
+        <aside className={`sidebar${sidebarOpen ? " open" : ""}`}>
           {/* Profile block */}
           <div className="head">
             <div className="image-box">
@@ -213,13 +225,16 @@ export default function PatientDashbord() {
                     setPreview(URL.createObjectURL(file));
                     uploadImage(file);
                   }}
+                  accept="image/*"
                 />
 
                 {preview || user?.pfp?.secure_url ? (
-                  <img src={preview || user?.pfp?.secure_url} alt="profile" />
+                  <div className="image-box__img">
+                    <img src={preview || user?.pfp?.secure_url} alt="profile" />
+                  </div>
                 ) : (
                   <div className="empty-avatar">
-                    {user?.userName?.charAt(0)?.toUpperCase()}
+                    {user?.userName?.charAt(0)?.toUpperCase() || "U"}
                   </div>
                 )}
 
@@ -230,20 +245,22 @@ export default function PatientDashbord() {
               </label>
 
               {loading && (
-                <span className="loading">
+                <div className="loading">
                   <span />
                   <span />
                   <span />
-                </span>
+                </div>
               )}
             </div>
 
             <h3>{user?.userName || "Loading..."}</h3>
             <p className="role-badge">{user?.role || "User"}</p>
 
-            <button className="remove-photo-btn" onClick={resetImage}>
-              Remove Photo
-            </button>
+            {user?.pfp?.secure_url && (
+              <button className="remove-photo-btn" onClick={resetImage}>
+                Remove Photo
+              </button>
+            )}
           </div>
 
           {/* Divider */}
@@ -253,7 +270,7 @@ export default function PatientDashbord() {
           <nav>
             <ul>
               <li>
-                <Link to="/">
+                <Link to="/" onClick={handleNavLinkClick}>
                   <span>
                     <IoHome />
                   </span>
@@ -262,15 +279,16 @@ export default function PatientDashbord() {
               </li>
 
               <li>
-                <Link to="/PatientHome">
+                <Link to="/PatientHome" onClick={handleNavLinkClick}>
                   <span>
                     <IoHome />
                   </span>
                   <h5>PatientHome</h5>
                 </Link>
               </li>
+
               <li>
-                <Link to="profile">
+                <Link to="profile" onClick={handleNavLinkClick}>
                   <span>
                     <IoPerson />
                   </span>
@@ -279,7 +297,7 @@ export default function PatientDashbord() {
               </li>
 
               <li>
-                <Link to="/doctor">
+                <Link to="/doctor" onClick={handleNavLinkClick}>
                   <span>
                     <IoPerson />
                   </span>
@@ -288,7 +306,7 @@ export default function PatientDashbord() {
               </li>
 
               <li>
-                <Link to="message">
+                <Link to="message" onClick={handleNavLinkClick}>
                   <span>
                     <BiMessageSquareDots />
                   </span>
@@ -297,7 +315,7 @@ export default function PatientDashbord() {
               </li>
 
               <li>
-                <Link to="groups">
+                <Link to="groups" onClick={handleNavLinkClick}>
                   <span>
                     <FiUsers />
                   </span>
@@ -305,16 +323,8 @@ export default function PatientDashbord() {
                 </Link>
               </li>
 
-              {/* <li>
-                <Link to="test">
-                  <span>
-                    <FiActivity />
-                  </span>
-                  <h5>Stress Test</h5>
-                </Link>
-              </li> */}
               <li>
-                <Link to="setting">
+                <Link to="setting" onClick={handleNavLinkClick}>
                   <span>
                     <MdSettings />
                   </span>
@@ -324,7 +334,7 @@ export default function PatientDashbord() {
 
               {/* Logout */}
               <li className="log-out">
-                <button onClick={handleLogout}>
+                <button onClick={handleLogout} aria-label="Logout">
                   <span>
                     <MdLogout />
                   </span>

@@ -1,24 +1,177 @@
 /* ══════════════════════════════════════════════════════════════════════════════ */
-/* SIDEBAR - MENTAL HEALTH SUPPORT PLATFORM (احترافي و مهدئ) */
+/* DASHBOARD - MENTAL HEALTH SUPPORT PLATFORM */
 /* ══════════════════════════════════════════════════════════════════════════════ */
 
-/* ─── CSS Variables (نظام الألوان الدافئ والمهدئ) ─── */
+* {
+  box-sizing: border-box;
+}
+
+/* ─── CSS Variables ─── */
 :root {
-  --primary-color: #6366f1;        /* Indigo مهدئ */
-  --secondary-color: #8b5cf6;      /* Purple فاتح */
-  --accent-color: #ec4899;         /* Pink ناعم */
-  --success-color: #10b981;        /* Green للإيجابية */
-  --bg-light: #f9fafb;             /* خلفية فاتحة */
-  --bg-darker: #111827;            /* خلفية داكنة */
-  --text-dark: #1f2937;            /* نص داكن */
-  --text-light: #9ca3af;           /* نص فاتح */
-  --border-color: #e5e7eb;         /* حدود ناعمة */
+  --primary-color: #6366f1;
+  --secondary-color: #8b5cf6;
+  --accent-color: #ec4899;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --bg-light: #f9fafb;
+  --bg-darker: #111827;
+  --text-dark: #1f2937;
+  --text-light: #9ca3af;
+  --border-color: #e5e7eb;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 8px 20px rgba(99, 102, 241, 0.12);
   --shadow-lg: 0 20px 40px rgba(99, 102, 241, 0.15);
 }
 
-/* ─── SIDEBAR MAIN CONTAINER ─── */
+/* ═══════════════════════════════════════════════ */
+/* MAIN CONTAINER */
+/* ═══════════════════════════════════════════════ */
+
+.dashbord {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-light);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════════════════════════════════════ */
+/* HEADER */
+/* ═══════════════════════════════════════════════ */
+
+.dash-header {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f6ff 100%);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 101;
+  gap: 16px;
+}
+
+.dash-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--primary-color);
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+
+.dash-header__logo {
+  font-size: 24px;
+}
+
+.dash-header__name {
+  display: none;
+}
+
+.dash-header__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.dash-header__greeting {
+  font-size: 14px;
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+
+.dash-header__greeting strong {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.dash-header__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.dash-header__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ─── Hamburger Button ─── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  margin-right: 8px;
+  z-index: 102;
+  flex-shrink: 0;
+}
+
+.hamburger span {
+  width: 24px;
+  height: 2.5px;
+  background: var(--primary-color);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* ═══════════════════════════════════════════════ */
+/* MAIN CONTENT AREA */
+/* ═══════════════════════════════════════════════ */
+
+.dash-content {
+  display: flex;
+  flex: 1;
+  gap: 0;
+  overflow: hidden;
+}
+
+.details {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--bg-light);
+  padding: 24px;
+  min-height: calc(100vh - 60px);
+}
+
+/* ═══════════════════════════════════════════════ */
+/* SIDEBAR */
+/* ═══════════════════════════════════════════════ */
+
 .sidebar {
   width: 280px;
   background: linear-gradient(135deg, #ffffff 0%, #f8f6ff 100%);
@@ -29,9 +182,10 @@
   box-shadow: var(--shadow-md);
   position: relative;
   z-index: 100;
+  flex-shrink: 0;
 }
 
-/* ─── Scrollbar styling ─── */
+/* ─── Scrollbar ─── */
 .sidebar::-webkit-scrollbar {
   width: 6px;
 }
@@ -44,37 +198,37 @@
   background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
   border-radius: 10px;
   opacity: 0.5;
-  transition: opacity 0.3s;
 }
 
 .sidebar::-webkit-scrollbar-thumb:hover {
   opacity: 0.8;
 }
 
-/* ─── HEADER SECTION (الصورة والاسم) ─── */
+/* ─── Sidebar Head (Profile Section) ─── */
 .sidebar .head {
   padding: 0 20px 24px;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 24px;
   text-align: center;
-      display: flex;
-    flex-direction: column;
-    align-items: center;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* ─── Profile Image Box ─── */
+/* ─── Image Box ─── */
 .image-box {
   position: relative;
   margin-bottom: 16px;
-  cursor: pointer;
+  width: 100%;
 }
 
 .image-box label {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   margin: 0 auto;
   border-radius: 50%;
   overflow: hidden;
@@ -87,20 +241,32 @@
 .image-box label:hover {
   transform: scale(1.05);
   box-shadow: 0 12px 32px rgba(99, 102, 241, 0.4);
-  
 }
 
-.image-box img {
+.image-box input[type="file"] {
+  display: none;
+}
+
+.image-box__img {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.image-box__img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.15);
 }
 
 /* ─── Empty Avatar ─── */
 .empty-avatar {
-  width: 100%;
-  height: 100%;
+  width: 90px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,10 +274,10 @@
   color: white;
   font-size: 36px;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  border-radius: 50%;
 }
 
-/* ─── Camera Overlay ─── */
+/* ─── Image Overlay ─── */
 .image-box__overlay {
   position: absolute;
   top: 0;
@@ -127,13 +293,14 @@
   transition: opacity 0.3s ease;
   border-radius: 50%;
   font-size: 24px;
+  pointer-events: none;
 }
 
 .image-box label:hover .image-box__overlay {
   opacity: 1;
 }
 
-/* ─── Loading Animation ─── */
+/* ─── Loading Spinner ─── */
 .image-box .loading {
   position: absolute;
   width: 100%;
@@ -183,6 +350,7 @@
   color: var(--text-dark);
   margin: 12px 0 8px;
   letter-spacing: -0.3px;
+  word-break: break-word;
 }
 
 .role-badge {
@@ -217,6 +385,10 @@
   color: #991b1b;
 }
 
+.remove-photo-btn:active {
+  transform: scale(0.95);
+}
+
 /* ─── Sidebar Divider ─── */
 .sidebar-divider {
   height: 1px;
@@ -230,7 +402,10 @@
   margin: 0 20px;
 }
 
-/* ─── NAVIGATION ─── */
+/* ═══════════════════════════════════════════════ */
+/* NAVIGATION */
+/* ═══════════════════════════════════════════════ */
+
 .sidebar nav ul {
   list-style: none;
   padding: 0;
@@ -260,9 +435,9 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  font-family: inherit;
 }
 
-/* ─── Navigation Item Hover ─── */
 .sidebar nav a:hover,
 .sidebar nav button:hover {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
@@ -281,17 +456,7 @@
   color: var(--primary-color);
   border-left: 3px solid var(--primary-color);
   padding-left: 13px;
-}
-
-.sidebar nav a.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 3px;
-  background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
-  border-radius: 0 4px 4px 0;
+  font-weight: 600;
 }
 
 /* ─── Icon Styling ─── */
@@ -303,6 +468,7 @@
   height: 24px;
   font-size: 18px;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .sidebar nav a:hover span,
@@ -319,10 +485,10 @@
   letter-spacing: -0.2px;
 }
 
-/* ─── LOGOUT BUTTON (Special styling) ─── */
+/* ─── Logout Button ─── */
 .sidebar .log-out {
   margin-top: 24px;
-  padding: 12px 12px;
+  padding: 12px 12px 0;
   border-top: 1px solid var(--border-color);
 }
 
@@ -339,118 +505,7 @@
   transform: translateX(4px);
 }
 
-/* ─── MOBILE RESPONSIVENESS ─── */
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    left: -280px;
-    top: 60px;
-    height: calc(100vh - 60px);
-    z-index: 999;
-    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-right: 2px solid var(--border-color);
-    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.15);
-  }
-
-  .sidebar--open {
-    left: 0;
-  }
-
-  .sidebar-overlay {
-    display: block;
-  }
-}
-
-/* ─── HEADER ADJUSTMENTS ─── */
-.dash-header {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f6ff 100%);
-  border-bottom: 1px solid var(--border-color);
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: var(--shadow-sm);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-
-.dash-header__brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--primary-color);
-  letter-spacing: -0.5px;
-}
-
-.dash-header__logo {
-  font-size: 24px;
-}
-
-.dash-header__right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.dash-header__greeting {
-  font-size: 14px;
-  color: var(--text-dark);
-}
-
-.dash-header__avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-  overflow: hidden;
-}
-
-.dash-header__avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ─── Hamburger Button ─── */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  margin-right: 16px;
-}
-
-.hamburger span {
-  width: 24px;
-  height: 2.5px;
-  background: var(--primary-color);
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
-@media (max-width: 768px) {
-  .hamburger {
-    display: flex;
-  }
-
-  .dash-header__greeting {
-    display: none;
-  }
-}
-
-/* ─── SIDEBAR OVERLAY (للموبايل) ─── */
+/* ─── Sidebar Overlay ─── */
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -463,6 +518,10 @@
   animation: fadeIn 0.3s ease;
 }
 
+.sidebar-overlay.active {
+  display: block;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -472,73 +531,10 @@
   }
 }
 
-/* ─── Main Content Area ─── */
-.dash-content {
-  display: flex;
-  flex: 1;
-  gap: 0;
-}
+/* ═══════════════════════════════════════════════ */
+/* ANIMATIONS */
+/* ═══════════════════════════════════════════════ */
 
-.details {
-  flex: 1;
-  overflow-y: auto;
-  background: #f9fafb;
-  padding: 24px;
-  min-height: calc(100vh - 60px);
-}
-
-/* ─── Dashboard Container ─── */
-.dashbord {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: #f9fafb;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ─── FEED INTEGRATION ─── */
-.feed-container {
-  /* max-width: 900px; */
-  margin: 0 auto;
-  padding: 24px;
-}
-
-/* ─── Post Card Integration ─── */
-.post-card {
-  background: white;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
-}
-
-.post-card:hover {
-  box-shadow: var(--shadow-md);
-  border-color: rgba(99, 102, 241, 0.2);
-}
-
-/* ─── Create Card ─── */
-.create-card {
-  background: white;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  padding: 20px;
-  margin-bottom: 24px;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
-}
-
-.create-card:hover {
-  box-shadow: var(--shadow-md);
-  border-color: rgba(99, 102, 241, 0.2);
-}
-
-/* ─── Animations ─── */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -584,4 +580,286 @@
 
 .sidebar nav li:nth-child(8) {
   animation-delay: 0.4s;
+}
+
+.sidebar nav li:nth-child(9) {
+  animation-delay: 0.45s;
+}
+
+/* ═══════════════════════════════════════════════ */
+/* RESPONSIVE DESIGN */
+/* ═══════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 260px;
+    padding: 20px 0;
+  }
+
+  .details {
+    padding: 20px;
+  }
+
+  .dash-header {
+    padding: 12px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* ── Header ── */
+  .dash-header {
+    padding: 12px 16px;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .dash-header__name {
+    display: none;
+  }
+
+  .dash-header__greeting {
+    display: none;
+  }
+
+  .dash-header__brand {
+    font-size: 16px;
+    gap: 8px;
+  }
+
+  .dash-header__logo {
+    font-size: 20px;
+  }
+
+  /* ── Sidebar Mobile ── */
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 60px;
+    height: calc(100vh - 60px);
+    width: 280px;
+    z-index: 100;
+    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 2px solid var(--border-color);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.15);
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  /* ── Content ── */
+  .details {
+    padding: 16px;
+    min-height: calc(100vh - 60px);
+  }
+
+  /* ── Avatar in Header ── */
+  .dash-header__avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  /* ── Sidebar Profile ── */
+  .sidebar .head {
+    padding: 0 16px 20px;
+  }
+
+  .image-box label {
+    width: 90px;
+    height: 90px;
+  }
+
+  .empty-avatar {
+    width: 90px;
+    height: 90px;
+    font-size: 36px;
+  }
+
+  .sidebar h3 {
+    font-size: 16px;
+  }
+
+  /* ── Nav Items ── */
+  .sidebar nav li {
+    padding: 0 8px;
+    margin-bottom: 6px;
+  }
+
+  .sidebar nav a,
+  .sidebar nav button {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .sidebar nav span {
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+  }
+
+  .sidebar nav h5 {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* ── Header ── */
+  .dash-header {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .hamburger {
+    margin-right: 4px;
+    padding: 6px;
+  }
+
+  .hamburger span {
+    width: 20px;
+    height: 2px;
+  }
+
+  .dash-header__brand {
+    font-size: 14px;
+    gap: 6px;
+  }
+
+  .dash-header__logo {
+    font-size: 18px;
+  }
+
+  .dash-header__right {
+    gap: 8px;
+  }
+
+  .dash-header__avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 100%;
+    left: -100%;
+  }
+
+  .sidebar .head {
+    padding: 0 12px 16px;
+  }
+
+  .image-box label {
+    width: 80px;
+    height: 80px;
+  }
+
+  .empty-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 32px;
+  }
+
+  .sidebar h3 {
+    font-size: 15px;
+  }
+
+  .role-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+
+  /* ── Nav ── */
+  .sidebar nav li {
+    padding: 0 6px;
+    margin-bottom: 4px;
+  }
+
+  .sidebar nav a,
+  .sidebar nav button {
+    padding: 9px 12px;
+    font-size: 12px;
+    gap: 10px;
+  }
+
+  .sidebar nav span {
+    width: 18px;
+    height: 18px;
+    font-size: 15px;
+  }
+
+  .sidebar nav h5 {
+    font-size: 12px;
+  }
+
+  .remove-photo-btn {
+    font-size: 11px;
+    padding: 6px 12px;
+    margin-top: 8px;
+  }
+
+  /* ── Content ── */
+  .details {
+    padding: 12px;
+  }
+}
+
+/* ═══════════════════════════════════════════════ */
+/* CARD STYLES (Integration) */
+/* ═══════════════════════════════════════════════ */
+
+.feed-container {
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.post-card,
+.create-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.post-card:hover,
+.create-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+@media (max-width: 768px) {
+  .feed-container {
+    padding: 16px;
+  }
+
+  .post-card,
+  .create-card {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+}
+
+/* ═══════════════════════════════════════════════ */
+/* UTILITY CLASSES */
+/* ═══════════════════════════════════════════════ */
+
+.text-center {
+  text-align: center;
+}
+
+.mt-1 {
+  margin-top: 8px;
+}
+
+.mt-2 {
+  margin-top: 16px;
+}
+
+.mt-3 {
+  margin-top: 24px;
 }

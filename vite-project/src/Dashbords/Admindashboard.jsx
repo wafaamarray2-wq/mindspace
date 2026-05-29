@@ -17,7 +17,11 @@ import {
   FiChevronUp,
   FiClipboard,
 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { MdLogout } from "react-icons/md";
 import axios from "axios";
+
+import { toast } from "react-toastify";
 import "./AdminDashboard.css";
 import AdminGroupsPanel from "./Groups/Admingroups";
 
@@ -58,13 +62,16 @@ function UsersPanel() {
   const [loading, setLoading] = useState(true);
   const [banDuration, setBanDuration] = useState({});
 
-  useEffect(() => {
-    axios
-      .get(`${BASE_URL}/admin/view-users`, { headers: authHeader() })
-      .then((r) => setUsers(r.data?.data || r.data || []))
-      .catch(console.log)
-      .finally(() => setLoading(false));
-  }, []);
+useEffect(() => {
+  axios
+    .get(`${BASE_URL}/admin/view-users`, { headers: authHeader() })
+    .then((r) => {
+      console.log("USERS DATA:", r.data);
+      setUsers(r.data?.data || r.data || []);
+    })
+    .catch(console.log)
+    .finally(() => setLoading(false));
+}, []);
 
   const banUser = async (id) => {
     const duration = banDuration[id] || "10";
@@ -74,7 +81,7 @@ function UsersPanel() {
         data: { duration },
       });
       setUsers((prev) =>
-        prev.map((u) => (u._id === id ? { ...u, isBanned: true } : u))
+        prev.map((u) => (u._id === id ? { ...u, bannedUntil : true } : u))
       );
     } catch (e) {
       console.log(e.response?.data || e);
@@ -87,7 +94,7 @@ function UsersPanel() {
         headers: authHeader(),
       });
       setUsers((prev) =>
-        prev.map((u) => (u._id === id ? { ...u, isBanned: false } : u))
+        prev.map((u) => (u._id === id ? { ...u, bannedUntil : false } : u))
       );
     } catch (e) {
       console.log(e.response?.data || e);
@@ -112,7 +119,7 @@ function UsersPanel() {
           </thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u._id} className={u.isBanned ? "row-banned" : ""}>
+              <tr key={u._id} className={u.bannedUntil  ? "row-banned" : ""}>
                 <td>
                   <div className="user-cell">
                     {u.pfp?.secure_url ? (
@@ -130,7 +137,7 @@ function UsersPanel() {
                   <span className={`role-chip role-${u.role}`}>{u.role}</span>
                 </td>
                 <td>
-                  {u.isBanned ? (
+                  {u.bannedUntil  ? (
                     <span className="status-chip banned">Banned</span>
                   ) : (
                     <span className="status-chip active">Active</span>
@@ -138,7 +145,7 @@ function UsersPanel() {
                 </td>
                 <td>
                   <div className="action-row">
-                    {!u.isBanned ? (
+                    {!u.bannedUntil  ? (
                       <>
                         <input
                           type="number"
@@ -343,6 +350,10 @@ function ReportsPanel() {
     </div>
   );
 }
+
+
+
+  
 
 /* ─── QUESTIONS PANEL ─── */
 function QuestionsPanel() {
@@ -588,11 +599,29 @@ const TABS = [
   { id: "reports", label: "Reports", icon: <FiAlertCircle /> },
   { id: "questions", label: "Questions", icon: <FiHelpCircle /> },
   { id: "groups", label: "groups", icon: <FiUsers /> },
+
 ];
 
 /* ─── MAIN COMPONENT ─── */
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("users");
+ const navigate = useNavigate();
+ const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      await axios.post(
+        "https://mind-space-ov3r.onrender.com/auth/logout",
+        { flag: "logoutFromAllDevices" },
+        { headers: { Authorization: `dash ${token}` } }
+      );
+      toast.success("تم تسجيل الخروج بنجاح 👋");
+    } catch (err) {
+      toast.error("حدث خطأ أثناء تسجيل الخروج");
+    }
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    setTimeout(() => navigate("/login"), 1000);
+  };
 
   return (
     <div className="admin-container">
@@ -613,6 +642,14 @@ export default function AdminDashboard() {
               <span>{tab.label}</span>
             </button>
           ))}
+          <li className="log-out">
+                            <button onClick={handleLogout} aria-label="Logout">
+                              <span>
+                                <MdLogout />
+                              </span>
+                              <h5>Log Out</h5>
+                            </button>
+                          </li>
         </nav>
       </aside>
 
@@ -631,6 +668,7 @@ export default function AdminDashboard() {
           {activeTab === "reports" && <ReportsPanel />}
           {activeTab === "questions" && <QuestionsPanel />}
           {activeTab === "groups" && <AdminGroupsPanel />}
+          
         </div>
       </main>
     </div>

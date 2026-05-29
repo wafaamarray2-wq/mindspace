@@ -14,9 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./doc.css";
 
-// ═══════════════════════════════════════════════
-//  Context — للـ Feed والصفحات التانية
-// ═══════════════════════════════════════════════
+
 const DashContext = createContext(null);
 
 export const useDashUser = () => useContext(DashContext);
@@ -60,7 +58,7 @@ export default function DoctorDashbord() {
   // ================= CLOSE SIDEBAR ON ROUTE CHANGE =================
   useEffect(() => {
     setSidebarOpen(false);
-  }, [navigate]);
+  }, []);
 
   // ================= CLOSE SIDEBAR ON WINDOW RESIZE =================
   useEffect(() => {
@@ -161,15 +159,22 @@ export default function DoctorDashbord() {
             <div className="head">
               {/* Profile Image */}
               <div className="image-box">
-                {user?.pfp?.secure_url ? (
-                  <div className="image-box__img">
-                    <img src={user.pfp.secure_url} alt="Profile" />
+                <label>
+                  {user?.pfp?.secure_url ? (
+                    <div className="image-box__img">
+                      <img src={user.pfp.secure_url} alt="Profile" />
+                    </div>
+                  ) : (
+                    <div className="empty-avatar">
+                      {user?.userName?.charAt(0)?.toUpperCase() || "D"}
+                    </div>
+                  )}
+
+                  {/* Camera overlay on hover */}
+                  <div className="image-box__overlay">
+                    <span>📷</span>
                   </div>
-                ) : (
-                  <div className="empty-avatar">
-                    {user?.userName?.charAt(0)?.toUpperCase() || "D"}
-                  </div>
-                )}
+                </label>
               </div>
 
               {/* Doctor Info */}

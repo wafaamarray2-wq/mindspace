@@ -141,16 +141,30 @@ export default function AdminGroups() {
 
   /* Fetch all groups */
   const fetchGroups = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(`${BASE_URL}/group`, { headers: authHeader() });
-      setGroups(res.data?.data || res.data || []);
-    } catch (e) {
-      setError("تعذر تحميل الجروبات");
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+
+  try {
+    const res = await axios.get(`${BASE_URL}/group/get-groups`, {
+      headers: authHeader(),
+    });
+
+    console.log("GET GROUPS RESPONSE:", res.data);
+
+    const data = res.data;
+
+    setGroups(
+      data?.result ||
+      data?.data ||
+      data ||
+      []
+    );
+  } catch (e) {
+    console.log(e.response?.data || e.message);
+    setError("تعذر تحميل الجروبات");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => { fetchGroups(); }, []);
 
@@ -159,20 +173,16 @@ const handleCreate = async ({ name, description }) => {
   try {
     const res = await axios.post(
       `${BASE_URL}/group/create-group`,
-      {
-        name,
-        description,
-      },
-      {
-        headers: authHeader(),
-      }
+      { name, description },
+      { headers: authHeader() }
     );
-    console.log("res",res)
 
-    const newGroup = res.data?.data || res.data;
-    console.log(newGroup)
+    console.log("FULL RESPONSE:", res.data);
+
+    const newGroup = res.data?.result;
 
     setGroups((prev) => [newGroup, ...prev]);
+
   } catch (e) {
     console.log(e.response?.data);
     setError(e.response?.data?.message || "فشل إنشاء الجروب");
