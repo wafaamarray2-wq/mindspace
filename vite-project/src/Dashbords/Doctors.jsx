@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
+const BASE_URL = "https://mind-space-ov3r.onrender.com"
 export default function Doctors() {
   const navigate = useNavigate();
 
