@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -6,40 +6,51 @@ import "./sessiondetails.css";
 
 export default function SessionDetails() {
   const { id } = useParams();
+  const location = useLocation();
+  
   const [loading, setLoading] = useState(false);
   const [delayLoading, setDelayLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [showDelayInput, setShowDelayInput] = useState(false);
   const [newTime, setNewTime] = useState("");
 
-  const [session, setSession] = useState(null);
-  const [fetchLoading, setFetchLoading] = useState(true);
+  const [session, setSession] = useState(location.state || null);
+  const [fetchLoading, setFetchLoading] = useState(!location.state);
 
   useEffect(() => {
+    if (session) {
+      setFetchLoading(false);
+      return;
+    }
+
     const fetchSession = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`https://mind-space-ov3r.onrender.com/session/${id}`, {
+        // Using working list endpoint as a fallback because single session GET endpoint is broken on the server
+        const res = await axios.get("https://mind-space-ov3r.onrender.com/session/therapist", {
           headers: { Authorization: `dash ${token}` }
         });
-        const data = res.data?.data || res.data;
+        const list = res.data?.data || res.data || [];
+        const data = list.find((s) => s._id === id);
         
-        setSession({
-          id: data._id,
-          patient: data.patientId?.userName || "Unknown",
-          date: data.sessionTime || "N/A",
-          status: data.status || "Pending",
-          notes: data.notes || "No notes available."
-        });
+        if (data) {
+          setSession({
+            id: data._id,
+            patient: data.userId?.userName || "Unknown",
+            date: data.sessionTime || "N/A",
+            status: data.status || "Pending",
+            notes: data.notes || "No notes available."
+          });
+        }
       } catch (err) {
-        console.error("Error fetching session details:", err);
+        console.error("Error fetching session details fallback:", err);
       } finally {
         setFetchLoading(false);
       }
     };
 
     fetchSession();
-  }, [id]);
+  }, [id, session]);
 
   const handleConfirm = async () => {
     setLoading(true);

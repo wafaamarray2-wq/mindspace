@@ -21,7 +21,7 @@ export default function Sessions() {
         // Map backend format to component needs
         const mappedSessions = data.map(session => ({
           id: session._id,
-          patient: session.patientId?.userName || "Unknown",
+          patient: session.userId?.userName || "Unknown",
           date: session.sessionTime || "N/A",
           status: session.status || "Pending",
           notes: session.notes || "No notes"
@@ -38,10 +38,40 @@ export default function Sessions() {
     fetchSessions();
   }, []);
 
+  const handleDeleteSession = async (sessionId) => {
+    if (!window.confirm("⚠️ هل أنت متأكد من إلغاء/حذف هذه الجلسة؟")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `https://mind-space-ov3r.onrender.com/session/cancel/${sessionId}`,
+        {},
+        {
+          headers: {
+            Authorization: `dash ${token}`,
+          },
+        }
+      );
+
+      toast.success("🚫 تم إلغاء الجلسة بنجاح!");
+      // Update the status of the canceled session to "canceled" in the local state
+      setSessions((prev) =>
+        prev.map((s) => (s.id === sessionId ? { ...s, status: "canceled" } : s))
+      );
+    } catch (err) {
+      console.error("Delete session error:", err);
+      const errorMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "حدث خطأ أثناء إلغاء الجلسة.";
+      toast.error(`❌ ${errorMsg}`);
+    }
+  };
+
   const stats = {
     total: sessions.length,
-    completed: sessions.filter(s => s.status === "Confirmed" || s.status === "Completed").length,
-    pending: sessions.filter(s => s.status === "Pending").length,
+    completed: sessions.filter(s => s.status.toLowerCase() === "completed" || s.status.toLowerCase() === "confirmed").length,
+    pending: sessions.filter(s => s.status.toLowerCase() === "pending" || s.status.toLowerCase() === "scheduled").length,
   };
 
   return (
@@ -101,11 +131,16 @@ export default function Sessions() {
                 <td className="actions">
                   <button
                     className="view-btn"
-                    onClick={() => navigate(`/session/${session.id}`)}
+                    onClick={() => navigate(`/doctor-dashboard/session/${session.id}`, { state: session })}
                   >
                     View
                   </button>
-                  <button className="delete-btn">Delete</button>
+                  <button 
+                    className="delete-btn"
+                    onClick={() => handleDeleteSession(session.id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

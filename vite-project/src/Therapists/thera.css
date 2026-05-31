@@ -1,22 +1,20 @@
 /* ══════════════════════════════════════════════════════════════════════════════ */
-/* THERAPIST SEARCH PAGE - PROFESSIONAL & BEAUTIFUL DESIGN */
+/* THERAPIST SEARCH PAGE - MATCHING MIND SPACE TEAL THEME */
 /* ══════════════════════════════════════════════════════════════════════════════ */
 
-/* ─── CSS Variables ─── */
 :root {
-  --primary-color: #6366f1;        /* Indigo */
-  --secondary-color: #8b5cf6;      /* Purple */
-  --accent-color: #ec4899;         /* Pink */
-  --success-color: #10b981;        /* Green */
-  --text-dark: #1f2937;            /* Dark text */
-  --text-light: #9ca3af;           /* Light text */
-  --text-lighter: #d1d5db;         /* Even lighter */
-  --border-color: #e5e7eb;         /* Border */
-  --bg-light: #f9fafb;             /* Light background */
-  --bg-white: #ffffff;             /* White */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 8px 20px rgba(99, 102, 241, 0.12);
-  --shadow-lg: 0 20px 40px rgba(99, 102, 241, 0.15);
+  --primary-color:  #2a9d8f;
+  --secondary-color: #0f766e;
+  --accent-color: #14b8a6;
+  --text-dark: #0f2027;
+  --text-light: #4b6070;
+  --text-lighter: #94a3b8;
+  --border-color: #e2e8f0;
+  --bg-light: #f0fdfa;
+  --bg-white: #ffffff;
+  --shadow-sm: 0 2px 8px rgba(13, 148, 136, 0.07);
+  --shadow-md: 0 8px 24px rgba(13, 148, 136, 0.14);
+  --shadow-lg: 0 20px 40px rgba(13, 148, 136, 0.18);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -24,11 +22,9 @@
 .thera {
   min-height: 100vh;
   padding: 60px 20px;
-  background: linear-gradient(135deg, var(--bg-light) 0%, #f3f0ff 100%);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 .thera .container {
@@ -40,18 +36,14 @@
   margin: 0 auto;
 }
 
-/* ─── HEADER SECTION ─── */
+/* ─── HEADER ─── */
 .thera .container h1 {
   margin-bottom: 12px;
-  color: var(--text-dark);
   font-size: 36px;
   font-weight: 700;
   letter-spacing: -0.5px;
   text-align: center;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #2a9d8f;
 }
 
 .thera .container p {
@@ -64,7 +56,7 @@
   line-height: 1.6;
 }
 
-/* ─── SEARCH INPUT SECTION ─── */
+/* ─── SEARCH INPUT ─── */
 .thera .container .inp {
   display: flex;
   align-items: center;
@@ -76,7 +68,6 @@
 }
 
 .thera .container .inp input {
-  position: relative;
   direction: rtl;
   background: var(--bg-white);
   padding: 16px 45px 16px 25px;
@@ -93,19 +84,16 @@
 .thera .container .inp input::placeholder {
   color: var(--text-lighter);
   font-size: 16px;
-  font-weight: 400;
 }
 
 .thera .container .inp input:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1),
-              0 8px 20px rgba(99, 102, 241, 0.12);
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.02), rgba(139, 92, 246, 0.02));
+  border-color:#2a9d8f;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12), 0 8px 20px rgba(13, 148, 136, 0.1);
 }
 
 .thera .container .inp span {
   position: absolute;
-  color: var(--primary-color);
+  color:#2a9d8f;
   z-index: 2;
   right: 16px;
   font-size: 20px;
@@ -118,10 +106,10 @@
 
 .thera .container .inp span:hover {
   transform: scale(1.1);
-  color: var(--secondary-color);
+  color:#2a9d8f;
 }
 
-/* ─── EMPTY STATE SECTION ─── */
+/* ─── EMPTY STATE ─── */
 .thera .container .empty {
   display: flex;
   flex-direction: column;
@@ -142,7 +130,6 @@
 
 .thera .container .empty img:hover {
   transform: scale(1.02);
-  box-shadow: 0 24px 48px rgba(99, 102, 241, 0.2);
 }
 
 .thera .container .empty h2 {
@@ -150,7 +137,6 @@
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 12px;
-  letter-spacing: -0.3px;
 }
 
 .thera .container .empty p {
@@ -163,7 +149,7 @@
 }
 
 .thera .container .empty button {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: #2a9d8f;
   color: white;
   padding: 14px 40px;
   border-radius: 10px;
@@ -172,21 +158,15 @@
   font-size: 16px;
   font-weight: 600;
   transition: var(--transition);
-  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
-  text-transform: capitalize;
-  letter-spacing: 0.3px;
+  box-shadow: 0 8px 16px rgba(13, 148, 136, 0.3);
 }
 
 .thera .container .empty button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 12px 24px rgba(13, 148, 136, 0.4);
 }
 
-.thera .container .empty button:active {
-  transform: translateY(0);
-}
-
-/* ─── DOCTORS GRID DISPLAY ─── */
+/* ─── DOCTORS GRID ─── */
 .thera .container .display-doc {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -197,172 +177,192 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ─── DOCTOR CARD ─── */
 .thera .container .details {
   width: 100%;
-  min-height: 320px;
+  min-height: 340px;
   background: var(--bg-white);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(13, 148, 136, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(13, 148, 136, 0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 30px 20px;
+  justify-content: flex-start;
+  padding: 0 0 28px 0;
   transition: var(--transition);
   position: relative;
   overflow: hidden;
 }
 
-/* ─── Card Hover Effect ─── */
+/* ─── Card top teal banner ─── */
 .thera .container .details::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.03), rgba(139, 92, 246, 0.03));
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  height: 90px;
+  background:#2a9d8f;
+  pointer-events: none;
+}
+
+/* ─── Dot pattern on banner ─── */
+.thera .container .details::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 18px 18px;
   pointer-events: none;
 }
 
 .thera .container .details:hover {
-  box-shadow: var(--shadow-md);
-  border-color: rgba(99, 102, 241, 0.2);
-  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(13, 148, 136, 0.2);
+  border-color: rgba(13, 148, 136, 0.3);
+  transform: translateY(-8px);
 }
 
-.thera .container .details:hover::before {
-  opacity: 1;
-}
-
-/* ─── Doctor Image ─── */
+/* ─── Doctor Real Image ─── */
 .thera .container .details img {
-  width: 90px;
-  height: 90px;
+  width: 86px;
+  height: 86px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 3px solid var(--bg-white);
+  margin-top: 48px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border: 4px solid var(--bg-white);
+  position: relative;
+  z-index: 2;
   transition: var(--transition);
 }
 
 .thera .container .details:hover img {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+  transform: scale(1.06);
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.25);
+}
+
+/* ─── Avatar Initials (no photo fallback) ─── */
+.thera .container .details .avatar-initials {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+  color: #ffffff;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 48px;
+  margin-bottom: 16px;
+  border: 4px solid var(--bg-white);
+  box-shadow: 0 4px 16px rgba(13, 148, 136, 0.3);
+  position: relative;
+  z-index: 2;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.thera .container .details:hover .avatar-initials {
+  transform: scale(1.06);
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.35);
 }
 
 /* ─── Doctor Name ─── */
 .thera .container .details h3 {
   color: var(--text-dark);
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   margin: 0 0 8px;
-  letter-spacing: -0.2px;
   text-align: center;
+  position: relative;
+  z-index: 2;
 }
 
-/* ─── Doctor Specialization ─── */
-.thera .container .details p {
-  margin: 8px 0 20px;
+/* ─── Specialty Badge ─── */
+.thera .container .details .par {
+  display: inline-block;
+  background: rgba(13, 148, 136, 0.08);
+  color: #2a9d8f;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin: 0 0 10px;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(13, 148, 136, 0.2);
+}
+
+/* ─── Experience Text ─── */
+.thera .container .details p:not(.par) {
+  margin: 0 0 20px;
   color: var(--text-light);
   font-size: 13px;
   font-weight: 500;
   text-align: center;
-  max-width: 220px;
-  line-height: 1.5;
 }
 
-/* ─── Book Button ─── */
+/* ─── View Profile Button ─── */
 .thera .container .details button {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: #2a9d8f;
   color: white;
-  border-radius: 10px;
-  padding: 10px 24px;
+  border-radius: 12px;
+  padding: 11px 32px;
   border: none;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
   transition: var(--transition);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-  text-transform: capitalize;
-  letter-spacing: 0.2px;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
+  letter-spacing: 0.3px;
   margin-top: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.thera .container .details button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .thera .container .details button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 10px 24px rgba(13, 148, 136, 0.4);
+}
+
+.thera .container .details button:hover::before {
+  opacity: 1;
 }
 
 .thera .container .details button:active {
   transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
-/* ─── RESPONSIVE DESIGN ─── */
+/* ─── RESPONSIVE ─── */
 @media (max-width: 768px) {
-  .thera {
-    padding: 40px 16px;
-  }
+  .thera { padding: 40px 16px; }
 
-  .thera .container h1 {
-    font-size: 28px;
-    margin-bottom: 8px;
-  }
+  .thera .container h1 { font-size: 28px; }
 
-  .thera .container p {
-    margin-bottom: 30px;
-    font-size: 14px;
-  }
+  .thera .container p { margin-bottom: 30px; font-size: 14px; }
 
-  .thera .container .inp {
-    max-width: 100%;
-    margin-bottom: 40px;
-  }
+  .thera .container .inp { max-width: 100%; margin-bottom: 40px; }
 
-  .thera .container .inp input {
-    font-size: 14px;
-    padding: 14px 40px 14px 20px;
-  }
-
-  .thera .container .empty {
-    padding: 20px 16px;
-  }
-
-  .thera .container .empty img {
-    max-width: 100%;
-    margin-bottom: 30px;
-  }
-
-  .thera .container .empty h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-
-  .thera .container .empty p {
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-
-  .thera .container .empty button {
-    padding: 12px 32px;
-    font-size: 14px;
-  }
+  .thera .container .inp input { font-size: 14px; padding: 14px 40px 14px 20px; }
 
   .thera .container .display-doc {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -370,59 +370,21 @@
     margin-top: 30px;
   }
 
-  .thera .container .details {
-    padding: 24px 16px;
-    min-height: auto;
-  }
+  .thera .container .details { padding: 0 0 24px 0; min-height: auto; }
 
-  .thera .container .details img {
-    width: 80px;
-    height: 80px;
-  }
+  .thera .container .details img,
+  .thera .container .details .avatar-initials { width: 76px; height: 76px; font-size: 22px; }
 
-  .thera .container .details h3 {
-    font-size: 16px;
-  }
-
-  .thera .container .details p {
-    font-size: 12px;
-  }
-
-  .thera .container .details button {
-    font-size: 13px;
-    padding: 8px 20px;
-  }
+  .thera .container .details h3 { font-size: 16px; }
+  .thera .container .details p { font-size: 12px; }
+  .thera .container .details button { font-size: 13px; padding: 8px 20px; }
 }
 
 @media (max-width: 480px) {
-  .thera {
-    padding: 30px 12px;
-  }
-
-  .thera .container h1 {
-    font-size: 24px;
-  }
-
-  .thera .container .display-doc {
-    grid-template-columns: 1fr;
-  }
-
-  .thera .container .empty img {
-    max-width: 90%;
-  }
-
-  .thera .container .empty h2 {
-    font-size: 20px;
-  }
-
-  .thera .container .empty p {
-    font-size: 13px;
-  }
-
-  .thera .container .inp input {
-    padding: 12px 35px 12px 16px;
-    font-size: 14px;
-  }
+  .thera { padding: 30px 12px; }
+  .thera .container h1 { font-size: 24px; }
+  .thera .container .display-doc { grid-template-columns: 1fr; }
+  .thera .container .inp input { padding: 12px 35px 12px 16px; font-size: 14px; }
 }
 
 /* ─── ACCESSIBILITY ─── */
@@ -437,89 +399,32 @@
   outline-offset: 2px;
 }
 
-/* ─── ANIMATIONS FOR CARDS ─── */
-.thera .container .details {
-  animation: slideUp 0.5s ease-out backwards;
-}
-
-.thera .container .details:nth-child(1) {
-  animation-delay: 0.05s;
-}
-
-.thera .container .details:nth-child(2) {
-  animation-delay: 0.1s;
-}
-
-.thera .container .details:nth-child(3) {
-  animation-delay: 0.15s;
-}
-
-.thera .container .details:nth-child(4) {
-  animation-delay: 0.2s;
-}
-
-.thera .container .details:nth-child(5) {
-  animation-delay: 0.25s;
-}
-
-.thera .container .details:nth-child(6) {
-  animation-delay: 0.3s;
-}
+/* ─── CARD STAGGER ANIMATIONS ─── */
+.thera .container .details { animation: slideUp 0.5s ease-out backwards; }
+.thera .container .details:nth-child(1) { animation-delay: 0.05s; }
+.thera .container .details:nth-child(2) { animation-delay: 0.10s; }
+.thera .container .details:nth-child(3) { animation-delay: 0.15s; }
+.thera .container .details:nth-child(4) { animation-delay: 0.20s; }
+.thera .container .details:nth-child(5) { animation-delay: 0.25s; }
+.thera .container .details:nth-child(6) { animation-delay: 0.30s; }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── LOADING STATE ─── */
-.thera .container .display-doc.loading {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-/* ─── DARK MODE SUPPORT (Optional) ─── */
+/* ─── DARK MODE ─── */
 @media (prefers-color-scheme: dark) {
   :root {
-    --text-dark: #f3f4f6;
-    --text-light: #d1d5db;
-    --text-lighter: #9ca3af;
-    --bg-light: #111827;
-    --bg-white: #1f2937;
-    --border-color: #374151;
+    --text-dark: #f1f5f9;
+    --text-light: #cbd5e1;
+    --text-lighter: #94a3b8;
+    --bg-light: #0c1f1e;
+    --bg-white: #1a2e2d;
+    --border-color: #2d4a48;
   }
 
   .thera {
-    background: linear-gradient(135deg, #111827 0%, #1a1535 100%);
+    background: linear-gradient(150deg, #0c1f1e 0%, #0d2e2b 60%, #0a2420 100%);
   }
-}
-
-/* ─── UTILITY CLASSES ─── */
-.thera .container .no-results {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.thera .container .no-results-icon {
-  font-size: 80px;
-  margin-bottom: 20px;
-  opacity: 0.5;
-}
-
-.thera .container .no-results h2 {
-  color: var(--text-dark);
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.thera .container .no-results p {
-  color: var(--text-light);
-  font-size: 16px;
-  margin-bottom: 20px;
 }

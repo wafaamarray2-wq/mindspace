@@ -116,6 +116,7 @@ function App() {
   <Route path="patients" element={<Patients />} />
   <Route path="message" element={<Messages />} />
   <Route path="session" element={<Sessions />} />
+  <Route path="session/:id" element={<SessionDetails />} />
   <Route path="groups" element={<TherapistGroups />} />
   <Route path="setting" element={<Setting />} />
 

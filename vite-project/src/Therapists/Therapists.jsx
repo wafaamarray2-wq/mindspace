@@ -26,6 +26,13 @@ function authHeader() {
 console.log("TOKEN:", localStorage.getItem("token"));
 console.log("ROLE:", localStorage.getItem("role"));
 
+function getInitials(name) {
+  if (!name) return "د";
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
 function Therapists() {
   const navigate = useNavigate();
 
@@ -61,12 +68,12 @@ function Therapists() {
             <CiSearch />
           </span>
 
-        <input
-  type="text"
-  placeholder="ابحث عن معالج..."
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-/>
+          <input
+            type="text"
+            placeholder="ابحث عن معالج..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
 
         {therapists.length === 0 ? (
@@ -82,34 +89,39 @@ function Therapists() {
         ) : (
           <div className="display-doc">
             {therapists
-  .filter((doctor) => {
-    const name = doctor.userName?.toLowerCase() || "";
-    const spec = doctor.specialty?.toLowerCase() || "";
-    const value = search.toLowerCase();
+              .filter((doctor) => {
+                const name = doctor.userName?.toLowerCase() || "";
+                const spec = doctor.specialty?.toLowerCase() || "";
+                const value = search.toLowerCase();
+                return name.includes(value) || spec.includes(value);
+              })
+              .map((doctor, index) => (
+                <div className="details" key={doctor._id || index}>
+                  {doctor.pfp?.secure_url ? (
+                    <img src={doctor.pfp.secure_url} alt="doctor" />
+                  ) : (
+                    <div className="avatar-initials">
+                      {getInitials(doctor.userName)}
+                    </div>
+                  )}
 
-    return name.includes(value) || spec.includes(value);
-  })
-  .map((doctor, index) => (
-              <div className="details" key={doctor._id || index}>
-                <img src={doctor.pfp?.secure_url || Empty} alt="doctor" />
+                  <h3>Dr. {doctor.userName}</h3>
 
-                <h3> Dr. {doctor.userName}</h3>
+                  <p className="par">اخصائي نفسي</p>
 
-                <p className="par">اخصائي نفسي</p>
+                  <p>خبره {doctor.experience} سنوات</p>
 
-                <p>خبره {doctor.experience} سنوات</p>
-
-                <button
-                  onClick={() =>
-                    navigate(`/doctor/${doctor._id}`, {
-                      state: doctor,
-                    })
-                  }
-                >
-                  عرض الملف
-                </button>
-              </div>
-            ))}
+                  <button
+                    onClick={() =>
+                      navigate(`/doctor/${doctor._id}`, {
+                        state: doctor,
+                      })
+                    }
+                  >
+                    عرض الملف
+                  </button>
+                </div>
+              ))}
           </div>
         )}
       </div>
