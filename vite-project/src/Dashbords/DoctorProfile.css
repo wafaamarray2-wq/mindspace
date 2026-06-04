@@ -785,3 +785,327 @@ html, body {
 .mt-4 {
   margin-top: 16px;
 }
+
+/* ════════════════════════════════════════════════════════════════════════ */
+/* FEEDBACK & RATING SYSTEM STYLES */
+/* ════════════════════════════════════════════════════════════════════════ */
+
+.feedback-section {
+  background: var(--bg-white);
+  border: 2px solid var(--border-color);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 30px;
+  transition: var(--transition);
+  animation: fadeIn 0.6s ease-out 0.4s backwards;
+}
+
+.feedback-section:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.feedback-section h3 {
+  color: var(--text-dark);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.feedback-section h3::after {
+  content: "";
+  height: 2px;
+  flex-grow: 1;
+  background: linear-gradient(90deg, var(--primary-color), transparent);
+  display: inline-block;
+  margin-right: 15px;
+}
+
+/* Rating Summary Card */
+.rating-summary-card {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.03), rgba(139, 92, 246, 0.03));
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 25px;
+  margin-bottom: 30px;
+  align-items: center;
+}
+
+.average-rating-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid var(--border-color);
+  padding-left: 20px;
+}
+
+.average-rating-col .avg-num {
+  font-size: 54px;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1;
+}
+
+.stars-row {
+  font-size: 22px;
+  margin: 10px 0;
+  display: flex;
+  gap: 2px;
+}
+
+.star-filled {
+  color: #ffb703;
+}
+
+.star-empty {
+  color: #e5e7eb;
+}
+
+.reviews-count {
+  font-size: 13px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.rating-bars-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rating-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.star-label {
+  width: 50px;
+  text-align: left;
+}
+
+.bar-outer {
+  flex: 1;
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, #ffb703, #ffa200);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.count-label {
+  width: 25px;
+  text-align: right;
+  font-weight: 600;
+}
+
+/* Submit Review Form */
+.add-review-form {
+  background: #f9fafb;
+  border: 1px dashed var(--primary-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.add-review-form h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 15px;
+}
+
+.rating-input-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.rating-input-row .label {
+  font-size: 14px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.stars-input {
+  display: flex;
+  gap: 4px;
+}
+
+.star-input-btn {
+  background: none;
+  border: none;
+  font-size: 26px;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.star-input-btn:hover {
+  transform: scale(1.2);
+}
+
+.star-input-btn.selected {
+  color: #ffb703;
+}
+
+.textarea-wrap textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.textarea-wrap textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.submit-review-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  transition: var(--transition);
+  margin-top: 15px;
+}
+
+.submit-review-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+}
+
+.submit-review-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Feedbacks List */
+.feedbacks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.feedback-card {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--bg-white);
+  transition: var(--transition);
+}
+
+.feedback-card:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: rgba(99, 102, 241, 0.15);
+  transform: translateY(-1px);
+}
+
+.feedback-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.reviewer-pfp {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.reviewer-avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.reviewer-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.reviewer-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.reviewer-date {
+  font-size: 11px;
+  color: var(--text-lighter);
+}
+
+.reviewer-stars {
+  font-size: 15px;
+}
+
+.feedback-content {
+  font-size: 14px;
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+.loading-feedbacks,
+.no-feedbacks {
+  text-align: center;
+  padding: 30px;
+  font-size: 14px;
+  color: var(--text-light);
+  background: #f9fafb;
+  border-radius: 10px;
+}
+
+/* Responsive updates for Rating Summary */
+@media (max-width: 600px) {
+  .rating-summary-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .average-rating-col {
+    border-left: none;
+    border-bottom: 1px solid var(--border-color);
+    padding-left: 0;
+    padding-bottom: 20px;
+  }
+}

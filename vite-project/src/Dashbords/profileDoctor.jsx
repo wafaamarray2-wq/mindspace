@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useDashUser } from "../Dashbords/DoctorDashbord";
@@ -75,6 +75,92 @@ export default function ProfileDoctor() {
   const [cropSrc,    setCropSrc]    = useState(null);
   const [cropTarget, setCropTarget] = useState(null);
 
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [loadingFeedbacks, setLoadingFeedbacks] = useState(true);
+  const [sessions, setSessions] = useState([]);
+
+  // Fetch feedbacks and sessions for this therapist
+  useEffect(() => {
+    if (!user?._id) return;
+    const fetchFeedbacks = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("https://mind-space-ov3r.onrender.com/feedback", {
+          headers: { Authorization: `dash ${token}` }
+        });
+        const data = res.data?.data || res.data || [];
+        const filtered = data.filter((f) => {
+          const tId = f.therapistId?._id || f.therapistId || "";
+          return tId === user._id;
+        });
+        setFeedbacks(filtered);
+      } catch (err) {
+        console.error("Error fetching feedbacks:", err);
+      } finally {
+        setLoadingFeedbacks(false);
+      }
+    };
+
+    const fetchSessions = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("https://mind-space-ov3r.onrender.com/session/therapist", {
+          headers: { Authorization: `dash ${token}` }
+        });
+        setSessions(res.data?.data || res.data || []);
+      } catch (err) {
+        console.error("Error fetching sessions:", err);
+      }
+    };
+
+    fetchFeedbacks();
+    fetchSessions();
+  }, [user?._id]);
+
+  const getReviewerName = (feedback, currentUserId, currentUserName) => {
+    if (feedback.userId === currentUserId || (feedback.userId?._id && feedback.userId._id === currentUserId)) {
+      return currentUserName || "أنت";
+    }
+    
+    if (feedback.userId?.userName) return feedback.userId.userName;
+    if (feedback.user?.userName) return feedback.user.userName;
+    if (feedback.userName) return feedback.userName;
+    
+    const userIdStr = typeof feedback.userId === 'object' ? feedback.userId?._id : feedback.userId;
+    if (!userIdStr) return "مريض";
+    
+    let hash = 0;
+    for (let i = 0; i < userIdStr.length; i++) {
+      hash = userIdStr.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    const firstNames = [
+      "أحمد", "سارة", "محمد", "ياسمين", "كريم", "منى", "علي", "فاطمة", 
+      "محمود", "ليلى", "خالد", "رانيا", "عمر", "هالة", "يوسف", "مي"
+    ];
+    const lastInitials = [
+      "أ.", "ب.", "ت.", "ج.", "ح.", "خ.", "د.", "ر.", "س.", "ش.", "ع.", "م.", "ن.", "هـ."
+    ];
+    
+    const firstName = firstNames[Math.abs(hash) % firstNames.length];
+    const lastInitial = lastInitials[Math.abs(hash >> 3) % lastInitials.length];
+    
+    return `${firstName} ${lastInitial}`;
+  };
+
+  const translateSpecialty = (spec) => {
+    const translations = {
+      "therapist": "العلاج النفسي",
+      "psychologist": "علم النفس الإكلينيكي",
+      "psychiatrist": "الطب النفسي",
+      "anxiety": "القلق والتوتر",
+      "depression": "الاكتئاب",
+      "stress": "الضغط النفسي",
+      "cbt": "العلاج المعرفي السلوكي"
+    };
+    return translations[(spec || "").toLowerCase()] || spec || "العلاج النفسي العام";
+  };
+
   const openCrop = (file, target) => {
     setCropSrc(URL.createObjectURL(file));
     setCropTarget(target);
@@ -137,40 +223,37 @@ export default function ProfileDoctor() {
   const initial = user?.userName?.charAt(0)?.toUpperCase() || "د";
 
 
+  const uniquePatients = new Set(sessions.map((s) => s.userId?._id || s.userId).filter(Boolean)).size;
+  const hasReviews = feedbacks.length > 0;
+  const avgRating = hasReviews 
+    ? feedbacks.reduce((acc, f) => acc + f.stars, 0) / feedbacks.length 
+    : 0;
+  const avgRatingText = hasReviews ? `${avgRating.toFixed(1)}⭐` : "جديد";
+
   const info = [
-    { icon: <FiMail />,       label: "Email",      val: user?.email || "—" },
-    { icon: <FiPhone />,      label: "Phone",      val: "+20 100 123 4567" },
-    { icon: <FiMapPin />,     label: "Location",      val: "Cairo, Egypt" },
-    { icon: <FiGlobe />,      label: "Languages",      val: "Arabic, English" },
-    { icon: <FiDollarSign />, label: "Session fee", val: "500 EGP / 60 min" },
+    { icon: <FiMail />,       label: "البريد الإلكتروني",      val: user?.email || "—" },
+    { icon: <FiPhone />,      label: "الهاتف",      val: user?.phoneNumber || "—" },
+    { icon: <FiDollarSign />, label: "سعر الجلسة", val: `${user?.sessionFee || "150"} ج.م / 60 دقيقة` },
   ];
 
-  const specializations = [
-    "Anxiety disorders", "Depression", "Trauma & PTSD",
-    "CBT", "Mindfulness", "Relationship issues",
-  ];
+  const specializations = user?.specialty 
+    ? user.specialty.split(/[,،\s\n]+/).map(s => s.trim()).filter(Boolean)
+    : ["العلاج النفسي", "الإرشاد السلوكي", "الدعم النفسي"];
 
   const availability = [
-    { day: "Sun", time: "10-5",  off: false },
-    { day: "Mon", time: "9-6",   off: false },
-    { day: "Tue", time: "—",     off: true  },
-    { day: "Wed", time: "10-4",  off: false },
-    { day: "Thu", time: "9-5",   off: false },
-    { day: "Fri", time: "—",     off: true  },
-    { day: "Sat", time: "10-2",  off: false },
+    { day: "الأحد", time: "10-5",  off: false },
+    { day: "الأثنين", time: "9-6",   off: false },
+    { day: "الثلاثاء", time: "—",     off: true  },
+    { day: "الأربعاء", time: "10-4",  off: false },
+    { day: "الخميس", time: "9-5",   off: false },
+    { day: "الجمعة", time: "—",     off: true  },
+    { day: "السبت", time: "10-2",  off: false },
   ];
 
   const certifications = [
-    { name: "Licensed Clinical Psychologist", org: "Egyptian Psychological Association · 2018" },
-    { name: "CBT Practitioner",           org: "Beck Institute · 2020" },
-    { name: "Trauma-Focused Therapy",         org: "EMDR International · 2022" },
-  ];
-
-  const reviews = [
-    { initials: "SM", name: "Sara M.", time: "2 weeks ago", stars: 5,
-      text: "Dr. Ahmed is incredibly patient and understanding. After just a few sessions I noticed a real difference in how I handle stress." },
-    { initials: "KR", name: "Khaled R.", time: "1 month ago", stars: 5,
-      text: "Very professional and compassionate. The CBT techniques he taught me have been life-changing." },
+    { name: "أخصائي نفسي عيادي معتمد", org: "الجمعية المصرية للدراسات النفسية · 2018" },
+    { name: "ممارس العلاج المعرفي السلوكي (CBT)", org: "معهد بيك · 2020" },
+    { name: "معالج الصدمات النفسية المعتمد", org: "الجمعية الدولية لعلاج الصدمات · 2022" },
   ];
 
   return (
@@ -238,20 +321,23 @@ export default function ProfileDoctor() {
 
       {/* ── STATS ── */}
       <div className="dp-stats-row">
-        {[{ n: 124, l: "Patients" }, { n: "4.9", l: "Rating" }, { n: "6 yrs", l: "Experience" }]
-          .map(({ n, l }) => (
-            <div className="dp-stat-box" key={l}>
-              <div className="dp-stat-n">{n}</div>
-              <div className="dp-stat-l">{l}</div>
-            </div>
-          ))}
+        {[
+          { n: uniquePatients, l: "المرضى" },
+          { n: avgRatingText, l: "التقييم" },
+          { n: `${user?.experience || 0} سنوات`, l: "سنوات الخبرة" }
+        ].map(({ n, l }) => (
+          <div className="dp-stat-box" key={l}>
+            <div className="dp-stat-n">{n}</div>
+            <div className="dp-stat-l">{l}</div>
+          </div>
+        ))}
       </div>
 
       {/* ── PERSONAL INFO ── */}
       <div className="dp-card">
         <div className="dp-sec-head">
-          <span className="dp-sec-title">Personal information</span>
-          <button className="dp-sec-btn"><FiEdit2 size={12} /> Edit</button>
+          <span className="dp-sec-title">البيانات الشخصية</span>
+          <button className="dp-sec-btn"><FiEdit2 size={12} /> تعديل</button>
         </div>
         {info.map(({ icon, label, val }) => (
           <div className="dp-info-row" key={label}>
@@ -265,24 +351,23 @@ export default function ProfileDoctor() {
       {/* ── ABOUT ── */}
       <div className="dp-card">
         <div className="dp-sec-head">
-          <span className="dp-sec-title">About</span>
-          <button className="dp-sec-btn"><FiEdit2 size={12} /> Edit</button>
+          <span className="dp-sec-title">عن الدكتور</span>
+          <button className="dp-sec-btn"><FiEdit2 size={12} /> تعديل</button>
         </div>
         <p className="dp-about-text">
-          Experienced clinical psychologist specializing in anxiety, depression, and trauma recovery.
-          I use evidence-based approaches including CBT and mindfulness to help clients build lasting mental resilience.
+          {user?.bio || user?.description || `الدكتور ${user?.userName} هو أخصائي نفسي متميز في مجال ${translateSpecialty(user?.specialty)}، ولديه خبرة عملية تمتد لأكثر من ${user?.experience || 0} سنوات في تقديم الدعم النفسي والإرشاد السلوكي لمساعدة المرضى على تجاوز الصعاب وتحقيق التوازن النفسي.`}
         </p>
       </div>
 
       {/* ── SPECIALIZATIONS ── */}
       <div className="dp-card">
         <div className="dp-sec-head">
-          <span className="dp-sec-title">Specializations</span>
-          <button className="dp-sec-btn"><FiPlus size={12} /> Add</button>
+          <span className="dp-sec-title">التخصصات</span>
+          <button className="dp-sec-btn"><FiPlus size={12} /> إضافة</button>
         </div>
         <div className="dp-tags">
           {specializations.map((s) => (
-            <span className="dp-tag" key={s}>{s}</span>
+            <span className="dp-tag" key={s}>{translateSpecialty(s)}</span>
           ))}
         </div>
       </div>
@@ -290,8 +375,8 @@ export default function ProfileDoctor() {
       {/* ── AVAILABILITY ── */}
       <div className="dp-card">
         <div className="dp-sec-head">
-          <span className="dp-sec-title">Weekly availability</span>
-          <button className="dp-sec-btn"><FiEdit2 size={12} /> Edit</button>
+          <span className="dp-sec-title">مواعيد العمل الأسبوعية</span>
+          <button className="dp-sec-btn"><FiEdit2 size={12} /> تعديل</button>
         </div>
         <div className="dp-avail-grid">
           {availability.map(({ day, time, off }) => (
@@ -306,8 +391,8 @@ export default function ProfileDoctor() {
       {/* ── CERTIFICATIONS ── */}
       <div className="dp-card">
         <div className="dp-sec-head">
-          <span className="dp-sec-title">Certifications</span>
-          <button className="dp-sec-btn"><FiPlus size={12} /> Add</button>
+          <span className="dp-sec-title">الشهادات والاعتمادات</span>
+          <button className="dp-sec-btn"><FiPlus size={12} /> إضافة</button>
         </div>
         {certifications.map(({ name, org }) => (
           <div className="dp-cert-item" key={name}>
@@ -323,21 +408,30 @@ export default function ProfileDoctor() {
       {/* ── REVIEWS ── */}
       <div className="dp-card">
         <div className="dp-sec-head">
-          <span className="dp-sec-title">Patient reviews</span>
+          <span className="dp-sec-title">تقييمات وآراء المرضى</span>
         </div>
-        {reviews.map(({ initials, name, time, stars, text }) => (
-          <div className="dp-review-item" key={name}>
-            <div className="dp-rev-top">
-              <div className="dp-rev-av" style={{ background: "#CECBF6", color: "#3C3489" }}>
-                {initials}
+        {loadingFeedbacks ? (
+          <div style={{ padding: "20px", color: "var(--text-light)" }}>جاري تحميل التقييمات...</div>
+        ) : feedbacks.map((f, index) => {
+          const name = getReviewerName(f, user?._id, user?.userName);
+          const time = f.createdAt ? new Date(f.createdAt).toLocaleDateString("ar-EG") : "مؤخراً";
+          return (
+            <div className="dp-review-item" key={f._id || index}>
+              <div className="dp-rev-top">
+                <div className="dp-rev-av" style={{ background: "#CECBF6", color: "#3C3489" }}>
+                  {name.charAt(0).toUpperCase()}
+                </div>
+                <span className="dp-rev-name">{name}</span>
+                <span className="dp-rev-time">{time}</span>
               </div>
-              <span className="dp-rev-name">{name}</span>
-              <span className="dp-rev-time">{time}</span>
+              <div className="dp-stars">{"★".repeat(f.stars)}</div>
+              <div className="dp-rev-text">{f.content}</div>
             </div>
-            <div className="dp-stars">{"★".repeat(stars)}</div>
-            <div className="dp-rev-text">{text}</div>
-          </div>
-        ))}
+          );
+        })}
+        {!loadingFeedbacks && feedbacks.length === 0 && (
+          <div className="dp-no-reviews" style={{ padding: "20px", color: "var(--text-light)" }}>لا توجد تقييمات من المرضى بعد.</div>
+        )}
       </div>
 
     </div>
