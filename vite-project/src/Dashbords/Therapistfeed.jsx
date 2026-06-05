@@ -217,6 +217,7 @@ function PostCard({
   onLike,
   onAddComment,
   onToggleComments,
+  onToggleLikesList,
   onEdit,
   onArchive,
   onRestore,

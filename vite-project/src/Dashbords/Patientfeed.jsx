@@ -119,7 +119,7 @@ function CommentItem({ comment }) {
 }
 
 /* ─── Post Card ─── */
-function PostCard({ post, onLike, onAddComment, onToggleComments, userImage, userName }) {
+function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesList, userImage, userName }) {
   const [draft, setDraft] = useState("");
   const [showCommentForm, setShowCommentForm] = useState(false);
 
@@ -173,11 +173,14 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, userImage, use
 
       {/* Stats */}
       <div className="post-stats">
-        <div className="stat-item">
+        <button
+          className="stat-item stat-button"
+          onClick={() => onToggleLikesList(post.id)}
+        >
           <FaHeart className="stat-icon liked" />
           <span className="stat-number">{post.likes}</span>
           <span className="stat-label">likes</span>
-        </div>
+        </button>
         <button
           className="stat-item stat-button"
           onClick={() => onToggleComments(post.id)}
@@ -216,6 +219,35 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, userImage, use
 
       
       </div>
+
+      {/* Likes List Section */}
+      {post.showLikesList && (
+        <div className="likes-list-section" style={{ direction: "rtl", textAlign: "right" }}>
+          <h4>الأشخاص الذين أعجبهم هذا المنشور:</h4>
+          <div className="likes-avatars-row">
+            {post.likesList && post.likesList.length > 0 ? (
+              post.likesList.map((likeUser, idx) => {
+                const name = likeUser.userName || "مريض";
+                const pfp = likeUser.pfp?.secure_url || null;
+                return (
+                  <div key={likeUser._id || idx} className="like-user-item">
+                    {pfp ? (
+                      <img src={pfp} alt={name} className="like-user-pfp" />
+                    ) : (
+                      <div className="like-user-avatar-placeholder">
+                        {name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span className="like-user-name">{name}</span>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="no-likes-text">لا توجد إعجابات بعد</div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Comments Section */}
       {post.showComments && (
@@ -290,11 +322,13 @@ function formatArticle(article) {
     text: article.content,
     img: article.attachments?.[0]?.secure_url || null,
     likes: article.likes?.length || 0,
+    likesList: Array.isArray(article.likes) ? article.likes : [],
     liked,
     likeLoading: false,
     comments: [],
     commentsCount: 0,
     showComments: false,
+    showLikesList: false,
     time: formatTime(article.createdAt),
   };
 }
@@ -361,6 +395,15 @@ export default function PatientFeed() {
 
 
 
+
+  /* ─── Handle Toggle Likes List ─── */
+  const handleToggleLikesList = (id) => {
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === id ? { ...p, showLikesList: !p.showLikesList } : p
+      )
+    );
+  };
 
   /* ─── Handle Like ─── */
   const handleLike = async (id) => {
@@ -547,6 +590,7 @@ export default function PatientFeed() {
                 onLike={handleLike}
                 onAddComment={handleAddComment}
                 onToggleComments={handleToggleComments}
+                onToggleLikesList={handleToggleLikesList}
                 userImage={userImage}
                 userName={userName}
               />

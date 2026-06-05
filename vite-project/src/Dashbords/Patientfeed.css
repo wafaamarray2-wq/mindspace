@@ -744,3 +744,69 @@ body {
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
   }
 }
+
+/* ─── LIKES LIST SECTION ─── */
+.likes-list-section {
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--border-light);
+  animation: slideDown 0.3s ease-out;
+}
+
+.likes-list-section h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.likes-avatars-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.like-user-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-secondary);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.like-user-item:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--bg-primary);
+}
+
+.like-user-pfp {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.like-user-avatar-placeholder {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.no-likes-text {
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+}
