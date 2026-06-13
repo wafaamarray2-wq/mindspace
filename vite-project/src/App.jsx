@@ -19,7 +19,7 @@ import SessionDetails from "./Dashbords/SessionDetails";
 import DoctorProfile from "./Dashbords/DoctorProfile";
 import Booking from "./Dashbords/Booking";
 // import PatientHome from "./Dashbords/PatientHome";
-import MessagePatient from "./Dashbords/MessagePatient";
+
 import SettingPatients from "./Dashbords/SettingPatients";
  import VerifyOtp from "./Registers/VerifyOtp";
 import ForgetPassword from "./Registers/ForgetPassword";
@@ -126,7 +126,7 @@ function App() {
       <Route path="/patient-dashboard" element={<PatientDashbord />} >
 
      <Route index element={<Patientfeed/>} />
-        <Route path="message" element={<MessagePatient />} />
+        <Route path="message" element={<Messages />} />
         <Route path="groups" element={<PatientGroups />} />
         <Route path="test" element={<TestPage />} />
         <Route path="setting" element={<SettingPatients />} />
