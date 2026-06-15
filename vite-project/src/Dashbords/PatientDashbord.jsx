@@ -269,8 +269,17 @@ export default function PatientDashbord() {
           {/* Navigation */}
           <nav>
             <ul>
-              <li>
+              {/* <li>
                 <Link to="/" onClick={handleNavLinkClick}>
+                  <span>
+                    <IoHome />
+                  </span>
+                  <h5>Home</h5>
+                </Link>
+              </li> */}
+
+              <li>
+                <Link to="/PatientHome" onClick={handleNavLinkClick}>
                   <span>
                     <IoHome />
                   </span>
@@ -278,23 +287,14 @@ export default function PatientDashbord() {
                 </Link>
               </li>
 
-              <li>
-                <Link to="/PatientHome" onClick={handleNavLinkClick}>
-                  <span>
-                    <IoHome />
-                  </span>
-                  <h5>PatientHome</h5>
-                </Link>
-              </li>
-
-              <li>
+              {/* <li>
                 <Link to="profile" onClick={handleNavLinkClick}>
                   <span>
                     <IoPerson />
                   </span>
                   <h5>My Profile</h5>
                 </Link>
-              </li>
+              </li> */}
 
               <li>
                 <Link to="/doctor" onClick={handleNavLinkClick}>

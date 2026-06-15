@@ -30,7 +30,7 @@ import ProtectedRoute from "./Registers/ProtectedRoute";
 import Therapistfeed from "./Dashbords/Therapistfeed";
 import ProfileDoctor from "./Dashbords/profileDoctor";
 import Patientfeed from "./Dashbords/Patientfeed";
-import Profilepatient from "./Dashbords/Profilepatient ";
+// import Profilepatient from "./Dashbords/Profilepatient ";
 import AdminDashboard from "./Dashbords/Admindashboard";
 import PatientGroups from "./Dashbords/Groups/Patientgroups";
 import TherapistGroups from "./Dashbords/Groups/Therapistgroups";
@@ -132,7 +132,7 @@ function App() {
         <Route path="test" element={<TestPage />} />
         <Route path="setting" element={<SettingPatients />} />
       <Route path="logOut" element={<LogOut />} />
-      <Route path="profile" element={<Profilepatient/>} />
+      {/* <Route path="profile" element={<Profilepatient/>} /> */}
       </Route> 
       <Route path="/PatientHome" element={<Patientfeed  />} />
       <Route path="/patient/:id" element={<PatientProfile />} />
