@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 // import { TherapistProvider } from "./Therapists/TherapistContext";
 import { UserProvider } from './UserContext.jsx';
+import { SocketProvider } from './SocketContext.jsx';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 createRoot(document.getElementById('root')).render(
@@ -12,8 +13,10 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
   
           <UserProvider>
-        <App />
-        <ToastContainer position="top-right" autoClose={2000} />
+        <SocketProvider>
+          <App />
+          <ToastContainer position="top-right" autoClose={2000} />
+        </SocketProvider>
         </UserProvider>
 
     </BrowserRouter>
