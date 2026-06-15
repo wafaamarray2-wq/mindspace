@@ -1,117 +1,151 @@
-import { useParams } from "react-router-dom";
-import './patientprofile.css';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+import { FiArrowRight, FiCalendar, FiClock, FiUser } from "react-icons/fi";
+import "./PatientProfile.css";
+
+const BASE = "https://mind-space-ov3r.onrender.com";
+
+function authHeader() {
+  const token = localStorage.getItem("token");
+  return { Authorization: `dash ${token}` };
+}
+
+const STATUS_MAP = {
+  pending:   { text: "في الانتظار", cls: "pp-badge pending"   },
+  confirmed: { text: "مؤكدة",       cls: "pp-badge confirmed" },
+  canceled:  { text: "ملغاة",       cls: "pp-badge canceled"  },
+  completed: { text: "منتهية",      cls: "pp-badge completed" },
+};
+
+function Avatar({ name, size = 72 }) {
+  const colors = [
+    ["#EEEDFE","#534AB7"], ["#E1F5EE","#0F6E56"],
+    ["#FEF3C7","#92400E"], ["#FFE4E6","#9F1239"],
+    ["#DBEAFE","#1E40AF"],
+  ];
+  const [bg, color] = colors[(name?.charCodeAt(0) || 0) % colors.length];
+  return (
+    <div className="pp-avatar" style={{ width: size, height: size, background: bg, color, fontSize: size * 0.38 }}>
+      {name?.charAt(0)?.toUpperCase() || "؟"}
+    </div>
+  );
+}
 
 export default function PatientProfile() {
-  const { id } = useParams();
+  const { id }       = useParams();
+  const navigate     = useNavigate();
+  const { state }    = useLocation();
 
-  const patientsData = [
-    {
-      id: "1",
-      name: "Ali",
-      age: 30,
-      gender: "Male",
-      condition: "Stable",
-      status: "Active",
-      diseases: ["Diabetes"],
-      medications: ["Metformin"],
-      image: "https://i.pravatar.cc/150?img=1"
-    },
-    {
-      id: "2",
-      name: "Ahmed",
-      age: 45,
-      gender: "Male",
-      condition: "Critical",
-      status: "Inactive",
-      diseases: ["Heart Disease"],
-      medications: ["Aspirin"],
-      image: "https://i.pravatar.cc/150?img=2"
-    },
-    {
-      id: "3",
-      name: "Sara",
-      age: 28,
-      gender: "Female",
-      condition: "Stable",
-      status: "Active",
-      diseases: ["Asthma"],
-      medications: ["Inhaler"],
-      image: "https://i.pravatar.cc/150?img=3"
-    },
-  ];
+  const [sessions, setSessions] = useState([]);
+  const [loading,  setLoading]  = useState(true);
+  const [error,    setError]    = useState("");
 
-  const patient = patientsData.find((p) => p.id === id);
-const sessions = [
-  { date: "2024-02-10", notes: "Regular check" },
-  { date: "2024-03-01", notes: "Follow up" },
-  { date: "2024-03-20", notes: "Improvement noticed" },
-  { date: "2024-04-05", notes: "Medication updated" },
-];
-  if (!patient) {
-    return <h2>Patient Not Found</h2>;
-  }
+  /* اسم المريض من الـ state اللي جاي من Patients page */
+  const patientName = state?.session?.userId?.userName || "مريض";
+
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const res  = await axios.get(`${BASE}/session/therapist`, { headers: authHeader() });
+        const all  = res.data?.data || res.data || [];
+        /* فلتر الجلسات بتاعة المريض ده بس */
+        const mine = all.filter((s) => {
+          const pid = s.userId?._id || s.userId;
+          return pid === id;
+        });
+        /* ترتيب من الأحدث للأقدم */
+        mine.sort((a, b) => new Date(b.sessionTime) - new Date(a.sessionTime));
+        setSessions(mine);
+      } catch {
+        setError("تعذر تحميل بيانات الجلسات");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSessions();
+  }, [id]);
+
+  const formatDate = (d) =>
+    d ? new Date(d).toLocaleString("ar-EG", {
+      year: "numeric", month: "long", day: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    }) : "—";
+
+  /* إحصائيات */
+  const total     = sessions.length;
+  const completed = sessions.filter((s) => s.status === "completed").length;
+  const upcoming  = sessions.filter((s) => s.status === "confirmed" || s.status === "pending").length;
 
   return (
-    <div className="profile-container">
+    <div className="pp-page" dir="rtl">
 
-      {/* Header */}
-      <div className="profile-header">
-        <img src={patient.image} alt="patient" className="profile-img"/>
+      {/* back */}
+      <button className="pp-back" onClick={() => navigate(-1)}>
+        <FiArrowRight /> العودة للمرضى
+      </button>
 
-        <div>
-          <h2>{patient.name}</h2>
-
-          <span className={`badge ${patient.condition === "Stable" ? "stable" : "critical"}`}>
-            {patient.condition}
-          </span>
-
-          <span className={`badge ${patient.status === "Active" ? "active" : "inactive"}`}>
-            {patient.status}
-          </span>
+      {/* hero */}
+      <div className="pp-hero">
+        <Avatar name={patientName} size={72} />
+        <div className="pp-hero-info">
+          <h1>{patientName}</h1>
+          <span className="pp-role-badge"><FiUser size={11} /> مريض</span>
         </div>
       </div>
 
-      {/* Info */}
-      <div className="info-grid">
-        <div className="card">
-          <h3>Personal Info</h3>
-          <p><strong>Age:</strong> {patient.age}</p>
-          <p><strong>Gender:</strong> {patient.gender}</p>
+      {/* stats */}
+      <div className="pp-stats">
+        <div className="pp-stat">
+          <span className="pp-stat-n">{total}</span>
+          <span className="pp-stat-l">إجمالي الجلسات</span>
         </div>
-
-        <div className="card">
-          <h3>Medical Info</h3>
-          <p><strong>Diseases:</strong> {patient.diseases.join(", ")}</p>
-          <p><strong>Medications:</strong> {patient.medications.join(", ")}</p>
+        <div className="pp-stat">
+          <span className="pp-stat-n">{completed}</span>
+          <span className="pp-stat-l">منتهية</span>
+        </div>
+        <div className="pp-stat">
+          <span className="pp-stat-n">{upcoming}</span>
+          <span className="pp-stat-l">قادمة</span>
         </div>
       </div>
 
-      {/* Sessions */}
-      <div className="card">
-        <h3>Sessions</h3>
+      {/* sessions list */}
+      <div className="pp-card">
+        <div className="pp-card-head">
+          <FiCalendar size={15} />
+          <span>سجل الجلسات</span>
+        </div>
 
-      <div className="sessions-list">
-  {sessions.map((s, index) => (
-    <div key={index} className="session-item">
-      <p><strong>Date:</strong> {s.date}</p>
-      <p><strong>Notes:</strong> {s.notes}</p>
-    </div>
-  ))}
-</div>
-<div className="card">
-  <h3>Contact Info</h3>
-  <p><strong>Phone:</strong> 01012345678</p>
-  <p><strong>Email:</strong> patient@email.com</p>
-</div>
-<div className="card">
-  <h3>Health Progress</h3>
+        {loading && (
+          <div className="pp-loading">
+            <span className="pp-spinner" /> جاري التحميل…
+          </div>
+        )}
 
-  <div className="progress-bar">
-    <div className="progress-fill"></div>
-  </div>
+        {error && <div className="pp-error">{error}</div>}
 
-  <p>Recovery: 70%</p>
-</div>
+        {!loading && !error && sessions.length === 0 && (
+          <div className="pp-empty">
+            <FiCalendar size={28} />
+            <p>لا توجد جلسات مسجلة</p>
+          </div>
+        )}
+
+        {!loading && sessions.map((s, i) => {
+          const { text, cls } = STATUS_MAP[s.status] || { text: s.status, cls: "pp-badge" };
+          return (
+            <div className="pp-session-row" key={s._id}>
+              <div className="pp-session-num">{i + 1}</div>
+              <div className="pp-session-info">
+                <div className="pp-session-date">
+                  <FiClock size={12} /> {formatDate(s.sessionTime)}
+                </div>
+              </div>
+              <span className={cls}>{text}</span>
+            </div>
+          );
+        })}
       </div>
 
     </div>

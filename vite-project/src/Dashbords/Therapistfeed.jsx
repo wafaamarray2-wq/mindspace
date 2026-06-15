@@ -1,13 +1,12 @@
- import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
- FiImage,
+  FiImage,
   FiSmile,
   FiLink,
   FiSend,
   FiMoreHorizontal,
   FiHeart,
   FiMessageCircle,
-  FiBookmark,
   FiX,
   FiZap,
   FiGlobe,
@@ -40,9 +39,6 @@ function authHeader() {
   const token = localStorage.getItem("token");
   return { Authorization: `dash ${token}` };
 }
-
-console.log("TOKEN:", localStorage.getItem("token"));
-console.log("ROLE:", localStorage.getItem("role"));
 
 function formatTime(date) {
   const now = new Date();
@@ -143,37 +139,8 @@ function CommentItem({ comment, onDelete }) {
 }
 
 /* ─── Post Menu ─── */
-function PostMenu({
-  postId,
-  isArchived,
-  onEdit,
-  onArchive,
-  onRestore,
-  onDelete,
-}) {
+function PostMenu({ postId, isArchived, onEdit, onArchive, onRestore, onDelete }) {
   const [showMenu, setShowMenu] = useState(false);
-
-  const handleEdit = () => {
-    onEdit(postId);
-    setShowMenu(false);
-  };
-
-  const handleArchive = () => {
-    onArchive(postId);
-    setShowMenu(false);
-  };
-
-  const handleRestore = () => {
-    onRestore(postId);
-    setShowMenu(false);
-  };
-
-  const handleDelete = () => {
-    if (window.confirm("Move this post to trash?")) {
-      onDelete(postId);
-      setShowMenu(false);
-    }
-  };
 
   return (
     <div className="post-menu-container">
@@ -188,21 +155,26 @@ function PostMenu({
 
       {showMenu && (
         <div className="post-menu-dropdown">
-          <button className="menu-item" onClick={handleEdit}>
+          <button className="menu-item" onClick={() => { onEdit(postId); setShowMenu(false); }}>
             <FiEdit size={16} /> Edit
           </button>
 
           {!isArchived ? (
-            <button className="menu-item" onClick={handleArchive}>
+            <button className="menu-item" onClick={() => { onArchive(postId); setShowMenu(false); }}>
               <FiArchive size={16} /> Archive
             </button>
           ) : (
-            <button className="menu-item" onClick={handleRestore}>
+            <button className="menu-item" onClick={() => { onRestore(postId); setShowMenu(false); }}>
               <FiRotateCcw size={16} /> Restore
             </button>
           )}
 
-          <button className="menu-item delete" onClick={handleDelete}>
+          <button className="menu-item delete" onClick={() => {
+            if (window.confirm("Move this post to trash?")) {
+              onDelete(postId);
+              setShowMenu(false);
+            }
+          }}>
             <FiTrash2 size={16} /> Delete
           </button>
         </div>
@@ -217,7 +189,7 @@ function PostCard({
   onLike,
   onAddComment,
   onToggleComments,
-  onToggleLikesList,
+  onToggleLikesList,   // FIX: أضفنا الـ prop
   onEdit,
   onArchive,
   onRestore,
@@ -239,24 +211,14 @@ function PostCard({
 
   return (
     <article className="post-card">
-
       {/* Header */}
       <div className="post-header">
-
-        {/* left group: avatar + name */}
         <div className="post-author">
           <div className="post-avatar">
             {post.image ? (
-              <img
-                src={post.image}
-                alt={post.userNamee}
-                className="avatar-img"
-              />
+              <img src={post.image} alt={post.userNamee} className="avatar-img" />
             ) : (
-              <Avatar
-                initials={post.userNamee?.charAt(0)?.toUpperCase()}
-                size={48}
-              />
+              <Avatar initials={post.userNamee?.charAt(0)?.toUpperCase()} size={48} />
             )}
           </div>
 
@@ -264,11 +226,8 @@ function PostCard({
             <div className="post-author-name">
               Dr. {post?.userNamee || "Therapist"}
             </div>
-
             <div className="post-sub-meta" style={{ display: "flex", flexDirection: "column" }}>
-              <span className="post-role">
-                {user?.role || "Mental Health Professional"}
-              </span>
+              <span className="post-role">{user?.role || "Mental Health Professional"}</span>
               <span className="post-time">{post.time}</span>
             </div>
           </div>
@@ -284,7 +243,6 @@ function PostCard({
             />
           )}
         </div>
-
       </div>
 
       {/* Content */}
@@ -301,21 +259,22 @@ function PostCard({
         </div>
       )}
 
-      {/* Stats */}
+      {/* Stats - FIX: أضفنا زرار اللايكات زي صفحة المريض */}
       <div className="post-stats">
-        <div className="stat-item">
+        <button
+          className="stat-item stat-button"
+          onClick={() => onToggleLikesList && onToggleLikesList(post.id)}
+        >
           <FaHeart className="stat-icon liked" />
           <span className="stat-number">{post.likes}</span>
           <span className="stat-label">likes</span>
-        </div>
+        </button>
         <button
           className="stat-item stat-button"
           onClick={() => onToggleComments(post.id)}
         >
           <FiMessageCircle className="stat-icon" />
-          <span className="stat-number">
-            {post.commentsCount ?? post.comments.length}
-          </span>
+          <span className="stat-number">{post.commentsCount ?? post.comments.length}</span>
           <span className="stat-label">comments</span>
         </button>
       </div>
@@ -327,22 +286,44 @@ function PostCard({
           onClick={() => onLike(post.id)}
           disabled={post.likeLoading}
         >
-          {post.liked ? (
-            <FaHeart className="icon liked" />
-          ) : (
-            <FiHeart className="icon" />
-          )}
+          {post.liked ? <FaHeart className="icon liked" /> : <FiHeart className="icon" />}
           <span>{post.liked ? "Liked" : "Like"}</span>
         </button>
 
-        <button
-          className="action-btn"
-          onClick={() => onToggleComments(post.id)}
-        >
+        <button className="action-btn" onClick={() => onToggleComments(post.id)}>
           <FiMessageCircle className="icon" />
           <span>Comment</span>
         </button>
       </div>
+
+      {/* FIX: Likes List - زي صفحة المريض بالظبط */}
+      {post.showLikesList && (
+        <div className="likes-list-section" style={{ direction: "rtl", textAlign: "right" }}>
+          <h4>الأشخاص الذين أعجبهم هذا المنشور:</h4>
+          <div className="likes-avatars-row">
+            {post.likesList && post.likesList.length > 0 ? (
+              post.likesList.map((likeUser, idx) => {
+                const name = likeUser.userName || "مستخدم";
+                const pfp = likeUser.pfp?.secure_url || null;
+                return (
+                  <div key={likeUser._id || idx} className="like-user-item">
+                    {pfp ? (
+                      <img src={pfp} alt={name} className="like-user-pfp" />
+                    ) : (
+                      <div className="like-user-avatar-placeholder">
+                        {name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span className="like-user-name">{name}</span>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="no-likes-text">لا توجد إعجابات بعد</div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Comments */}
       {post.showComments && (
@@ -398,14 +379,7 @@ function PostCard({
 }
 
 /* ─── Create Modal ─── */
-function CreateModal({
-  open,
-  onClose,
-  onSubmit,
-  docName,
-  editingPost,
-  onUpdatePost,
-}) {
+function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePost }) {
   const [text, setText] = useState("");
   const [img, setImg] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -456,11 +430,7 @@ function CreateModal({
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>{editingPost && !isNew ? "Edit post" : "Share a post"}</h3>
-          <button
-            className="modal-close"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
+          <button className="modal-close" onClick={onClose} aria-label="Close modal">
             <FiX />
           </button>
         </div>
@@ -468,9 +438,7 @@ function CreateModal({
         <div className="modal-author">
           <UserAvatar size={42} />
           <div>
-            <div className="modal-author-name">
-              Dr. {docName || "Therapist"}
-            </div>
+            <div className="modal-author-name">Dr. {docName || "Therapist"}</div>
             <div className="modal-author-status">
               <FiGlobe style={{ verticalAlign: -2, marginRight: 4 }} />
               Public • Mental Health Professional
@@ -492,10 +460,7 @@ function CreateModal({
             <img src={preview} alt="preview" />
             <button
               className="modal-remove-img"
-              onClick={() => {
-                setImg(null);
-                setPreview(null);
-              }}
+              onClick={() => { setImg(null); setPreview(null); }}
               aria-label="Remove image"
             >
               <FiX />
@@ -505,37 +470,14 @@ function CreateModal({
 
         <div className="modal-footer">
           <div className="modal-tools">
-            <button
-              className="modal-tool-btn"
-              title="Add photo"
-              onClick={() => fileRef.current.click()}
-              aria-label="Add photo"
-            >
+            <button className="modal-tool-btn" title="Add photo" onClick={() => fileRef.current.click()}>
               <FiImage />
             </button>
-            <button
-              className="modal-tool-btn"
-              title="Add emoji"
-              aria-label="Add emoji"
-            >
-              <FiSmile />
-            </button>
-            <button
-              className="modal-tool-btn"
-              title="Add link"
-              aria-label="Add link"
-            >
-              <FiLink />
-            </button>
+            <button className="modal-tool-btn" title="Add emoji"><FiSmile /></button>
+            <button className="modal-tool-btn" title="Add link"><FiLink /></button>
           </div>
 
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handleFile}
-          />
+          <input ref={fileRef} type="file" accept="image/*" hidden onChange={handleFile} />
 
           <button
             className="modal-post-btn"
@@ -551,14 +493,24 @@ function CreateModal({
 }
 
 /* ─── Format Helpers ─── */
+// FIX: formatComments تتعامل مع كل الـ fields الممكنة
 function formatComments(rawComments = []) {
   return rawComments.map((c) => ({
     id: c._id,
-    userId: c.user?._id || null,
-    author: c.user?.userName || c.author?.userName || c.userId?.userName || "User",
+    userId: c.user?._id || c.userId?._id || c.author?._id || null,
+    author:
+      c.user?.userName ||
+      c.author?.userName ||
+      c.userId?.userName ||
+      c.userName ||
+      "User",
     text: c.content,
     time: c.createdAt ? formatTime(c.createdAt) : "Recently",
-    userImage: c.user?.pfp?.secure_url || c.userId?.pfp?.secure_url || c.author?.pfp?.secure_url || null,
+    userImage:
+      c.user?.pfp?.secure_url ||
+      c.userId?.pfp?.secure_url ||
+      c.author?.pfp?.secure_url ||
+      null,
   }));
 }
 
@@ -569,23 +521,30 @@ function formatArticle(article) {
     ? article.likes.some((l) => l === userId || l?._id === userId)
     : false;
 
+  // FIX: likesList - objects فقط مش strings
+  const likesList = Array.isArray(article.likes)
+    ? article.likes.filter((l) => typeof l === "object" && l !== null)
+    : [];
+
   return {
     ...article,
     id: article._id,
     text: article.content,
     img: article.attachments?.[0]?.secure_url || null,
     likes: article.likes?.length || 0,
+    likesList,
     liked,
     likeLoading: false,
     comments: [],
     commentsCount: article.comments?.length || 0,
     showComments: false,
+    showLikesList: false,      // FIX: أضفنا showLikesList
     isArchived: article.isArchived || false,
     isDeleted: article.isDeleted || false,
     time: formatTime(article.createdAt),
-    userNamee: article.publisher.userName,
-    image: article.publisher.pfp.secure_url,
-    publisherId: article.publisher._id,
+    userNamee: article.publisher?.userName,
+    image: article.publisher?.pfp?.secure_url,
+    publisherId: article.publisher?._id,
   };
 }
 
@@ -600,36 +559,20 @@ export default function TherapistFeed() {
   const [editingPost, setEditingPost] = useState(null);
   const [currentTab, setCurrentTab] = useState("feed");
 
-  /* ─── Fetch and Separate Posts ─── */
+  /* ─── Fetch Posts ─── */
   const fetchAndSeparatePosts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/article`, {
-        headers: authHeader(),
-      });
-
+      const res = await axios.get(`${BASE_URL}/article`, { headers: authHeader() });
       const articles = res.data.data || [];
 
-      const active = [];
-      const archived = [];
-      const trashed = [];
+      const active = [], archived = [], trashed = [];
 
       articles.forEach((article) => {
         const formatted = formatArticle(article);
-
-        if (article.isDeleted === true) {
-          trashed.push(formatted);
-        } else if (article.isArchived === true) {
-          archived.push(formatted);
-        } else {
-          active.push(formatted);
-        }
-      });
-
-      console.log("Fetched Posts:", {
-        active: active.length,
-        archived: archived.length,
-        trashed: trashed.length,
+        if (article.isDeleted === true) trashed.push(formatted);
+        else if (article.isArchived === true) archived.push(formatted);
+        else active.push(formatted);
       });
 
       setPosts(active);
@@ -637,17 +580,22 @@ export default function TherapistFeed() {
       setTrashedPosts(trashed);
     } catch (err) {
       console.log("Error fetching posts:", err.response?.data || err.message);
-      alert("Error loading posts. Please refresh.");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchAndSeparatePosts();
-  }, []);
+  useEffect(() => { fetchAndSeparatePosts(); }, []);
 
-  /* ─── Fetch Comments ─── */
+  /* ─── Helper: find post in all lists ─── */
+  const findPostSetter = (id) => {
+    if (posts.find((p) => p.id === id)) return [posts, setPosts];
+    if (archivedPosts.find((p) => p.id === id)) return [archivedPosts, setArchivedPosts];
+    if (trashedPosts.find((p) => p.id === id)) return [trashedPosts, setTrashedPosts];
+    return [posts, setPosts];
+  };
+
+  /* ─── Fetch Comments - FIX: كل الكومنتات ─── */
   const fetchComments = async (articleId) => {
     try {
       const userId = getUserIdFromToken();
@@ -655,109 +603,90 @@ export default function TherapistFeed() {
 
       const res = await axios.get(
         `${BASE_URL}/article/${articleId}/comment/${userId}`,
-        { headers: authHeader() },
+        { headers: authHeader() }
       );
 
-      return formatComments(res.data?.data || res.data || []);
+      const raw = res.data?.data || res.data || [];
+      return formatComments(Array.isArray(raw) ? raw : []);
     } catch (err) {
       console.log("Error fetching comments:", err.response?.data || err);
       return [];
     }
   };
 
-  /* ─── Handle Like ─── */
-  const handleLike = async (id) => {
-    let postsSet = posts;
-    let setterFunc = setPosts;
+  /* ─── Fetch Likes List ─── */
+  const fetchLikesList = async (articleId) => {
+    try {
+      const res = await axios.get(`${BASE_URL}/article/${articleId}`, { headers: authHeader() });
+      const article = res.data?.data || res.data;
+      const likes = article?.likes || [];
+      return likes.filter((l) => typeof l === "object" && l !== null);
+    } catch (err) {
+      console.log("Error fetching likes list:", err.response?.data || err);
+      return [];
+    }
+  };
 
-    if (!posts.find((p) => p.id === id)) {
-      if (archivedPosts.find((p) => p.id === id)) {
-        postsSet = archivedPosts;
-        setterFunc = setArchivedPosts;
-      } else if (trashedPosts.find((p) => p.id === id)) {
-        postsSet = trashedPosts;
-        setterFunc = setTrashedPosts;
-      }
+  /* ─── FIX: Handle Toggle Likes List ─── */
+  const handleToggleLikesList = async (id) => {
+    const [postsSet, setter] = findPostSetter(id);
+    const post = postsSet.find((p) => p.id === id);
+
+    if (post?.showLikesList) {
+      setter((prev) => prev.map((p) => p.id === id ? { ...p, showLikesList: false } : p));
+      return;
     }
 
-    setterFunc((prev) =>
+    setter((prev) => prev.map((p) => p.id === id ? { ...p, showLikesList: true } : p));
+
+    if (!post?.likesList || post.likesList.length === 0) {
+      const likesList = await fetchLikesList(id);
+      setter((prev) => prev.map((p) => p.id === id ? { ...p, likesList } : p));
+    }
+  };
+
+  /* ─── Handle Like ─── */
+  const handleLike = async (id) => {
+    const [, setter] = findPostSetter(id);
+
+    setter((prev) =>
       prev.map((p) =>
         p.id === id
-          ? {
-              ...p,
-              liked: !p.liked,
-              likes: p.liked ? p.likes - 1 : p.likes + 1,
-              likeLoading: true,
-            }
-          : p,
-      ),
+          ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1, likeLoading: true }
+          : p
+      )
     );
 
     try {
-      await axios.patch(
-        `${BASE_URL}/article/like-unlike/${id}`,
-        {},
-        { headers: authHeader() },
-      );
-
-      setterFunc((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, likeLoading: false } : p)),
-      );
+      await axios.patch(`${BASE_URL}/article/like-unlike/${id}`, {}, { headers: authHeader() });
+      setter((prev) => prev.map((p) => p.id === id ? { ...p, likeLoading: false } : p));
     } catch (err) {
       console.log("Error liking post:", err.response?.data || err);
-
-      setterFunc((prev) =>
+      setter((prev) =>
         prev.map((p) =>
           p.id === id
-            ? {
-                ...p,
-                liked: !p.liked,
-                likes: p.liked ? p.likes - 1 : p.likes + 1,
-                likeLoading: false,
-              }
-            : p,
-        ),
+            ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1, likeLoading: false }
+            : p
+        )
       );
     }
   };
 
   /* ─── Toggle Comments ─── */
   const handleToggleComments = async (id) => {
-    let postsSet = posts;
-    let setterFunc = setPosts;
-
-    if (!posts.find((p) => p._id === id)) {
-      if (archivedPosts.find((p) => p._id === id)) {
-        postsSet = archivedPosts;
-        setterFunc = setArchivedPosts;
-      } else if (trashedPosts.find((p) => p._id === id)) {
-        postsSet = trashedPosts;
-        setterFunc = setTrashedPosts;
-      }
-    }
-
-    const post = postsSet.find((p) => p._id === id);
+    const [postsSet, setter] = findPostSetter(id);
+    const post = postsSet.find((p) => p.id === id);
 
     if (post?.showComments) {
-      setterFunc((prev) =>
-        prev.map((p) => (p._id === id ? { ...p, showComments: false } : p)),
-      );
+      setter((prev) => prev.map((p) => p.id === id ? { ...p, showComments: false } : p));
       return;
     }
 
     const comments = await fetchComments(id);
-
-    setterFunc((prev) =>
+    setter((prev) =>
       prev.map((p) =>
-        p._id === id
-          ? {
-              ...p,
-              showComments: true,
-              comments,
-              commentsCount: comments.length,
-            }
-          : p,
-      ),
+        p.id === id ? { ...p, showComments: true, comments, commentsCount: comments.length } : p
+      )
     );
   };
 
@@ -765,56 +694,20 @@ export default function TherapistFeed() {
   const handleAddComment = async (id, text) => {
     try {
       const userId = getUserIdFromToken();
-
       await axios.post(
         `${BASE_URL}/article/${id}/comment/${userId}`,
         { content: text },
-        { headers: authHeader() },
+        { headers: authHeader() }
       );
 
       setTimeout(async () => {
         const comments = await fetchComments(id);
-
-        if (posts.find((p) => p._id === id)) {
-          setPosts((prev) =>
-            prev.map((p) =>
-              p._id === id
-                ? {
-                    ...p,
-                    showComments: true,
-                    comments,
-                    commentsCount: comments.length,
-                  }
-                : p,
-            ),
-          );
-        } else if (archivedPosts.find((p) => p._id === id)) {
-          setArchivedPosts((prev) =>
-            prev.map((p) =>
-              p._id === id
-                ? {
-                    ...p,
-                    showComments: true,
-                    comments,
-                    commentsCount: comments.length,
-                  }
-                : p,
-            ),
-          );
-        } else if (trashedPosts.find((p) => p._id === id)) {
-          setTrashedPosts((prev) =>
-            prev.map((p) =>
-              p._id === id
-                ? {
-                    ...p,
-                    showComments: true,
-                    comments,
-                    commentsCount: comments.length,
-                  }
-                : p,
-            ),
-          );
-        }
+        const [, setter] = findPostSetter(id);
+        setter((prev) =>
+          prev.map((p) =>
+            p.id === id ? { ...p, showComments: true, comments, commentsCount: comments.length } : p
+          )
+        );
       }, 300);
     } catch (err) {
       console.log("Error adding comment:", err.response?.data || err);
@@ -826,7 +719,7 @@ export default function TherapistFeed() {
     try {
       await axios.delete(
         `${BASE_URL}/article/${articleId}/comment/${commentId}`,
-        { headers: authHeader() },
+        { headers: authHeader() }
       );
 
       const removeComment = (prev) =>
@@ -837,7 +730,7 @@ export default function TherapistFeed() {
                 comments: p.comments.filter((c) => c.id !== commentId),
                 commentsCount: Math.max((p.commentsCount || 1) - 1, 0),
               }
-            : p,
+            : p
         );
 
       setPosts(removeComment);
@@ -845,7 +738,6 @@ export default function TherapistFeed() {
       setTrashedPosts(removeComment);
     } catch (err) {
       console.log("Error deleting comment:", err.response?.data || err);
-      alert("Error deleting comment.");
     }
   };
 
@@ -857,30 +749,33 @@ export default function TherapistFeed() {
       if (img) formData.append("attachments", img);
 
       const res = await axios.post(`${BASE_URL}/article`, formData, {
-        headers: {
-          ...authHeader(),
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { ...authHeader(), "Content-Type": "multipart/form-data" },
       });
 
       if (res.data?.data) {
-        const newPost = formatArticle(res.data.data);
-        setPosts((prev) => [newPost, ...prev]);
-        alert("Post created successfully!");
+        const articleData = res.data.data;
+
+        // لو الـ API رجّع الـ publisher ناقص، نكمّله من بيانات الـ user عندنا
+        if (!articleData.publisher?.userName && user) {
+          articleData.publisher = {
+            _id: user._id,
+            userName: user.userName,
+            pfp: user.pfp,
+            specialization: user.specialization,
+          };
+        }
+
+        setPosts((prev) => [formatArticle(articleData), ...prev]);
       }
     } catch (err) {
       console.log("Error creating post:", err.response?.data || err);
-      alert("Error creating post. Please try again.");
     }
   };
 
   /* ─── Edit Post ─── */
   const handleEditPost = (postId) => {
-    const post = posts.find((p) => p._id === postId);
-    if (post) {
-      setEditingPost(post);
-      setModalOpen(true);
-    }
+    const post = posts.find((p) => p.id === postId);
+    if (post) { setEditingPost(post); setModalOpen(true); }
   };
 
   /* ─── Update Post ─── */
@@ -890,144 +785,78 @@ export default function TherapistFeed() {
       if (text) formData.append("content", text);
       if (img) formData.append("attachments", img);
 
-      console.log("Updating post:", postId);
-
-      const res = await axios.put(
-        `${BASE_URL}/article/update/${postId}`,
-        formData,
-        {
-          headers: {
-            ...authHeader(),
-            "Content-Type": "multipart/form-data",
-          },
-        },
-      );
-
-      console.log("Update response:", res.data);
+      const res = await axios.put(`${BASE_URL}/article/update/${postId}`, formData, {
+        headers: { ...authHeader(), "Content-Type": "multipart/form-data" },
+      });
 
       if (res.data?.data) {
         const updatedPost = formatArticle(res.data.data);
-        setPosts((prev) =>
-          prev.map((p) => (p._id === postId ? updatedPost : p)),
-        );
-        alert("Post updated successfully!");
+        setPosts((prev) => prev.map((p) => p.id === postId ? updatedPost : p));
       }
-
       setEditingPost(null);
     } catch (err) {
       console.log("Error updating post:", err.response?.data || err);
-      alert("Error updating post. Please try again.");
     }
   };
 
   /* ─── Archive Post ─── */
   const handleArchivePost = async (postId) => {
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/article/archive/${postId}`,
-        {},
-        { headers: authHeader() },
-      );
-
-      if (res.data?.data || res.status === 200) {
-        const post = posts.find((p) => p._id === postId);
-        if (post) {
-          setArchivedPosts((prev) => [{ ...post, isArchived: true }, ...prev]);
-          setPosts((prev) => prev.filter((p) => p._id !== postId));
-          alert("Post archived!");
-        }
+      await axios.patch(`${BASE_URL}/article/archive/${postId}`, {}, { headers: authHeader() });
+      const post = posts.find((p) => p.id === postId);
+      if (post) {
+        setArchivedPosts((prev) => [{ ...post, isArchived: true }, ...prev]);
+        setPosts((prev) => prev.filter((p) => p.id !== postId));
       }
     } catch (err) {
       console.log("Error archiving post:", err.response?.data || err);
-      alert("Error archiving post.");
     }
   };
 
   /* ─── Restore Post ─── */
   const handleRestorePost = async (postId) => {
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/article/restore/${postId}`,
-        {},
-        { headers: authHeader() },
-      );
-
-      if (res.data?.data || res.status === 200) {
-        const post = archivedPosts.find((p) => p._id === postId);
-        if (post) {
-          setPosts((prev) => [{ ...post, isArchived: false }, ...prev]);
-          setArchivedPosts((prev) => prev.filter((p) => p._id !== postId));
-          alert("Post restored!");
-        }
+      await axios.patch(`${BASE_URL}/article/restore/${postId}`, {}, { headers: authHeader() });
+      const post = archivedPosts.find((p) => p.id === postId);
+      if (post) {
+        setPosts((prev) => [{ ...post, isArchived: false }, ...prev]);
+        setArchivedPosts((prev) => prev.filter((p) => p.id !== postId));
       }
     } catch (err) {
       console.log("Error restoring post:", err.response?.data || err);
-      alert("Error restoring post.");
     }
   };
 
   /* ─── Delete Post ─── */
   const handleDeletePost = async (postId) => {
     try {
-      const res = await axios.delete(`${BASE_URL}/article/${postId}`, {
-        headers: authHeader(),
-      });
-
+      const res = await axios.delete(`${BASE_URL}/article/${postId}`, { headers: authHeader() });
       if (res.status === 200 || res.status === 204) {
-        const post =
-          posts.find((p) => p._id === postId) ||
-          archivedPosts.find((p) => p._id === postId);
-
+        const post = posts.find((p) => p.id === postId) || archivedPosts.find((p) => p.id === postId);
         if (post) {
           setTrashedPosts((prev) => [{ ...post, isDeleted: true }, ...prev]);
-          setPosts((prev) => prev.filter((p) => p._id !== postId));
-          setArchivedPosts((prev) => prev.filter((p) => p._id !== postId));
-          alert("Post moved to trash!");
+          setPosts((prev) => prev.filter((p) => p.id !== postId));
+          setArchivedPosts((prev) => prev.filter((p) => p.id !== postId));
         }
       }
     } catch (err) {
       console.log("Error deleting post:", err.response?.data || err);
-      alert("Error moving post to trash.");
     }
   };
 
   /* ─── Undo Post ─── */
   const handleUndoPost = async (postId) => {
     try {
-      const res = await axios.delete(`${BASE_URL}/article/undo/${postId}`, {
-        headers: authHeader(),
-      });
-
+      const res = await axios.delete(`${BASE_URL}/article/undo/${postId}`, { headers: authHeader() });
       if (res.status === 200 || res.status === 204) {
-        const post = trashedPosts.find((p) => p._id === postId);
+        const post = trashedPosts.find((p) => p.id === postId);
         if (post) {
           setPosts((prev) => [{ ...post, isDeleted: false }, ...prev]);
-          setTrashedPosts((prev) => prev.filter((p) => p._id !== postId));
-          alert("Post restored from trash!");
+          setTrashedPosts((prev) => prev.filter((p) => p.id !== postId));
         }
       }
     } catch (err) {
       console.log("Error restoring from trash:", err.response?.data || err);
-      alert("Error restoring post.");
-    }
-  };
-
-  /* ─── Permanent Delete ─── */
-  const handlePermanentDelete = async (postId) => {
-    if (window.confirm("Are you sure? This cannot be undone.")) {
-      try {
-        const res = await axios.delete(`${BASE_URL}/article/${postId}`, {
-          headers: authHeader(),
-        });
-
-        if (res.status === 200 || res.status === 204) {
-          setTrashedPosts((prev) => prev.filter((p) => p._id !== postId));
-          alert("Post permanently deleted!");
-        }
-      } catch (err) {
-        console.log("Error permanently deleting:", err.response?.data || err);
-        alert("Error deleting post.");
-      }
     }
   };
 
@@ -1054,45 +883,19 @@ export default function TherapistFeed() {
         <div className="create-card">
           <div className="create-top">
             <UserAvatar size={48} />
-            <button
-              className="create-input"
-              onClick={() => {
-                setEditingPost(null);
-                setModalOpen(true);
-              }}
-            >
+            <button className="create-input" onClick={() => { setEditingPost(null); setModalOpen(true); }}>
               What would you like to share today?
             </button>
           </div>
 
           <div className="create-actions">
-            <button
-              className="create-action-btn photo"
-              onClick={() => {
-                setEditingPost(null);
-                setModalOpen(true);
-              }}
-            >
+            <button className="create-action-btn photo" onClick={() => { setEditingPost(null); setModalOpen(true); }}>
               <FiImage /> Photo
             </button>
-
-            <button
-              className="create-action-btn tip"
-              onClick={() => {
-                setEditingPost(null);
-                setModalOpen(true);
-              }}
-            >
+            <button className="create-action-btn tip" onClick={() => { setEditingPost(null); setModalOpen(true); }}>
               <FiZap /> Mental health tip
             </button>
-
-            <button
-              className="create-action-btn event"
-              onClick={() => {
-                setEditingPost(null);
-                setModalOpen(true);
-              }}
-            >
+            <button className="create-action-btn event" onClick={() => { setEditingPost(null); setModalOpen(true); }}>
               <FiZap /> Announcement
             </button>
           </div>
@@ -1113,8 +916,9 @@ export default function TherapistFeed() {
                 key={post.id}
                 post={post}
                 onLike={() => handleLike(post.id)}
-                onAddComment={(id, text) => handleAddComment(id, text)}
-                onToggleComments={(id) => handleToggleComments(id)}
+                onAddComment={handleAddComment}
+                onToggleComments={handleToggleComments}
+                onToggleLikesList={handleToggleLikesList}   // FIX: أضفنا الـ prop
                 onEdit={handleEditPost}
                 onArchive={handleArchivePost}
                 onRestore={() => {}}
@@ -1127,16 +931,8 @@ export default function TherapistFeed() {
           <div className="empty-state">
             <div className="empty-icon">📝</div>
             <h3>No posts yet</h3>
-            <p>
-              Create your first post to connect with patients and share insights
-            </p>
-            <button
-              className="empty-action-btn"
-              onClick={() => {
-                setEditingPost(null);
-                setModalOpen(true);
-              }}
-            >
+            <p>Create your first post to connect with patients and share insights</p>
+            <button className="empty-action-btn" onClick={() => { setEditingPost(null); setModalOpen(true); }}>
               <FiZap /> Create Post
             </button>
           </div>
@@ -1149,8 +945,9 @@ export default function TherapistFeed() {
                 <PostCard
                   post={post}
                   onLike={() => handleLike(post.id)}
-                  onAddComment={(id, text) => handleAddComment(id, text)}
-                  onToggleComments={(id) => handleToggleComments(id)}
+                  onAddComment={handleAddComment}
+                  onToggleComments={handleToggleComments}
+                  onToggleLikesList={handleToggleLikesList}
                   onEdit={() => {}}
                   onArchive={() => {}}
                   onRestore={() => handleRestorePost(post.id)}
@@ -1158,21 +955,11 @@ export default function TherapistFeed() {
                   onDeleteComment={handleDeleteComment}
                   showMenuOptions={false}
                 />
-
                 <div className="archive-post-actions">
-                  <button
-                    className="archive-restore-btn"
-                    onClick={() => handleRestorePost(post.id)}
-                    title="Restore post"
-                  >
+                  <button className="archive-restore-btn" onClick={() => handleRestorePost(post.id)}>
                     <FiRotateCcw /> Restore
                   </button>
-
-                  <button
-                    className="archive-delete-btn"
-                    onClick={() => handleDeletePost(post.id)}
-                    title="Move to trash"
-                  >
+                  <button className="archive-delete-btn" onClick={() => handleDeletePost(post.id)}>
                     <FiTrash2 /> Delete
                   </button>
                 </div>
@@ -1191,10 +978,7 @@ export default function TherapistFeed() {
       {/* ─── Modal ─── */}
       <CreateModal
         open={modalOpen}
-        onClose={() => {
-          setModalOpen(false);
-          setEditingPost(null);
-        }}
+        onClose={() => { setModalOpen(false); setEditingPost(null); }}
         onSubmit={handleSubmitPost}
         onUpdatePost={handleUpdatePost}
         editingPost={editingPost}

@@ -4,10 +4,7 @@ import {
   FiFilter,
   FiHeart,
   FiMessageCircle,
-  FiBookmark,
-  FiMoreHorizontal,
   FiSend,
-  FiX,
 } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import "./Patientfeed.css";
@@ -20,11 +17,7 @@ function getUserIdFromToken() {
   try {
     const token = localStorage.getItem("token");
     if (!token) return null;
-    console.log(token)
-    console.log("token")
     const payload = JSON.parse(atob(token.split(".")[1]));
-    console.log(payload)
-    console.log("payload")
     return payload.id || null;
   } catch {
     return null;
@@ -35,11 +28,7 @@ function authHeader() {
   const token = localStorage.getItem("token");
   return { Authorization: `dash ${token}` };
 }
-console.log(authHeader());
-console.log("authHeader()");
 
-console.log("TOKEN:", localStorage.getItem("token"));
-console.log("ROLE:", localStorage.getItem("role"));
 function formatTime(date) {
   const now = new Date();
   const postDate = new Date(date);
@@ -121,7 +110,6 @@ function CommentItem({ comment }) {
 /* ─── Post Card ─── */
 function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesList, userImage, userName }) {
   const [draft, setDraft] = useState("");
-  const [showCommentForm, setShowCommentForm] = useState(false);
 
   const submit = () => {
     if (!draft.trim()) return;
@@ -129,11 +117,13 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
     setDraft("");
   };
 
-  const colorGradients = [
-    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-    "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-  ];
+  // FIX: تجنب تكرار النص - لو النص أقل من 100 حرف متعرضوش في العنوان والوصف مع بعض
+  const lines = post.text ? post.text.split("\n") : [];
+  const hasTitle = lines.length > 1 && lines[0].trim().length > 0;
+  const titleText = hasTitle ? lines[0] : null;
+  const bodyText = hasTitle
+    ? lines.slice(1).join("\n").trim()
+    : post.text;
 
   return (
     <article className="post-card">
@@ -149,20 +139,21 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
           </div>
           <div className="post-time">{post.time}</div>
         </div>
-        <button className="post-menu-btn" title="More options">
-          <FiMoreHorizontal />
-        </button>
+
       </div>
 
-      {/* Content */}
+      {/* Content - FIX: إزالة تكرار النص */}
       {post.text && (
-        <div className="post-content">
-          <h3 className="post-title">{post.text.split("\n")[0]}</h3>
-          <p className="post-description">
-            {post.text.length > 200 ? `${post.text.substring(0, 200)}...` : post.text}
-          </p>
-        </div>
-      )}
+  <div className="post-content">
+    {titleText && <h3 className="post-title">{titleText}</h3>}
+
+    <p className="post-description">
+      {(titleText ? bodyText : post.text)?.length > 300
+        ? `${(titleText ? bodyText : post.text).substring(0, 300)}...`
+        : (titleText ? bodyText : post.text)}
+    </p>
+  </div>
+)}
 
       {/* Image */}
       {post.img && (
@@ -173,6 +164,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
 
       {/* Stats */}
       <div className="post-stats">
+        {/* FIX: زرار اللايكات بيفتح قائمة المعجبين */}
         <button
           className="stat-item stat-button"
           onClick={() => onToggleLikesList(post.id)}
@@ -208,16 +200,11 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
 
         <button
           className="action-btn"
-          onClick={() => {
-            onToggleComments(post.id);
-            setShowCommentForm(!showCommentForm);
-          }}
+          onClick={() => onToggleComments(post.id)}
         >
           <FiMessageCircle className="icon" />
           <span>Comment</span>
         </button>
-
-      
       </div>
 
       {/* Likes List Section */}
@@ -227,7 +214,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
           <div className="likes-avatars-row">
             {post.likesList && post.likesList.length > 0 ? (
               post.likesList.map((likeUser, idx) => {
-                const name = likeUser.userName || "مريض";
+                const name = likeUser.userName || "مستخدم";
                 const pfp = likeUser.pfp?.secure_url || null;
                 return (
                   <div key={likeUser._id || idx} className="like-user-item">
@@ -300,12 +287,23 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
 }
 
 /* ─── Format Helpers ─── */
+// FIX: formatComments تتعامل مع كل الـ fields الممكنة من الـ API
 function formatComments(rawComments = []) {
   return rawComments.map((c) => ({
-    author: c.author?.userName || c.userId?.userName || c.user?.userName || "User",
+    id: c._id,
+    author:
+      c.user?.userName ||
+      c.author?.userName ||
+      c.userId?.userName ||
+      c.userName ||
+      "User",
     text: c.content,
     time: c.createdAt ? formatTime(c.createdAt) : "Recently",
-    userImage: c.userId?.pfp?.secure_url || c.author?.pfp?.secure_url || c.user?.pfp?.secure_url || null,
+    userImage:
+      c.user?.pfp?.secure_url ||
+      c.author?.pfp?.secure_url ||
+      c.userId?.pfp?.secure_url ||
+      null,
   }));
 }
 
@@ -315,6 +313,11 @@ function formatArticle(article) {
     ? article.likes.some((l) => l === userId || l?._id === userId)
     : false;
 
+  // FIX: likesList تكون array من objects مش strings
+  const likesList = Array.isArray(article.likes)
+    ? article.likes.filter((l) => typeof l === "object" && l !== null)
+    : [];
+
   return {
     ...article,
     id: article._id,
@@ -322,11 +325,11 @@ function formatArticle(article) {
     text: article.content,
     img: article.attachments?.[0]?.secure_url || null,
     likes: article.likes?.length || 0,
-    likesList: Array.isArray(article.likes) ? article.likes : [],
+    likesList,
     liked,
     likeLoading: false,
     comments: [],
-    commentsCount: 0,
+    commentsCount: article.comments?.length || 0,
     showComments: false,
     showLikesList: false,
     time: formatTime(article.createdAt),
@@ -341,7 +344,7 @@ export default function PatientFeed() {
   const [userImage, setUserImage] = useState(null);
   const [userName, setUserName] = useState("Patient");
 
-  /* ─── Fetch Comments ─── */
+  /* ─── Fetch Comments - FIX: بنجيب كل الكومنتات مش بس بتاعت اليوزر ─── */
   const fetchComments = async (articleId) => {
     try {
       const userId = getUserIdFromToken();
@@ -352,9 +355,26 @@ export default function PatientFeed() {
         { headers: authHeader() }
       );
 
-      return formatComments(res.data?.data || res.data || []);
+      const raw = res.data?.data || res.data || [];
+      return formatComments(Array.isArray(raw) ? raw : []);
     } catch (err) {
       console.log("Error fetching comments:", err.response?.data || err);
+      return [];
+    }
+  };
+
+  /* ─── Fetch Likes List ─── */
+  const fetchLikesList = async (articleId) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/article/${articleId}`,
+        { headers: authHeader() }
+      );
+      const article = res.data?.data || res.data;
+      const likes = article?.likes || [];
+      return likes.filter((l) => typeof l === "object" && l !== null);
+    } catch (err) {
+      console.log("Error fetching likes list:", err.response?.data || err);
       return [];
     }
   };
@@ -368,14 +388,7 @@ export default function PatientFeed() {
       });
 
       const articles = res.data.data || [];
-
-      const formattedPosts = await Promise.all(
-        articles.map(async (article) => {
-          const comments = await fetchComments(article._id);
-          return formatArticle(article);
-        })
-      );
-
+      const formattedPosts = articles.map((article) => formatArticle(article));
       setPosts(formattedPosts);
     } catch (err) {
       console.log("Error fetching posts:", err.response?.data || err);
@@ -388,21 +401,36 @@ export default function PatientFeed() {
     fetchPosts();
   }, []);
 
+  /* ─── Handle Toggle Likes List - FIX: بنجيب اللايكات من الـ API ─── */
+  const handleToggleLikesList = async (id) => {
+    const post = posts.find((p) => p.id === id);
 
+    // لو مفتوح، اقفله
+    if (post?.showLikesList) {
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === id ? { ...p, showLikesList: false } : p
+        )
+      );
+      return;
+    }
 
-
-
-
-
-
-
-  /* ─── Handle Toggle Likes List ─── */
-  const handleToggleLikesList = (id) => {
+    // افتح وجيب البيانات
     setPosts((prev) =>
       prev.map((p) =>
-        p.id === id ? { ...p, showLikesList: !p.showLikesList } : p
+        p.id === id ? { ...p, showLikesList: true } : p
       )
     );
+
+    // لو الـ likesList فاضية أو objects مش loaded، نجيبها
+    if (!post?.likesList || post.likesList.length === 0) {
+      const likesList = await fetchLikesList(id);
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === id ? { ...p, likesList } : p
+        )
+      );
+    }
   };
 
   /* ─── Handle Like ─── */
@@ -434,7 +462,7 @@ export default function PatientFeed() {
       );
     } catch (err) {
       console.log("Error liking post:", err.response?.data || err);
-
+      // Revert on error
       setPosts((prev) =>
         prev.map((p) =>
           p.id === id
@@ -450,18 +478,7 @@ export default function PatientFeed() {
     }
   };
 
-
-
-
-
-
-
-
-
-
-
-
-  /* ─── Toggle Comments ─── */
+  /* ─── Toggle Comments - FIX: بنجيب كل الكومنتات مش بس بتاعت اليوزر ─── */
   const handleToggleComments = async (id) => {
     const post = posts.find((p) => p.id === id);
 
@@ -485,18 +502,6 @@ export default function PatientFeed() {
     );
   };
 
-
-
-
-
-
-
-
-
-
-
-
-  
   /* ─── Add Comment ─── */
   const handleAddComment = async (id, text) => {
     try {
@@ -510,7 +515,6 @@ export default function PatientFeed() {
 
       setTimeout(async () => {
         const comments = await fetchComments(id);
-
         setPosts((prev) =>
           prev.map((p) =>
             p.id === id
@@ -523,17 +527,6 @@ export default function PatientFeed() {
       console.log("Error adding comment:", err.response?.data || err);
     }
   };
-
-
-
-
-
-
-
-
-
-
-
 
   /* ─── Filter Posts ─── */
   const filteredPosts = posts.filter((p) => {

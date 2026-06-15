@@ -1,0 +1,380 @@
+/* ── GroupDetails.css ── بنفس نظام Groups.css ── */
+
+.gd-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  direction: rtl;
+}
+
+/* ── Back link ── */
+.gd-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #0d9488;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 1.25rem;
+  padding: 0;
+  transition: opacity 0.15s;
+}
+.gd-back-link:hover { opacity: 0.75; }
+.gd-back-link svg { transform: scaleX(-1); }
+
+/* ── Hero ── نفس لون grp-header بالضبط */
+.gd-hero {
+  background: #0d9488;
+  border-radius: 14px;
+  padding: 1.5rem 1.5rem 1.25rem;
+  color: #fff;
+  margin-bottom: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.gd-hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+}
+.gd-blob1 { width: 160px; height: 160px; top: -50px; left: -40px; }
+.gd-blob2 { width: 100px; height: 100px; bottom: -25px; right: -15px; }
+
+.gd-hero-body {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.gd-hero-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.gd-hero-text { flex: 1; }
+
+.gd-hero-top-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+
+.gd-hero-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0;
+  color: #fff;
+}
+
+.gd-joined-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.gd-hero-desc {
+  font-size: 0.875rem;
+  opacity: 0.88;
+  line-height: 1.55;
+  margin: 0 0 0.75rem;
+}
+
+.gd-hero-stats {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.gd-stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  opacity: 0.9;
+}
+
+.gd-hero-action { margin-top: 0.75rem; }
+
+/* ── Buttons — نفس grp-btn ── */
+.gd-btn-leave,
+.gd-btn-join {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  border: none;
+}
+.gd-btn-leave:hover,
+.gd-btn-join:hover  { opacity: 0.88; }
+.gd-btn-leave:active,
+.gd-btn-join:active { transform: scale(0.97); }
+
+.gd-btn-leave {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+.gd-btn-join {
+  background: #fff;
+  color: #0d9488;
+}
+
+/* ── Tabs ── نفس style الـ grp-card */
+.gd-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1.5px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.gd-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  font-size: 0.875rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1.5px;
+  color: #6b7280;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+.gd-tab.active {
+  color: #0d9488;
+  border-bottom-color: #0d9488;
+}
+.gd-tab:hover:not(.active) { color: #374151; }
+
+/* ── Section card ── نفس grp-card ── */
+.gd-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.gd-sub-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.6rem;
+}
+
+/* ── Members grid ── */
+.gd-members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+}
+
+.gd-member-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+.gd-member-card:hover { border-color: #0d9488; }
+
+.gd-member-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.gd-member-name {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.gd-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.badge-therapist {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+
+.badge-patient {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+/* ── Info rows (About tab) ── */
+.gd-info-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.gd-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+.gd-info-row:first-child { padding-top: 0; }
+.gd-info-row:last-child  { border-bottom: none; padding-bottom: 0; }
+
+.gd-info-icon {
+  width: 34px;
+  height: 34px;
+  background: #f0fdfa;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0d9488;
+  flex-shrink: 0;
+}
+
+.gd-info-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin: 0 0 3px;
+}
+
+.gd-info-value {
+  font-size: 0.875rem;
+  color: #111827;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Chat placeholder ── */
+.gd-chat-placeholder {
+  text-align: center;
+}
+
+.gd-chat-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 1.5rem 0;
+}
+
+.gd-chat-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.gd-chat-sub {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ── Empty state ── */
+.gd-empty {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Loading / Error ── */
+.gd-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 200px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.gd-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #0d9488;
+  border-radius: 50%;
+  animation: gd-spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes gd-spin { to { transform: rotate(360deg); } }
+
+.gd-error-page {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+}
+
+.gd-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1rem;
+  background: #0d9488;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+/* ── Responsive ── */
+@media (max-width: 540px) {
+  .gd-hero-body  { flex-direction: column; }
+  .gd-hero-stats { gap: 0.75rem; }
+  .gd-members-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .gd-tabs { overflow-x: auto; }
+}

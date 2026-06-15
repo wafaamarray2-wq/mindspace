@@ -19,7 +19,7 @@ import SessionDetails from "./Dashbords/SessionDetails";
 import DoctorProfile from "./Dashbords/DoctorProfile";
 import Booking from "./Dashbords/Booking";
 // import PatientHome from "./Dashbords/PatientHome";
-import MessagePatient from "./Dashbords/MessagePatient";
+
 import SettingPatients from "./Dashbords/SettingPatients";
  import VerifyOtp from "./Registers/VerifyOtp";
 import ForgetPassword from "./Registers/ForgetPassword";
@@ -30,7 +30,7 @@ import ProtectedRoute from "./Registers/ProtectedRoute";
 import Therapistfeed from "./Dashbords/Therapistfeed";
 import ProfileDoctor from "./Dashbords/profileDoctor";
 import Patientfeed from "./Dashbords/Patientfeed";
-import Profilepatient from "./Dashbords/Profilepatient ";
+// import Profilepatient from "./Dashbords/Profilepatient ";
 import AdminDashboard from "./Dashbords/Admindashboard";
 import PatientGroups from "./Dashbords/Groups/Patientgroups";
 import TherapistGroups from "./Dashbords/Groups/Therapistgroups";
@@ -127,12 +127,12 @@ function App() {
       <Route path="/patient-dashboard" element={<PatientDashbord />} >
 
      <Route index element={<Patientfeed/>} />
-        <Route path="message" element={<MessagePatient />} />
+        <Route path="message" element={<Messages />} />
         <Route path="groups" element={<PatientGroups />} />
         <Route path="test" element={<TestPage />} />
         <Route path="setting" element={<SettingPatients />} />
       <Route path="logOut" element={<LogOut />} />
-      <Route path="profile" element={<Profilepatient/>} />
+      {/* <Route path="profile" element={<Profilepatient/>} /> */}
       </Route> 
       <Route path="/PatientHome" element={<Patientfeed  />} />
       <Route path="/patient/:id" element={<PatientProfile />} />
