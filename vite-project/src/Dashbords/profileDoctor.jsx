@@ -6,8 +6,7 @@ import {
   FiCamera, FiMail, FiPhone,
   FiDollarSign, FiCheck, FiTrash2, FiX,
 } from "react-icons/fi";
-import "./ProfileDoctor.css";
-
+import "./profileDoctor.css";
 
 function CropModal({ src, onCrop, onCancel }) {
   const canvasRef = useRef();
