@@ -6,7 +6,8 @@ import { Routes, Route } from "react-router-dom"; // ✅ بدون Router هنا
 import Therapists from "./Therapists/Therapists";
 import Regester from "./Registers/Regester";
 import Login from "./Registers/Login";
-import DoctorDashbord from "./Dashbords/doctorDashbord";
+// import DoctorDashbord from "./Dashbords/doctorDashbord";
+import DoctorDashbord from "./Dashbords/DoctorDashbord";
 import PatientDashbord from "./Dashbords/PatientDashbord";
 import Patients from "./Dashbords/Patients";
 import DashbordContent from "./Dashbords/DashbordContent";
