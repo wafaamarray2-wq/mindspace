@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { FiArrowRight, FiCalendar, FiClock, FiUser } from "react-icons/fi";
-import "./PatientProfile.css";
+import "./patientprofile.css";
 
 const BASE = "https://mind-space-ov3r.onrender.com";
 
