@@ -12,7 +12,7 @@ import { MdWorkHistory } from "react-icons/md";
 import Doct from "..//images/photo_2026-03-04_02-40-53.jpg";
 import Sic from "..//images/photo_2026-03-04_02-40-47.jpg";
 import axios from "axios";
-import DoctorDashbord from "../Dashbords/doctorDashbord";
+import DoctorDashbord from "../Dashbords/DoctorDashbord";
 import PatientDashbord from "../Dashbords/PatientDashbord";
 // import TherapistInfo from "./TherapistInfo";
 function Regester() {
