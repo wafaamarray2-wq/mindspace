@@ -22,7 +22,8 @@ import { MdLogout } from "react-icons/md";
 import axios from "axios";
 
 import { toast } from "react-toastify";
-import "./AdminDashboard.css";
+// import "./AdminDashboard.css";
+import "./Admindashboard.css";
 import AdminGroupsPanel from "./Groups/Admingroups";
 
 const BASE_URL = "https://mind-space-ov3r.onrender.com";
