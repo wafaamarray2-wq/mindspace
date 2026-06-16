@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "./TestPage.css";
-
+// import "./TestPage.css";
+import "./Testpage.css";
 const BASE_URL = "https://mind-space-ov3r.onrender.com";
 
 function authHeader() {
