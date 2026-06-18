@@ -13,7 +13,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./doc.css";
-
+import "./darkmode.css";
 
 const DashContext = createContext(null);
 
@@ -24,7 +24,7 @@ export default function DoctorDashbord() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+const [isDark, setIsDark] = useState(false);  // ← هنا
   // ================= GET USER DATA =================
   const fetchUserData = async () => {
     try {
@@ -54,6 +54,20 @@ export default function DoctorDashbord() {
   useEffect(() => {
     fetchUserData();
   }, []);
+
+
+
+
+
+  useEffect(() => {
+  const saved = localStorage.getItem("mindspace-theme") || "light";
+  document.documentElement.setAttribute("data-theme", saved);
+  setIsDark(saved === "dark");
+}, []);
+
+
+
+
 
   // ================= CLOSE SIDEBAR ON ROUTE CHANGE =================
   useEffect(() => {
@@ -107,6 +121,17 @@ export default function DoctorDashbord() {
     setTimeout(() => navigate("/login"), 1000);
   };
 
+
+
+
+  const toggleTheme = () => {
+  const next = isDark ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("mindspace-theme", next);
+  setIsDark(!isDark);
+};
+
+
   const navClass = ({ isActive }) => (isActive ? "active" : "");
 
   return (
@@ -139,18 +164,27 @@ export default function DoctorDashbord() {
             <span className="dash-header__name">MindSpace</span>
           </div>
 
-          <div className="dash-header__right">
-            <div className="dash-header__greeting">
-              Welcome back,&nbsp;<strong>Dr. {user?.userName || "..."}</strong>
-            </div>
-            <div className="dash-header__avatar">
+         <div className="dash-header__right">
+  <button      
+    className="theme-toggle"
+    onClick={toggleTheme}
+    aria-label="Toggle theme"
+  >
+    <span className="theme-toggle__knob">
+      {isDark ? "🌙" : "☀️"}
+    </span>
+  </button>
+  <div className="dash-header__greeting">
+    Welcome back,&nbsp;<strong>Dr. {user?.userName || "..."}</strong>
+  </div>
+  <div className="dash-header__avatar">
               {user?.pfp?.secure_url ? (
                 <img src={user.pfp.secure_url} alt="User avatar" />
               ) : (
                 <span>{user?.userName?.charAt(0)?.toUpperCase()}</span>
               )}
             </div>
-          </div>
+</div>
         </header>
 
         <div className="dash-content">

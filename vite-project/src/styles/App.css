@@ -1,0 +1,32 @@
+/* src/styles/App.css */
+/* Global resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+html, body, #root {
+  height: 100%;
+  background-color: #f7fafc; /* soft off‑white */
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Mobile: sidebar below chat */
+@media (max-width: 767px) {
+  .main-content {
+    flex-direction: column;
+  }
+}

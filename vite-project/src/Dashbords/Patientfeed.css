@@ -589,8 +589,16 @@ body {
   background: var(--bg-primary);
   border-radius: 12px;
   border: 1px dashed var(--border-color);
-}
+    background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 
+}
+[data-theme="dark"] .empty-state {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 .empty-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
