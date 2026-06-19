@@ -2,7 +2,7 @@ import "./App.css";
 import Navbar from "./Header/NavBar";
 import HeroSection from "./Home/HeroSection";
 import Footer from "./Footer/Footer";
-import { Routes, Route } from "react-router-dom"; // ✅ بدون Router هنا
+import { Routes, Route,Navigate  } from "react-router-dom"; // ✅ بدون Router هنا
 import Therapists from "./Therapists/Therapists";
 import Regester from "./Registers/Regester";
 import Login from "./Registers/Login";
@@ -24,8 +24,8 @@ import Booking from "./Dashbords/Booking";
 import SettingPatients from "./Dashbords/SettingPatients";
  import VerifyOtp from "./Registers/VerifyOtp";
 import ForgetPassword from "./Registers/ForgetPassword";
-// import { useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "./Registers/ProtectedRoute";
 // import PatientFullProfile from "./Dashbords/PatientFullprofile";
 import Therapistfeed from "./Dashbords/Therapistfeed";
@@ -38,38 +38,32 @@ import TherapistGroups from "./Dashbords/Groups/Therapistgroups";
 import TestPage from "./Dashbords/Tests/Testpage";
 import Verify from "./Registers/Verify";
 import TherapistInfo from "./Registers/TherapistInfo";
+
 function App() {
-  // const navigate = useNavigate();
 
-// useEffect(() => {
-//   const token = localStorage.getItem("token");
-//   const role = localStorage.getItem("role");
-
-//   // لو مفيش token → يفضل في login
-//   if (!token) {
-//     navigate("/login");
-//     return;
-//   }
-
-//   // لو موجود token → روح حسب الدور
-//   if (role === "therapist") {
-//     navigate("/doctor-dashboard");
-//   } else {
-//     navigate("/patient-dashboard");
-//   }
-// }, []);
   return (
     <Routes>
       <Route
         path="/"
         element={
-          <>
-            <Navbar />
-            <HeroSection />
-            <Footer />
-          </>
+          localStorage.getItem("token") ? (
+            localStorage.getItem("role") === "therapist" ? (
+              <Navigate to="/doctor-dashboard" replace />
+            ) : (
+              <Navigate to="/patient-dashboard" replace />
+            )
+          ) : (
+            <>
+              <Navbar />
+              <HeroSection />
+              <Footer />
+            </>
+          )
         }
       />
+
+
+
       <Route
         path="/therapists"
         element={

@@ -428,3 +428,99 @@
     background: linear-gradient(150deg, #0c1f1e 0%, #0d2e2b 60%, #0a2420 100%);
   }
 }
+/* ═══ DARK MODE ═══ */
+[data-theme="dark"] .thera {
+  background: #0f172a !important;
+}
+
+[data-theme="dark"] .thera .container h1 {
+  color: #2dd4bf !important;
+}
+
+[data-theme="dark"] .thera .container > p {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .thera .container .inp input {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .thera .container .inp input::placeholder {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .thera .container .inp span {
+  color: #2dd4bf !important;
+}
+
+[data-theme="dark"] .thera .container .details {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .thera .container .details::before {
+  background: #0f766e !important;
+}
+
+[data-theme="dark"] .thera .container .details h3 {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .thera .container .details .par {
+  background: rgba(45,212,191,0.1) !important;
+  color: #2dd4bf !important;
+  border-color: rgba(45,212,191,0.2) !important;
+}
+
+[data-theme="dark"] .thera .container .details p:not(.par) {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .thera .container .details img {
+  border-color: #1e293b !important;
+}
+
+[data-theme="dark"] .thera .container .details button {
+  background: #0d9488 !important;
+  box-shadow: 0 4px 14px rgba(13,148,136,0.4) !important;
+}
+
+[data-theme="dark"] .thera .container .details button:hover {
+  background: #0f766e !important;
+}
+
+[data-theme="dark"] .thera .container .empty h2 {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .thera .container .empty p {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .thera .container .empty {
+  background: transparent !important;
+}
+
+[data-theme="dark"] .thera .container .empty img {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+  border: 1px solid #334155 !important;
+}
+
+[data-theme="dark"] .thera .container .empty h2 {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .thera .container .empty p {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .thera .container .empty button {
+  background: #0d9488 !important;
+  box-shadow: 0 8px 16px rgba(13,148,136,0.4) !important;
+}
+
+[data-theme="dark"] .thera .container .empty button:hover {
+  background: #0f766e !important;
+  box-shadow: 0 12px 24px rgba(13,148,136,0.5) !important;
+}

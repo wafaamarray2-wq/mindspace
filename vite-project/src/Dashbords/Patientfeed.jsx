@@ -9,7 +9,7 @@ import {
 import { FaHeart } from "react-icons/fa";
 import "./Patientfeed.css";
 import axios from "axios";
-
+import { useLang } from "../i18n/LanguageContext";
 const BASE_URL = "https://mind-space-ov3r.onrender.com";
 
 /* ─── Helper Functions ─── */
@@ -110,6 +110,7 @@ function CommentItem({ comment }) {
 /* ─── Post Card ─── */
 function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesList, userImage, userName }) {
   const [draft, setDraft] = useState("");
+  const { t } = useLang();
 
   const submit = () => {
     if (!draft.trim()) return;
@@ -156,11 +157,62 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
 )}
 
       {/* Image */}
-      {post.img && (
-        <div className="post-image-container">
-          <img src={post.img} alt="post" className="post-image" />
-        </div>
-      )}
+     {post.img && (
+  <div className="post-image-container">
+    <img
+      src={post.img}
+      alt="post"
+      className="post-image"
+      onClick={() => {
+        const modal = document.createElement("div");
+        modal.style.cssText = `
+          position:fixed; inset:0; background:rgba(0,0,0,0.9);
+          display:flex; align-items:center; justify-content:center;
+          z-index:9999; cursor:pointer; flex-direction:column; gap:16px;
+        `;
+
+        const img = document.createElement("img");
+        img.src = post.img;
+        img.style.cssText = `
+          max-width:90vw; max-height:85vh;
+          object-fit:contain; border-radius:8px;
+          box-shadow:0 20px 60px rgba(0,0,0,0.5);
+        `;
+
+        const btnRow = document.createElement("div");
+        btnRow.style.cssText = "display:flex; gap:12px;";
+
+        const downloadBtn = document.createElement("a");
+        downloadBtn.href = post.img;
+        downloadBtn.download = "image.jpg";
+        downloadBtn.target = "_blank";
+        downloadBtn.innerText = "⬇ تنزيل الصورة";
+        downloadBtn.style.cssText = `
+          background:#6366f1; color:#fff; padding:10px 20px;
+          border-radius:8px; text-decoration:none; font-size:14px;
+          font-weight:600; cursor:pointer;
+        `;
+        downloadBtn.onclick = (e) => e.stopPropagation();
+
+        const closeBtn = document.createElement("button");
+        closeBtn.innerText = "✕ إغلاق";
+        closeBtn.style.cssText = `
+          background:#334155; color:#fff; padding:10px 20px;
+          border-radius:8px; border:none; font-size:14px;
+          font-weight:600; cursor:pointer;
+        `;
+        closeBtn.onclick = () => document.body.removeChild(modal);
+
+        btnRow.appendChild(downloadBtn);
+        btnRow.appendChild(closeBtn);
+        modal.appendChild(img);
+        modal.appendChild(btnRow);
+        modal.onclick = () => document.body.removeChild(modal);
+        document.body.appendChild(modal);
+      }}
+    />
+  </div>
+)}
 
       {/* Stats */}
       <div className="post-stats">
@@ -171,7 +223,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
         >
           <FaHeart className="stat-icon liked" />
           <span className="stat-number">{post.likes}</span>
-          <span className="stat-label">likes</span>
+         <span className="stat-label">{t("likes")}</span>
         </button>
         <button
           className="stat-item stat-button"
@@ -179,7 +231,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
         >
           <FiMessageCircle className="stat-icon" />
           <span className="stat-number">{post.commentsCount ?? post.comments.length}</span>
-          <span className="stat-label">comments</span>
+         <span className="stat-label">{t("comments")}</span>
         </button>
       </div>
 
@@ -195,7 +247,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
           ) : (
             <FiHeart className="icon" />
           )}
-          <span>{post.liked ? "Liked" : "Like"}</span>
+         <span>{post.liked ? t("liked") : t("like")}</span>
         </button>
 
         <button
@@ -203,14 +255,14 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
           onClick={() => onToggleComments(post.id)}
         >
           <FiMessageCircle className="icon" />
-          <span>Comment</span>
+          <span>{t("comment")}</span>
         </button>
       </div>
 
       {/* Likes List Section */}
       {post.showLikesList && (
         <div className="likes-list-section" style={{ direction: "rtl", textAlign: "right" }}>
-          <h4>الأشخاص الذين أعجبهم هذا المنشور:</h4>
+        <h4>{t("whoLiked")}</h4>
           <div className="likes-avatars-row">
             {post.likesList && post.likesList.length > 0 ? (
               post.likesList.map((likeUser, idx) => {
@@ -230,7 +282,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
                 );
               })
             ) : (
-              <div className="no-likes-text">لا توجد إعجابات بعد</div>
+            <div className="no-likes-text">{t("noLikesYet")}</div>
             )}
           </div>
         </div>
@@ -245,7 +297,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
                 <CommentItem key={i} comment={c} />
               ))
             ) : (
-              <div className="no-comments">No comments yet</div>
+              <div className="no-comments">{t("noPostsFound")}</div>
             )}
           </div>
 
@@ -261,7 +313,7 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
               <input
                 type="text"
                 className="comment-input"
-                placeholder="Write a comment..."
+                placeholder={t("writeComment...")}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 onKeyDown={(e) => {
@@ -338,12 +390,34 @@ function formatArticle(article) {
 
 /* ─── MAIN COMPONENT ─── */
 export default function PatientFeed() {
+  const { t } = useLang();
   const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [userImage, setUserImage] = useState(null);
   const [userName, setUserName] = useState("Patient");
 
+
+
+    // ← ضيفي الـ dark mode state هنا
+  const [isDark, setIsDark] = useState(false);
+
+  // ← ضيفي الـ useEffect ده هنا
+  useEffect(() => {
+    const saved = localStorage.getItem("mindspace-theme-patient") || "light";
+    document.documentElement.setAttribute("data-theme", saved);
+    setIsDark(saved === "dark");
+  }, []);
+
+  const toggleTheme = () => {
+    const next = isDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+ 
+localStorage.setItem("mindspace-theme-patient", next);
+    setIsDark(!isDark);
+  };
+
+  
   /* ─── Fetch Comments - FIX: بنجيب كل الكومنتات مش بس بتاعت اليوزر ─── */
   const fetchComments = async (articleId) => {
     try {
@@ -542,10 +616,9 @@ export default function PatientFeed() {
       <header className="feed-header">
         <div className="header-content">
           <div className="header-text">
-            <h1 className="header-title">Mental Health Feed</h1>
-            <p className="header-subtitle">
-              Connect with mental health professionals and discover valuable insights
-            </p>
+          <h1 className="header-title">{t("mentalHealthFeed")}</h1>
+
+          <p className="header-subtitle">{t("feedSubtitle")}</p>
           </div>
 
           <div className="header-controls">
@@ -554,14 +627,14 @@ export default function PatientFeed() {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Search doctors or topics..."
+              placeholder={t("searchPlaceholder...")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <button className="filter-btn">
               <FiFilter />
-              <span>Filter</span>
+            <span>{t("filter")}</span>
             </button>
           </div>
         </div>
@@ -572,7 +645,7 @@ export default function PatientFeed() {
         {loading ? (
           <div className="loading-state">
             <div className="spinner"></div>
-            <p>Loading posts...</p>
+          <p>{t("loadingPosts")}</p>
           </div>
         ) : filteredPosts.length > 0 ? (
           <div className="posts-list">
@@ -592,8 +665,8 @@ export default function PatientFeed() {
         ) : (
           <div className="empty-state">
             <div className="empty-icon">📝</div>
-            <h3>No posts found</h3>
-            <p>Try adjusting your search terms</p>
+           <h3>{t("noPostsFound")}</h3>
+         <p>{t("tryAdjusting")}</p>
           </div>
         )}
       </main>

@@ -110,3 +110,60 @@ text-align: center;
 .icon {
   font-size: 18px;
 } 
+/* ═══ DARK MODE - BOOKING ═══ */
+[data-theme="dark"] .booking-container {
+  background: #0f172a !important;
+}
+
+[data-theme="dark"] .booking-container .title {
+  color: #34d399 !important;
+}
+
+[data-theme="dark"] .booking-container .book-details {
+  background: #1e293b !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+}
+
+[data-theme="dark"] .booking-container .book-details h2 {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .input-group {
+  background: #0f172a !important;
+  border: 1px solid #334155 !important;
+}
+
+[data-theme="dark"] .input-group input {
+  color: #f1f5f9 !important;
+  background: transparent !important;
+}
+
+[data-theme="dark"] .input-group input::placeholder {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .time-btn {
+  background: #1e293b !important;
+  border-color: #6366f1 !important;
+  color: #a5b4fc !important;
+}
+
+[data-theme="dark"] .time-btn.active {
+  background: #6366f1 !important;
+  color: #ffffff !important;
+  border-color: #6366f1 !important;
+}
+
+[data-theme="dark"] .divider {
+  border-color: #334155 !important;
+}
+[data-theme="dark"] .booking-container .book-details {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+[data-theme="dark"] .booking-container .book-details .image img {
+  border-radius: 16px !important;
+  opacity: 0.9 !important;
+}

@@ -14,17 +14,19 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./doc.css";
 import "./darkmode.css";
-
+import { useLang } from "../i18n/LanguageContext";
 const DashContext = createContext(null);
 
 export const useDashUser = () => useContext(DashContext);
 
 // ═══════════════════════════════════════════════
 export default function DoctorDashbord() {
+ 
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-const [isDark, setIsDark] = useState(false);  // ← هنا
+const [isDark, setIsDark] = useState(false); 
+ const { lang, t, toggleLang } = useLang(); // ← هنا
   // ================= GET USER DATA =================
   const fetchUserData = async () => {
     try {
@@ -60,7 +62,7 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
 
 
   useEffect(() => {
-  const saved = localStorage.getItem("mindspace-theme") || "light";
+ const saved = localStorage.getItem("mindspace-theme-doctor") || "light";
   document.documentElement.setAttribute("data-theme", saved);
   setIsDark(saved === "dark");
 }, []);
@@ -127,7 +129,7 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
   const toggleTheme = () => {
   const next = isDark ? "light" : "dark";
   document.documentElement.setAttribute("data-theme", next);
-  localStorage.setItem("mindspace-theme", next);
+  localStorage.setItem("mindspace-theme-doctor", next);
   setIsDark(!isDark);
 };
 
@@ -174,6 +176,16 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
       {isDark ? "🌙" : "☀️"}
     </span>
   </button>
+
+
+  <button
+  className="lang-toggle"
+  onClick={toggleLang}
+  aria-label="Toggle language"
+  title={lang === "en" ? "العربية" : "English"}
+>
+  {lang === "en" ? "ع" : "EN"}
+</button>
   <div className="dash-header__greeting">
     Welcome back,&nbsp;<strong>Dr. {user?.userName || "..."}</strong>
   </div>
@@ -232,7 +244,7 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
                     <span>
                       <IoHome />
                     </span>
-                    <h5>Home</h5>
+                   <h5>{t("home")}</h5>
                   </NavLink>
                 </li>
 
@@ -246,7 +258,7 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
                     <span>
                       <MdDashboard />
                     </span>
-                    <h5>Dashboard</h5>
+                    <h5>{t("Dashboard")}</h5>
                   </NavLink>
                 </li>
 
@@ -259,7 +271,7 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
                     <span>
                       <IoPerson />
                     </span>
-                    <h5>Profile</h5>
+                    <h5>{t("Profile")}</h5>
                   </NavLink>
                 </li>
 
@@ -272,7 +284,7 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
                     <span>
                       <FaUserInjured />
                     </span>
-                    <h5>Patients</h5>
+                    <h5>{t("Patients")}</h5>
                   </NavLink>
                 </li>
 
@@ -285,7 +297,7 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
                     <span>
                       <BiMessageSquareDots />
                     </span>
-                    <h5>Messages</h5>
+                 <h5>{t("messages")}</h5>
                   </NavLink>
                 </li>
 
@@ -311,7 +323,7 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
                     <span>
                       <FiUsers />
                     </span>
-                    <h5>Groups</h5>
+               <h5>{t("groups")}</h5>
                   </NavLink>
                 </li>
 
@@ -324,7 +336,7 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
                     <span>
                       <MdSettings />
                     </span>
-                    <h5>Settings</h5>
+                <h5>{t("settings")}</h5>
                   </NavLink>
                 </li>
 
@@ -334,7 +346,7 @@ const [isDark, setIsDark] = useState(false);  // ← هنا
                     <span>
                       <MdLogout />
                     </span>
-                    <h5>Log Out</h5>
+                  <h5>{t("logout")}</h5>
                   </button>
                 </li>
               </ul>

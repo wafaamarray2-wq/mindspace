@@ -4,7 +4,8 @@ import { CiSearch } from "react-icons/ci";
 import Empty from "../images/photo_2026-03-08_01-28-32.jpg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import Login from "../Registers/Login";
+import { Link} from "react-router-dom";
 const BASE_URL = "https://mind-space-ov3r.onrender.com";
 
 function getUserIdFromToken() {
@@ -84,7 +85,9 @@ function Therapists() {
 
             <p>كن اول من ينضم الي منصتنا</p>
 
-            <button>تسجيل كمعالج</button>
+            <Link to="/login">
+              <button>تسجيل كمعالج</button>
+            </Link>
           </div>
         ) : (
           <div className="display-doc">

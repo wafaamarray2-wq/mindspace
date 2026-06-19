@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import {
   FiImage,
-  FiSmile,
-  FiLink,
+  // FiSmile,
+  // FiLink,
   FiSend,
   FiMoreHorizontal,
   FiHeart,
@@ -20,7 +20,7 @@ import { FaHeart } from "react-icons/fa";
 import { useDashUser } from "../Dashbords/DoctorDashbord";
 import "./Therapistfeed.css";
 import axios from "axios";
-
+import { useLang } from "../i18n/LanguageContext";
 const BASE_URL = "https://mind-space-ov3r.onrender.com";
 
 /* ─── Helper Functions ─── */
@@ -113,7 +113,10 @@ function CommentItem({ comment, onDelete }) {
           <div className="comment-author">{comment.author}</div>
           <div className="comment-text">{comment.text}</div>
         </div>
-        <div className="comment-time" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div
+          className="comment-time"
+          style={{ display: "flex", alignItems: "center", gap: 8 }}
+        >
           {comment.time}
           {canDelete && onDelete && (
             <button
@@ -139,8 +142,16 @@ function CommentItem({ comment, onDelete }) {
 }
 
 /* ─── Post Menu ─── */
-function PostMenu({ postId, isArchived, onEdit, onArchive, onRestore, onDelete }) {
+function PostMenu({
+  postId,
+  isArchived,
+  onEdit,
+  onArchive,
+  onRestore,
+  onDelete,
+}) {
   const [showMenu, setShowMenu] = useState(false);
+  const { t } = useLang();
 
   return (
     <div className="post-menu-container">
@@ -155,27 +166,48 @@ function PostMenu({ postId, isArchived, onEdit, onArchive, onRestore, onDelete }
 
       {showMenu && (
         <div className="post-menu-dropdown">
-          <button className="menu-item" onClick={() => { onEdit(postId); setShowMenu(false); }}>
-            <FiEdit size={16} /> Edit
+          <button
+            className="menu-item"
+            onClick={() => {
+              onEdit(postId);
+              setShowMenu(false);
+            }}
+          >
+           <FiEdit size={16} /> {t("edit")}
           </button>
 
           {!isArchived ? (
-            <button className="menu-item" onClick={() => { onArchive(postId); setShowMenu(false); }}>
-              <FiArchive size={16} /> Archive
+            <button
+              className="menu-item"
+              onClick={() => {
+                onArchive(postId);
+                setShowMenu(false);
+              }}
+            >
+              <FiArchive size={16} /> {t("archive")}
             </button>
           ) : (
-            <button className="menu-item" onClick={() => { onRestore(postId); setShowMenu(false); }}>
-              <FiRotateCcw size={16} /> Restore
+            <button
+              className="menu-item"
+              onClick={() => {
+                onRestore(postId);
+                setShowMenu(false);
+              }}
+            >
+         <FiRotateCcw size={16} /> {t("restore")}
             </button>
           )}
 
-          <button className="menu-item delete" onClick={() => {
-            if (window.confirm("Move this post to trash?")) {
-              onDelete(postId);
-              setShowMenu(false);
-            }
-          }}>
-            <FiTrash2 size={16} /> Delete
+          <button
+            className="menu-item delete"
+            onClick={() => {
+             if (window.confirm(t("moveToTrash"))) {
+                onDelete(postId);
+                setShowMenu(false);
+              }
+            }}
+          >
+          <FiTrash2 size={16} /> {t("delete")}
           </button>
         </div>
       )}
@@ -183,13 +215,38 @@ function PostMenu({ postId, isArchived, onEdit, onArchive, onRestore, onDelete }
   );
 }
 
+function renderTextWithLinks(text) {
+  const urlRegex = /https?:\/\/[^\s]+/g;
+  const parts = text.split(urlRegex);
+  const matches = text.match(urlRegex) || [];
+
+  return parts.map((part, i) => (
+    <span key={i}>
+      {part}
+      {matches[i] && (
+        <a
+          href={matches[i]}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: "#534AB7",
+            wordBreak: "break-all",
+            textDecoration: "underline",
+          }}
+        >
+          {matches[i]}
+        </a>
+      )}
+    </span>
+  ));
+}
 /* ─── Post Card ─── */
 function PostCard({
   post,
   onLike,
   onAddComment,
   onToggleComments,
-  onToggleLikesList,   // FIX: أضفنا الـ prop
+  onToggleLikesList, // FIX: أضفنا الـ prop
   onEdit,
   onArchive,
   onRestore,
@@ -197,6 +254,7 @@ function PostCard({
   onDeleteComment,
   showMenuOptions = true,
 }) {
+   const { t } = useLang();
   const { user } = useDashUser();
   const [draft, setDraft] = useState("");
   const currentUserId = getUserIdFromToken();
@@ -216,9 +274,16 @@ function PostCard({
         <div className="post-author">
           <div className="post-avatar">
             {post.image ? (
-              <img src={post.image} alt={post.userNamee} className="avatar-img" />
+              <img
+                src={post.image}
+                alt={post.userNamee}
+                className="avatar-img"
+              />
             ) : (
-              <Avatar initials={post.userNamee?.charAt(0)?.toUpperCase()} size={48} />
+              <Avatar
+                initials={post.userNamee?.charAt(0)?.toUpperCase()}
+                size={48}
+              />
             )}
           </div>
 
@@ -226,8 +291,13 @@ function PostCard({
             <div className="post-author-name">
               Dr. {post?.userNamee || "Therapist"}
             </div>
-            <div className="post-sub-meta" style={{ display: "flex", flexDirection: "column" }}>
-              <span className="post-role">{user?.role || "Mental Health Professional"}</span>
+            <div
+              className="post-sub-meta"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <span className="post-role">
+                {user?.role || "Mental Health Professional"}
+              </span>
               <span className="post-time">{post.time}</span>
             </div>
           </div>
@@ -248,14 +318,66 @@ function PostCard({
       {/* Content */}
       {post.text && (
         <div className="post-content">
-          <p className="post-text">{post.text}</p>
+          <p className="post-text">{renderTextWithLinks(post.text)}</p>
         </div>
       )}
 
       {/* Image */}
+      {/* Image */}
       {post.img && (
         <div className="post-image-container">
-          <img src={post.img} alt="post" className="post-image" />
+          <img
+            src={post.img}
+            alt="post"
+            className="post-image"
+            onClick={() => {
+              const modal = document.createElement("div");
+              modal.style.cssText = `
+          position:fixed; inset:0; background:rgba(0,0,0,0.9);
+          display:flex; align-items:center; justify-content:center;
+          z-index:9999; cursor:pointer; flex-direction:column; gap:16px;
+        `;
+
+              const img = document.createElement("img");
+              img.src = post.img;
+              img.style.cssText = `
+          max-width:90vw; max-height:85vh;
+          object-fit:contain; border-radius:8px;
+          box-shadow:0 20px 60px rgba(0,0,0,0.5);
+        `;
+
+              const btnRow = document.createElement("div");
+              btnRow.style.cssText = "display:flex; gap:12px;";
+
+              const downloadBtn = document.createElement("a");
+              downloadBtn.href = post.img;
+              downloadBtn.download = "image.jpg";
+              downloadBtn.target = "_blank";
+              downloadBtn.innerText = "⬇ تنزيل الصورة";
+              downloadBtn.style.cssText = `
+          background:#6366f1; color:#fff; padding:10px 20px;
+          border-radius:8px; text-decoration:none; font-size:14px;
+          font-weight:600; cursor:pointer;
+        `;
+              downloadBtn.onclick = (e) => e.stopPropagation();
+
+              const closeBtn = document.createElement("button");
+              closeBtn.innerText = "✕ إغلاق";
+              closeBtn.style.cssText = `
+          background:#334155; color:#fff; padding:10px 20px;
+          border-radius:8px; border:none; font-size:14px;
+          font-weight:600; cursor:pointer;
+        `;
+              closeBtn.onclick = () => document.body.removeChild(modal);
+
+              btnRow.appendChild(downloadBtn);
+              btnRow.appendChild(closeBtn);
+              modal.appendChild(img);
+              modal.appendChild(btnRow);
+              modal.onclick = () => document.body.removeChild(modal);
+              document.body.appendChild(modal);
+            }}
+          />
         </div>
       )}
 
@@ -267,15 +389,17 @@ function PostCard({
         >
           <FaHeart className="stat-icon liked" />
           <span className="stat-number">{post.likes}</span>
-          <span className="stat-label">likes</span>
+        <span className="stat-label">{t("likes")}</span>
         </button>
         <button
           className="stat-item stat-button"
           onClick={() => onToggleComments(post.id)}
         >
           <FiMessageCircle className="stat-icon" />
-          <span className="stat-number">{post.commentsCount ?? post.comments.length}</span>
-          <span className="stat-label">comments</span>
+          <span className="stat-number">
+            {post.commentsCount ?? post.comments.length}
+          </span>
+        <span className="stat-label">{t("comments")}</span>
         </button>
       </div>
 
@@ -286,20 +410,30 @@ function PostCard({
           onClick={() => onLike(post.id)}
           disabled={post.likeLoading}
         >
-          {post.liked ? <FaHeart className="icon liked" /> : <FiHeart className="icon" />}
-          <span>{post.liked ? "Liked" : "Like"}</span>
+          {post.liked ? (
+            <FaHeart className="icon liked" />
+          ) : (
+            <FiHeart className="icon" />
+          )}
+         <span>{post.liked ? t("liked") : t("like")}</span>
         </button>
 
-        <button className="action-btn" onClick={() => onToggleComments(post.id)}>
+        <button
+          className="action-btn"
+          onClick={() => onToggleComments(post.id)}
+        >
           <FiMessageCircle className="icon" />
-          <span>Comment</span>
+         <span>{t("comment")}</span>
         </button>
       </div>
 
       {/* FIX: Likes List - زي صفحة المريض بالظبط */}
       {post.showLikesList && (
-        <div className="likes-list-section" style={{ direction: "rtl", textAlign: "right" }}>
-          <h4>الأشخاص الذين أعجبهم هذا المنشور:</h4>
+        <div
+          className="likes-list-section"
+          style={{ direction: "rtl", textAlign: "right" }}
+        >
+        <h4>{t("whoLiked")}</h4>
           <div className="likes-avatars-row">
             {post.likesList && post.likesList.length > 0 ? (
               post.likesList.map((likeUser, idx) => {
@@ -319,7 +453,7 @@ function PostCard({
                 );
               })
             ) : (
-              <div className="no-likes-text">لا توجد إعجابات بعد</div>
+            <div className="no-likes-text">{t("noLikesYet")}</div>
             )}
           </div>
         </div>
@@ -342,7 +476,7 @@ function PostCard({
                 />
               ))
             ) : (
-              <div className="no-comments">No comments yet. Be the first!</div>
+              <div className="no-comments">{t("noCommentsYet")}</div>
             )}
           </div>
 
@@ -352,7 +486,7 @@ function PostCard({
               <input
                 type="text"
                 className="comment-input"
-                placeholder="Write a response..."
+               placeholder={t("writeResponse..." )   } 
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 onKeyDown={(e) => {
@@ -379,7 +513,15 @@ function PostCard({
 }
 
 /* ─── Create Modal ─── */
-function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePost }) {
+function CreateModal({
+  open,
+  onClose,
+  onSubmit,
+  docName,
+  editingPost,
+  onUpdatePost,
+}) {
+  const { t } = useLang();
   const [text, setText] = useState("");
   const [img, setImg] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -429,8 +571,12 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3>{editingPost && !isNew ? "Edit post" : "Share a post"}</h3>
-          <button className="modal-close" onClick={onClose} aria-label="Close modal">
+          <h3>{editingPost && !isNew ? t("editPost") : t("sharePost")}</h3>
+          <button
+            className="modal-close"
+            onClick={onClose}
+            aria-label="Close modal"
+          >
             <FiX />
           </button>
         </div>
@@ -438,17 +584,19 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
         <div className="modal-author">
           <UserAvatar size={42} />
           <div>
-            <div className="modal-author-name">Dr. {docName || "Therapist"}</div>
+            <div className="modal-author-name">
+              Dr. {docName || "Therapist"}
+            </div>
             <div className="modal-author-status">
               <FiGlobe style={{ verticalAlign: -2, marginRight: 4 }} />
-              Public • Mental Health Professional
+              {t("publicProfessional")}
             </div>
           </div>
         </div>
 
         <textarea
           className="modal-textarea"
-          placeholder="Share insights, tips, or mental health information with your audience..."
+        placeholder={t("shareTextPlaceholder...")} 
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={5}
@@ -460,7 +608,10 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
             <img src={preview} alt="preview" />
             <button
               className="modal-remove-img"
-              onClick={() => { setImg(null); setPreview(null); }}
+              onClick={() => {
+                setImg(null);
+                setPreview(null);
+              }}
               aria-label="Remove image"
             >
               <FiX />
@@ -470,21 +621,31 @@ function CreateModal({ open, onClose, onSubmit, docName, editingPost, onUpdatePo
 
         <div className="modal-footer">
           <div className="modal-tools">
-            <button className="modal-tool-btn" title="Add photo" onClick={() => fileRef.current.click()}>
+            <button
+              className="modal-tool-btn"
+              title={t("addPhoto")}
+              onClick={() => fileRef.current.click()}
+            >
               <FiImage />
             </button>
-            <button className="modal-tool-btn" title="Add emoji"><FiSmile /></button>
-            <button className="modal-tool-btn" title="Add link"><FiLink /></button>
+            {/* <button className="modal-tool-btn" title="Add emoji"><FiSmile /></button>
+            <button className="modal-tool-btn" title="Add link"><FiLink /></button> */}
           </div>
 
-          <input ref={fileRef} type="file" accept="image/*" hidden onChange={handleFile} />
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={handleFile}
+          />
 
           <button
             className="modal-post-btn"
             disabled={!text.trim() && !img && !preview}
             onClick={submit}
           >
-            {editingPost && !isNew ? "Update Post" : "Share Post"}
+            {editingPost && !isNew ? t("updatePost") : t("sharePost")}
           </button>
         </div>
       </div>
@@ -538,7 +699,7 @@ function formatArticle(article) {
     comments: [],
     commentsCount: article.comments?.length || 0,
     showComments: false,
-    showLikesList: false,      // FIX: أضفنا showLikesList
+    showLikesList: false, // FIX: أضفنا showLikesList
     isArchived: article.isArchived || false,
     isDeleted: article.isDeleted || false,
     time: formatTime(article.createdAt),
@@ -550,6 +711,7 @@ function formatArticle(article) {
 
 /* ─── MAIN COMPONENT ─── */
 export default function TherapistFeed() {
+  const { t } = useLang();
   const { user } = useDashUser();
   const [posts, setPosts] = useState([]);
   const [archivedPosts, setArchivedPosts] = useState([]);
@@ -563,10 +725,14 @@ export default function TherapistFeed() {
   const fetchAndSeparatePosts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/article`, { headers: authHeader() });
+      const res = await axios.get(`${BASE_URL}/article`, {
+        headers: authHeader(),
+      });
       const articles = res.data.data || [];
 
-      const active = [], archived = [], trashed = [];
+      const active = [],
+        archived = [],
+        trashed = [];
 
       articles.forEach((article) => {
         const formatted = formatArticle(article);
@@ -585,13 +751,17 @@ export default function TherapistFeed() {
     }
   };
 
-  useEffect(() => { fetchAndSeparatePosts(); }, []);
+  useEffect(() => {
+    fetchAndSeparatePosts();
+  }, []);
 
   /* ─── Helper: find post in all lists ─── */
   const findPostSetter = (id) => {
     if (posts.find((p) => p.id === id)) return [posts, setPosts];
-    if (archivedPosts.find((p) => p.id === id)) return [archivedPosts, setArchivedPosts];
-    if (trashedPosts.find((p) => p.id === id)) return [trashedPosts, setTrashedPosts];
+    if (archivedPosts.find((p) => p.id === id))
+      return [archivedPosts, setArchivedPosts];
+    if (trashedPosts.find((p) => p.id === id))
+      return [trashedPosts, setTrashedPosts];
     return [posts, setPosts];
   };
 
@@ -603,7 +773,7 @@ export default function TherapistFeed() {
 
       const res = await axios.get(
         `${BASE_URL}/article/${articleId}/comment/${userId}`,
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
 
       const raw = res.data?.data || res.data || [];
@@ -617,7 +787,9 @@ export default function TherapistFeed() {
   /* ─── Fetch Likes List ─── */
   const fetchLikesList = async (articleId) => {
     try {
-      const res = await axios.get(`${BASE_URL}/article/${articleId}`, { headers: authHeader() });
+      const res = await axios.get(`${BASE_URL}/article/${articleId}`, {
+        headers: authHeader(),
+      });
       const article = res.data?.data || res.data;
       const likes = article?.likes || [];
       return likes.filter((l) => typeof l === "object" && l !== null);
@@ -633,15 +805,21 @@ export default function TherapistFeed() {
     const post = postsSet.find((p) => p.id === id);
 
     if (post?.showLikesList) {
-      setter((prev) => prev.map((p) => p.id === id ? { ...p, showLikesList: false } : p));
+      setter((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, showLikesList: false } : p)),
+      );
       return;
     }
 
-    setter((prev) => prev.map((p) => p.id === id ? { ...p, showLikesList: true } : p));
+    setter((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, showLikesList: true } : p)),
+    );
 
     if (!post?.likesList || post.likesList.length === 0) {
       const likesList = await fetchLikesList(id);
-      setter((prev) => prev.map((p) => p.id === id ? { ...p, likesList } : p));
+      setter((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, likesList } : p)),
+      );
     }
   };
 
@@ -652,22 +830,38 @@ export default function TherapistFeed() {
     setter((prev) =>
       prev.map((p) =>
         p.id === id
-          ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1, likeLoading: true }
-          : p
-      )
+          ? {
+              ...p,
+              liked: !p.liked,
+              likes: p.liked ? p.likes - 1 : p.likes + 1,
+              likeLoading: true,
+            }
+          : p,
+      ),
     );
 
     try {
-      await axios.patch(`${BASE_URL}/article/like-unlike/${id}`, {}, { headers: authHeader() });
-      setter((prev) => prev.map((p) => p.id === id ? { ...p, likeLoading: false } : p));
+      await axios.patch(
+        `${BASE_URL}/article/like-unlike/${id}`,
+        {},
+        { headers: authHeader() },
+      );
+      setter((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, likeLoading: false } : p)),
+      );
     } catch (err) {
       console.log("Error liking post:", err.response?.data || err);
       setter((prev) =>
         prev.map((p) =>
           p.id === id
-            ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1, likeLoading: false }
-            : p
-        )
+            ? {
+                ...p,
+                liked: !p.liked,
+                likes: p.liked ? p.likes - 1 : p.likes + 1,
+                likeLoading: false,
+              }
+            : p,
+        ),
       );
     }
   };
@@ -678,15 +872,24 @@ export default function TherapistFeed() {
     const post = postsSet.find((p) => p.id === id);
 
     if (post?.showComments) {
-      setter((prev) => prev.map((p) => p.id === id ? { ...p, showComments: false } : p));
+      setter((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, showComments: false } : p)),
+      );
       return;
     }
 
     const comments = await fetchComments(id);
     setter((prev) =>
       prev.map((p) =>
-        p.id === id ? { ...p, showComments: true, comments, commentsCount: comments.length } : p
-      )
+        p.id === id
+          ? {
+              ...p,
+              showComments: true,
+              comments,
+              commentsCount: comments.length,
+            }
+          : p,
+      ),
     );
   };
 
@@ -697,7 +900,7 @@ export default function TherapistFeed() {
       await axios.post(
         `${BASE_URL}/article/${id}/comment/${userId}`,
         { content: text },
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
 
       setTimeout(async () => {
@@ -705,8 +908,15 @@ export default function TherapistFeed() {
         const [, setter] = findPostSetter(id);
         setter((prev) =>
           prev.map((p) =>
-            p.id === id ? { ...p, showComments: true, comments, commentsCount: comments.length } : p
-          )
+            p.id === id
+              ? {
+                  ...p,
+                  showComments: true,
+                  comments,
+                  commentsCount: comments.length,
+                }
+              : p,
+          ),
         );
       }, 300);
     } catch (err) {
@@ -719,7 +929,7 @@ export default function TherapistFeed() {
     try {
       await axios.delete(
         `${BASE_URL}/article/${articleId}/comment/${commentId}`,
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
 
       const removeComment = (prev) =>
@@ -730,7 +940,7 @@ export default function TherapistFeed() {
                 comments: p.comments.filter((c) => c.id !== commentId),
                 commentsCount: Math.max((p.commentsCount || 1) - 1, 0),
               }
-            : p
+            : p,
         );
 
       setPosts(removeComment);
@@ -775,7 +985,10 @@ export default function TherapistFeed() {
   /* ─── Edit Post ─── */
   const handleEditPost = (postId) => {
     const post = posts.find((p) => p.id === postId);
-    if (post) { setEditingPost(post); setModalOpen(true); }
+    if (post) {
+      setEditingPost(post);
+      setModalOpen(true);
+    }
   };
 
   /* ─── Update Post ─── */
@@ -785,13 +998,19 @@ export default function TherapistFeed() {
       if (text) formData.append("content", text);
       if (img) formData.append("attachments", img);
 
-      const res = await axios.put(`${BASE_URL}/article/update/${postId}`, formData, {
-        headers: { ...authHeader(), "Content-Type": "multipart/form-data" },
-      });
+      const res = await axios.put(
+        `${BASE_URL}/article/update/${postId}`,
+        formData,
+        {
+          headers: { ...authHeader(), "Content-Type": "multipart/form-data" },
+        },
+      );
 
       if (res.data?.data) {
         const updatedPost = formatArticle(res.data.data);
-        setPosts((prev) => prev.map((p) => p.id === postId ? updatedPost : p));
+        setPosts((prev) =>
+          prev.map((p) => (p.id === postId ? updatedPost : p)),
+        );
       }
       setEditingPost(null);
     } catch (err) {
@@ -802,7 +1021,11 @@ export default function TherapistFeed() {
   /* ─── Archive Post ─── */
   const handleArchivePost = async (postId) => {
     try {
-      await axios.patch(`${BASE_URL}/article/archive/${postId}`, {}, { headers: authHeader() });
+      await axios.patch(
+        `${BASE_URL}/article/archive/${postId}`,
+        {},
+        { headers: authHeader() },
+      );
       const post = posts.find((p) => p.id === postId);
       if (post) {
         setArchivedPosts((prev) => [{ ...post, isArchived: true }, ...prev]);
@@ -816,7 +1039,11 @@ export default function TherapistFeed() {
   /* ─── Restore Post ─── */
   const handleRestorePost = async (postId) => {
     try {
-      await axios.patch(`${BASE_URL}/article/restore/${postId}`, {}, { headers: authHeader() });
+      await axios.patch(
+        `${BASE_URL}/article/restore/${postId}`,
+        {},
+        { headers: authHeader() },
+      );
       const post = archivedPosts.find((p) => p.id === postId);
       if (post) {
         setPosts((prev) => [{ ...post, isArchived: false }, ...prev]);
@@ -830,9 +1057,13 @@ export default function TherapistFeed() {
   /* ─── Delete Post ─── */
   const handleDeletePost = async (postId) => {
     try {
-      const res = await axios.delete(`${BASE_URL}/article/${postId}`, { headers: authHeader() });
+      const res = await axios.delete(`${BASE_URL}/article/${postId}`, {
+        headers: authHeader(),
+      });
       if (res.status === 200 || res.status === 204) {
-        const post = posts.find((p) => p.id === postId) || archivedPosts.find((p) => p.id === postId);
+        const post =
+          posts.find((p) => p.id === postId) ||
+          archivedPosts.find((p) => p.id === postId);
         if (post) {
           setTrashedPosts((prev) => [{ ...post, isDeleted: true }, ...prev]);
           setPosts((prev) => prev.filter((p) => p.id !== postId));
@@ -847,7 +1078,9 @@ export default function TherapistFeed() {
   /* ─── Undo Post ─── */
   const handleUndoPost = async (postId) => {
     try {
-      const res = await axios.delete(`${BASE_URL}/article/undo/${postId}`, { headers: authHeader() });
+      const res = await axios.delete(`${BASE_URL}/article/undo/${postId}`, {
+        headers: authHeader(),
+      });
       if (res.status === 200 || res.status === 204) {
         const post = trashedPosts.find((p) => p.id === postId);
         if (post) {
@@ -868,13 +1101,13 @@ export default function TherapistFeed() {
           className={`tab-btn ${currentTab === "feed" ? "active" : ""}`}
           onClick={() => setCurrentTab("feed")}
         >
-          <FiList size={18} /> Feed ({posts.length})
+          <FiList size={18} /> {t("feed")} ({posts.length})
         </button>
         <button
           className={`tab-btn ${currentTab === "archives" ? "active" : ""}`}
           onClick={() => setCurrentTab("archives")}
         >
-          <FiArchive size={18} /> Archives ({archivedPosts.length})
+          <FiArchive size={18} /> {t("archives")} ({archivedPosts.length})
         </button>
       </div>
 
@@ -883,20 +1116,44 @@ export default function TherapistFeed() {
         <div className="create-card">
           <div className="create-top">
             <UserAvatar size={48} />
-            <button className="create-input" onClick={() => { setEditingPost(null); setModalOpen(true); }}>
-              What would you like to share today?
+            <button
+              className="create-input"
+              onClick={() => {
+                setEditingPost(null);
+                setModalOpen(true);
+              }}
+            >
+              {t("shareToday")}
             </button>
           </div>
 
           <div className="create-actions">
-            <button className="create-action-btn photo" onClick={() => { setEditingPost(null); setModalOpen(true); }}>
-              <FiImage /> Photo
+            <button
+              className="create-action-btn photo"
+              onClick={() => {
+                setEditingPost(null);
+                setModalOpen(true);
+              }}
+            >
+              <FiImage /> {t("photo")}
             </button>
-            <button className="create-action-btn tip" onClick={() => { setEditingPost(null); setModalOpen(true); }}>
-              <FiZap /> Mental health tip
+            <button
+              className="create-action-btn tip"
+              onClick={() => {
+                setEditingPost(null);
+                setModalOpen(true);
+              }}
+            >
+              <FiZap /> {t("mentalHealthTip")}
             </button>
-            <button className="create-action-btn event" onClick={() => { setEditingPost(null); setModalOpen(true); }}>
-              <FiZap /> Announcement
+            <button
+              className="create-action-btn event"
+              onClick={() => {
+                setEditingPost(null);
+                setModalOpen(true);
+              }}
+            >
+              <FiZap /> {t("announcement")}
             </button>
           </div>
         </div>
@@ -906,7 +1163,7 @@ export default function TherapistFeed() {
       {loading ? (
         <div className="loading-state">
           <div className="spinner"></div>
-          <p>Loading posts...</p>
+         <p>{t("loadingPosts")}</p>
         </div>
       ) : currentTab === "feed" ? (
         posts.length > 0 ? (
@@ -918,7 +1175,7 @@ export default function TherapistFeed() {
                 onLike={() => handleLike(post.id)}
                 onAddComment={handleAddComment}
                 onToggleComments={handleToggleComments}
-                onToggleLikesList={handleToggleLikesList}   // FIX: أضفنا الـ prop
+                onToggleLikesList={handleToggleLikesList} // FIX: أضفنا الـ prop
                 onEdit={handleEditPost}
                 onArchive={handleArchivePost}
                 onRestore={() => {}}
@@ -930,10 +1187,16 @@ export default function TherapistFeed() {
         ) : (
           <div className="empty-state">
             <div className="empty-icon">📝</div>
-            <h3>No posts yet</h3>
-            <p>Create your first post to connect with patients and share insights</p>
-            <button className="empty-action-btn" onClick={() => { setEditingPost(null); setModalOpen(true); }}>
-              <FiZap /> Create Post
+           <h3>{t("noPostsYet")}</h3>
+           <p>{t("noPostsDesc")}</p>
+            <button
+              className="empty-action-btn"
+              onClick={() => {
+                setEditingPost(null);
+                setModalOpen(true);
+              }}
+            >
+              <FiZap />{t("createPost")}
             </button>
           </div>
         )
@@ -956,11 +1219,17 @@ export default function TherapistFeed() {
                   showMenuOptions={false}
                 />
                 <div className="archive-post-actions">
-                  <button className="archive-restore-btn" onClick={() => handleRestorePost(post.id)}>
-                    <FiRotateCcw /> Restore
+                  <button
+                    className="archive-restore-btn"
+                    onClick={() => handleRestorePost(post.id)}
+                  >
+                   <FiRotateCcw /> {t("restore")}
                   </button>
-                  <button className="archive-delete-btn" onClick={() => handleDeletePost(post.id)}>
-                    <FiTrash2 /> Delete
+                  <button
+                    className="archive-delete-btn"
+                    onClick={() => handleDeletePost(post.id)}
+                  >
+                   <FiTrash2 /> {t("delete")}
                   </button>
                 </div>
               </div>
@@ -969,8 +1238,8 @@ export default function TherapistFeed() {
         ) : (
           <div className="empty-state">
             <div className="empty-icon">📦</div>
-            <h3>No archived posts</h3>
-            <p>Posts you archive will appear here</p>
+           <h3>{t("noArchivedPosts")}</h3>
+           <p>{t("noArchivedDesc")}</p>
           </div>
         )
       ) : null}
@@ -978,7 +1247,10 @@ export default function TherapistFeed() {
       {/* ─── Modal ─── */}
       <CreateModal
         open={modalOpen}
-        onClose={() => { setModalOpen(false); setEditingPost(null); }}
+        onClose={() => {
+          setModalOpen(false);
+          setEditingPost(null);
+        }}
         onSubmit={handleSubmitPost}
         onUpdatePost={handleUpdatePost}
         editingPost={editingPost}
