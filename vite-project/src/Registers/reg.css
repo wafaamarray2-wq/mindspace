@@ -418,3 +418,88 @@ select {
     filter: blur(0);
   }
 }
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1024px) {
+  .register .content .text h1 {
+    font-size: 32px;
+  }
+  .register .content .text p {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .register {
+    padding-top: 30px;
+    align-items: flex-start;
+  }
+  .register .content .text h1 {
+    font-size: 22px;
+    white-space: normal;
+    animation: none;
+    width: auto;
+    border-left: none;
+  }
+  .register .content .text p {
+    font-size: 16px;
+    animation: none;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  .register .content form {
+    width: 90%;
+    max-width: 90%;
+    margin-bottom: 40px;
+    padding: 16px;
+  }
+  .register .content form .reg-role .cards {
+    gap: 15px;
+  }
+  .register .content form .reg-role p::before,
+  .register .content form .reg-role p::after {
+    width: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .register .content .text h1 {
+    font-size: 18px;
+    padding: 0 10px;
+  }
+  .register .content .text p {
+    font-size: 14px;
+    padding: 0 10px;
+  }
+  .register .content form {
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+  .register .content form h2 {
+    font-size: 18px;
+  }
+  .register .content form button {
+    font-size: 17px;
+    padding: 10px;
+  }
+  .register .content form .cont {
+    font-size: 16px;
+  }
+  .ag-gn {
+    flex-direction: column;
+    gap: 0;
+  }
+  .register .content form .reg-role .cards .tex {
+    font-size: 16px;
+  }
+  .register .content form .inp .icon,
+  .register .content form .inp .icons {
+    right: -30px;
+    padding-right: 32px;
+  }
+  .register .content form .therapist-extra input,
+  .register .content form .therapist-extra select {
+    font-size: 15px;
+  }
+}

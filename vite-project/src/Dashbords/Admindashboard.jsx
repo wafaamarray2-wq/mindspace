@@ -607,6 +607,24 @@ const TABS = [
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("users");
  const navigate = useNavigate();
+
+
+ const [isDark, setIsDark] = useState(false);
+
+useEffect(() => {
+  const saved = localStorage.getItem("mindspace-theme-admin") || "light";
+  document.documentElement.setAttribute("data-theme", saved);
+  setIsDark(saved === "dark");
+}, []);
+
+const toggleTheme = () => {
+  const next = isDark ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("mindspace-theme-admin", next);
+  setIsDark(!isDark);
+};
+
+
  const handleLogout = async () => {
     const token = localStorage.getItem("token");
     try {

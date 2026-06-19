@@ -1109,3 +1109,129 @@ html, body {
     padding-bottom: 20px;
   }
 }
+/* ═══ DARK MODE - DOCTOR PROFILE ═══ */
+[data-theme="dark"] .doctor-profile {
+  background: #0f172a !important;
+}
+
+[data-theme="dark"] .doctor-card,
+[data-theme="dark"] .about-card,
+[data-theme="dark"] .specials-card,
+[data-theme="dark"] .why,
+[data-theme="dark"] .feedback-section {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .doctor-card .doctor-info h2,
+[data-theme="dark"] .about-card h3,
+[data-theme="dark"] .specials-card h3,
+[data-theme="dark"] .why h3,
+[data-theme="dark"] .feedback-section h3 {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .about-card p,
+[data-theme="dark"] .doctor-card .doctor-info p {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .meta span {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .stats .stat-box {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .stats .stat-box h2 {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .stats .stat-box p {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .specials-card .boxs .box {
+  background: rgba(99,102,241,0.1) !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .why .boxes .box {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .why .boxes .box p {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .rating-summary-card {
+  background: rgba(99,102,241,0.05) !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .average-rating-col {
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .avg-num {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .reviews-count,
+[data-theme="dark"] .star-label,
+[data-theme="dark"] .count-label {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .bar-outer {
+  background: #334155 !important;
+}
+
+[data-theme="dark"] .add-review-form {
+  background: #334155 !important;
+  border-color: #6366f1 !important;
+}
+
+[data-theme="dark"] .add-review-form h4 {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .rating-input-row .label {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .textarea-wrap textarea {
+  background: #0f172a !important;
+  color: #f1f5f9 !important;
+  border-color: #475569 !important;
+}
+
+[data-theme="dark"] .textarea-wrap textarea::placeholder {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .feedback-card {
+  background: #334155 !important;
+  border-color: #475569 !important;
+}
+
+[data-theme="dark"] .reviewer-name {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .reviewer-date {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .feedback-content {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .loading-feedbacks,
+[data-theme="dark"] .no-feedbacks {
+  background: #334155 !important;
+  color: #94a3b8 !important;
+}

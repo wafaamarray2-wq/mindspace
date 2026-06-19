@@ -11,14 +11,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import { useLang } from "../i18n/LanguageContext";
 export default function PatientDashbord() {
+  const { lang, t, toggleLang } = useLang();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false); // ← ضيفي السطر ده
 
   const token = localStorage.getItem("token");
 
@@ -33,7 +35,7 @@ export default function PatientDashbord() {
       }
       const res = await axios.get(
         "https://mind-space-ov3r.onrender.com/user/profile",
-        { headers: { Authorization: `dash ${token}` } }
+        { headers: { Authorization: `dash ${token}` } },
       );
 
       const userData = res.data.data;
@@ -65,6 +67,12 @@ export default function PatientDashbord() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const saved = localStorage.getItem("mindspace-theme-patient") || "light";
+    document.documentElement.setAttribute("data-theme", saved);
+    setIsDark(saved === "dark");
+  }, []);
+
   // ================= UPLOAD IMAGE =================
   const uploadImage = async (fileParam) => {
     const formData = new FormData();
@@ -76,7 +84,7 @@ export default function PatientDashbord() {
       const res = await axios.post(
         "https://mind-space-ov3r.onrender.com/user/profile-picture",
         formData,
-        { headers: { Authorization: `dash ${token}` } }
+        { headers: { Authorization: `dash ${token}` } },
       );
 
       const newPfp = res.data?.data?.pfp || res.data?.pfp;
@@ -113,7 +121,7 @@ export default function PatientDashbord() {
       await axios.patch(
         "https://mind-space-ov3r.onrender.com/user/reset-profile-picture",
         {},
-        { headers: { Authorization: `dash ${token}` } }
+        { headers: { Authorization: `dash ${token}` } },
       );
       setUser((prev) => ({ ...prev, pfp: null }));
       setPreview(null);
@@ -141,7 +149,7 @@ export default function PatientDashbord() {
         { flag: "logoutFromAllDevices" },
         {
           headers: { Authorization: `dash ${token || ""}` },
-        }
+        },
       );
       toast.success("تم تسجيل الخروج بنجاح 👋");
     } catch (err) {
@@ -162,6 +170,13 @@ export default function PatientDashbord() {
     if (window.innerWidth <= 768) {
       setSidebarOpen(false);
     }
+  };
+
+  const toggleTheme = () => {
+    const next = isDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("mindspace-theme-patient", next);
+    setIsDark(!isDark);
   };
 
   return (
@@ -194,8 +209,27 @@ export default function PatientDashbord() {
         </div>
 
         <div className="dash-header__right">
+          {/* ← ضيفي الزر ده هنا */}
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            title={isDark ? "Light Mode" : "Dark Mode"}
+          >
+            <span className="theme-toggle__knob">{isDark ? "🌙" : "☀️"}</span>
+          </button>
+
+          <button
+            className="lang-toggle"
+            onClick={toggleLang}
+            aria-label="Toggle language"
+            title={lang === "en" ? "العربية" : "English"}
+          >
+            {lang === "en" ? "ع" : "EN"}
+          </button>
+
           <div className="dash-header__greeting">
-            Welcome back,&nbsp;<strong>{user?.userName || "..."}</strong>
+         {t("welcomeBack")}&nbsp;<strong>{user?.userName || "..."}</strong>
           </div>
           <div className="dash-header__avatar">
             {user?.pfp?.secure_url ? (
@@ -258,7 +292,7 @@ export default function PatientDashbord() {
 
             {user?.pfp?.secure_url && (
               <button className="remove-photo-btn" onClick={resetImage}>
-                Remove Photo
+                {t("removePhoto")}
               </button>
             )}
           </div>
@@ -279,11 +313,11 @@ export default function PatientDashbord() {
               </li> */}
 
               <li>
-                <Link to="/PatientHome" onClick={handleNavLinkClick}>
+                <Link to="/patient-dashboard" onClick={handleNavLinkClick}>
                   <span>
                     <IoHome />
                   </span>
-                  <h5>Home</h5>
+                  <h5>{t("home")}</h5>
                 </Link>
               </li>
 
@@ -301,7 +335,7 @@ export default function PatientDashbord() {
                   <span>
                     <IoPerson />
                   </span>
-                  <h5>Doctors</h5>
+                  <h5>{t("doctors")}</h5>
                 </Link>
               </li>
 
@@ -310,7 +344,7 @@ export default function PatientDashbord() {
                   <span>
                     <BiMessageSquareDots />
                   </span>
-                  <h5>Messages</h5>
+                  <h5>{t("messages")}</h5>
                 </Link>
               </li>
 
@@ -319,7 +353,7 @@ export default function PatientDashbord() {
                   <span>
                     <FiUsers />
                   </span>
-                  <h5>Groups</h5>
+                  <h5>{t("groups")}</h5>
                 </Link>
               </li>
 
@@ -328,7 +362,7 @@ export default function PatientDashbord() {
                   <span>
                     <MdSettings />
                   </span>
-                  <h5>Settings</h5>
+                  <h5>{t("settings")}</h5>
                 </Link>
               </li>
 
@@ -338,7 +372,7 @@ export default function PatientDashbord() {
                   <span>
                     <MdLogout />
                   </span>
-                  <h5>Log Out</h5>
+                  <h5>{t("logout")}</h5>
                 </button>
               </li>
             </ul>

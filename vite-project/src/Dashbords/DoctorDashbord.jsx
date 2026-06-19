@@ -13,18 +13,20 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./doc.css";
-
-
+import "./darkmode.css";
+import { useLang } from "../i18n/LanguageContext";
 const DashContext = createContext(null);
 
 export const useDashUser = () => useContext(DashContext);
 
 // ═══════════════════════════════════════════════
 export default function DoctorDashbord() {
+ 
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+const [isDark, setIsDark] = useState(false); 
+ const { lang, t, toggleLang } = useLang(); // ← هنا
   // ================= GET USER DATA =================
   const fetchUserData = async () => {
     try {
@@ -54,6 +56,20 @@ export default function DoctorDashbord() {
   useEffect(() => {
     fetchUserData();
   }, []);
+
+
+
+
+
+  useEffect(() => {
+ const saved = localStorage.getItem("mindspace-theme-doctor") || "light";
+  document.documentElement.setAttribute("data-theme", saved);
+  setIsDark(saved === "dark");
+}, []);
+
+
+
+
 
   // ================= CLOSE SIDEBAR ON ROUTE CHANGE =================
   useEffect(() => {
@@ -107,6 +123,17 @@ export default function DoctorDashbord() {
     setTimeout(() => navigate("/login"), 1000);
   };
 
+
+
+
+  const toggleTheme = () => {
+  const next = isDark ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("mindspace-theme-doctor", next);
+  setIsDark(!isDark);
+};
+
+
   const navClass = ({ isActive }) => (isActive ? "active" : "");
 
   return (
@@ -139,18 +166,37 @@ export default function DoctorDashbord() {
             <span className="dash-header__name">MindSpace</span>
           </div>
 
-          <div className="dash-header__right">
-            <div className="dash-header__greeting">
-              Welcome back,&nbsp;<strong>Dr. {user?.userName || "..."}</strong>
-            </div>
-            <div className="dash-header__avatar">
+         <div className="dash-header__right">
+  <button      
+    className="theme-toggle"
+    onClick={toggleTheme}
+    aria-label="Toggle theme"
+  >
+    <span className="theme-toggle__knob">
+      {isDark ? "🌙" : "☀️"}
+    </span>
+  </button>
+
+
+  <button
+  className="lang-toggle"
+  onClick={toggleLang}
+  aria-label="Toggle language"
+  title={lang === "en" ? "العربية" : "English"}
+>
+  {lang === "en" ? "ع" : "EN"}
+</button>
+  <div className="dash-header__greeting">
+    Welcome back,&nbsp;<strong>Dr. {user?.userName || "..."}</strong>
+  </div>
+  <div className="dash-header__avatar">
               {user?.pfp?.secure_url ? (
                 <img src={user.pfp.secure_url} alt="User avatar" />
               ) : (
                 <span>{user?.userName?.charAt(0)?.toUpperCase()}</span>
               )}
             </div>
-          </div>
+</div>
         </header>
 
         <div className="dash-content">
@@ -198,7 +244,7 @@ export default function DoctorDashbord() {
                     <span>
                       <IoHome />
                     </span>
-                    <h5>Home</h5>
+                   <h5>{t("home")}</h5>
                   </NavLink>
                 </li>
 
@@ -212,7 +258,7 @@ export default function DoctorDashbord() {
                     <span>
                       <MdDashboard />
                     </span>
-                    <h5>Dashboard</h5>
+                    <h5>{t("Dashboard")}</h5>
                   </NavLink>
                 </li>
 
@@ -225,7 +271,7 @@ export default function DoctorDashbord() {
                     <span>
                       <IoPerson />
                     </span>
-                    <h5>Profile</h5>
+                    <h5>{t("Profile")}</h5>
                   </NavLink>
                 </li>
 
@@ -238,7 +284,7 @@ export default function DoctorDashbord() {
                     <span>
                       <FaUserInjured />
                     </span>
-                    <h5>Patients</h5>
+                    <h5>{t("Patients")}</h5>
                   </NavLink>
                 </li>
 
@@ -251,7 +297,7 @@ export default function DoctorDashbord() {
                     <span>
                       <BiMessageSquareDots />
                     </span>
-                    <h5>Messages</h5>
+                 <h5>{t("messages")}</h5>
                   </NavLink>
                 </li>
 
@@ -277,7 +323,7 @@ export default function DoctorDashbord() {
                     <span>
                       <FiUsers />
                     </span>
-                    <h5>Groups</h5>
+               <h5>{t("groups")}</h5>
                   </NavLink>
                 </li>
 
@@ -290,7 +336,7 @@ export default function DoctorDashbord() {
                     <span>
                       <MdSettings />
                     </span>
-                    <h5>Settings</h5>
+                <h5>{t("settings")}</h5>
                   </NavLink>
                 </li>
 
@@ -300,7 +346,7 @@ export default function DoctorDashbord() {
                     <span>
                       <MdLogout />
                     </span>
-                    <h5>Log Out</h5>
+                  <h5>{t("logout")}</h5>
                   </button>
                 </li>
               </ul>
