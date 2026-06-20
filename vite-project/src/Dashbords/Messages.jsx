@@ -756,8 +756,7 @@ function Messages() {
             ) : (
               messages.map((msg, index) => {
                 const senderId = typeof msg.sender === 'string' ? msg.sender : (msg.sender?._id || msg.sender?.id || msg.sender);
-                const currentUserId = user?._id || user?.id;
-                const isMine = senderId === currentUserId || senderId === 'me' || msg._optimistic;
+                const isMine = (currentUserId && senderId && String(senderId) === String(currentUserId)) || senderId === 'me' || msg._optimistic;
                 return (
                   <div key={index} style={{
                     display: 'flex',
