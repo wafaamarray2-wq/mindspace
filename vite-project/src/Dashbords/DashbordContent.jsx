@@ -3,7 +3,7 @@ import axios from "axios";
 import { BiSolidStar } from "react-icons/bi";
 import { FiClock, FiCalendar, FiUsers, FiCheckCircle } from "react-icons/fi";
 import "./doc.css";
-
+import { useLang } from "../i18n/LanguageContext";
 const BASE = "https://mind-space-ov3r.onrender.com";
 
 function authHeader() {
@@ -11,28 +11,28 @@ function authHeader() {
   return { Authorization: `dash ${token}` };
 }
 
-const STATUS_LABEL = {
-  pending:   { text: "في الانتظار", cls: "status-pending"   },
-  confirmed: { text: "مؤكدة",       cls: "status-active"    },
-  cancelled: { text: "ملغاة",       cls: "status-inactive"  },
-  completed: { text: "منتهية",      cls: "status-inactive"  },
-};
-
 export default function DashboardContent() {
-  const [sessions,  setSessions]  = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
-  const [loading,   setLoading]   = useState(true);
+  const [loading, setLoading] = useState(true);
+  const { t } = useLang();
 
+  const STATUS_LABEL = {
+    pending: { text: t("pending"), cls: "status-pending" },
+    confirmed: { text: t("confirmed"), cls: "status-active" },
+    cancelled: { text: t("cancelled"), cls: "status-inactive" },
+    completed: { text: t("completed"), cls: "status-inactive" },
+  };
   useEffect(() => {
     const fetchAll = async () => {
       try {
         const [sessRes, fbRes] = await Promise.all([
           axios.get(`${BASE}/session/therapist`, { headers: authHeader() }),
-          axios.get(`${BASE}/feedback`,           { headers: authHeader() }),
+          axios.get(`${BASE}/feedback`, { headers: authHeader() }),
         ]);
 
-        const allSessions  = sessRes.data?.data || sessRes.data || [];
-        const allFeedbacks = fbRes.data?.data   || fbRes.data   || [];
+        const allSessions = sessRes.data?.data || sessRes.data || [];
+        const allFeedbacks = fbRes.data?.data || fbRes.data || [];
 
         setSessions(allSessions);
         setFeedbacks(allFeedbacks);
@@ -47,15 +47,17 @@ export default function DashboardContent() {
 
   /* ── derived stats ── */
   const uniquePatients = new Set(
-    sessions.map((s) => s.userId?._id || s.userId).filter(Boolean)
+    sessions.map((s) => s.userId?._id || s.userId).filter(Boolean),
   ).size;
 
   const upcomingSessions = sessions.filter(
-    (s) => s.status === "confirmed" || s.status === "pending"
+    (s) => s.status === "confirmed" || s.status === "pending",
   );
 
   const avgRating = feedbacks.length
-    ? (feedbacks.reduce((acc, f) => acc + (f.stars || 0), 0) / feedbacks.length).toFixed(1)
+    ? (
+        feedbacks.reduce((acc, f) => acc + (f.stars || 0), 0) / feedbacks.length
+      ).toFixed(1)
     : null;
 
   /* ── upcoming sorted by date ── */
@@ -66,8 +68,10 @@ export default function DashboardContent() {
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";
     return new Date(dateStr).toLocaleString("ar-EG", {
-      month: "short", day: "numeric",
-      hour: "2-digit", minute: "2-digit",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -85,7 +89,7 @@ export default function DashboardContent() {
       <div className="boxes">
         <div className="box">
           <FiUsers className="box-icon" />
-          <p>المرضى</p>
+          <p>{t("patients")}</p>
           <div className="number">
             <span>{uniquePatients}</span>
           </div>
@@ -93,7 +97,7 @@ export default function DashboardContent() {
 
         <div className="box">
           <FiCalendar className="box-icon" />
-          <p>جلسات قادمة</p>
+          <p>{t("upcomingSessions")}</p>
           <div className="number">
             <span>{upcomingSessions.length}</span>
           </div>
@@ -101,10 +105,16 @@ export default function DashboardContent() {
 
         <div className="box">
           <BiSolidStar className="box-icon" />
-          <p>التقييم</p>
+          <p>{t("avgRating")}</p>
           <div className="number">
             <span>
-              {avgRating ? <>{avgRating} <BiSolidStar /></> : "—"}
+              {avgRating ? (
+                <>
+                  {avgRating} <BiSolidStar />
+                </>
+              ) : (
+                "—"
+              )}
             </span>
           </div>
         </div>
@@ -113,32 +123,37 @@ export default function DashboardContent() {
       {/* ── UPCOMING SESSIONS TABLE ── */}
       <div className="table-container">
         <div className="table-title">
-          <FiClock /> الجلسات القادمة
+          <FiClock /> {t("upcomingSessions")}
         </div>
 
         {sortedUpcoming.length === 0 ? (
           <div className="dash-empty">
             <FiCheckCircle size={28} />
-            <p>لا توجد جلسات قادمة</p>
+            <p>{t("noUpcomingSessions")}</p>
           </div>
         ) : (
           <table className="dashboard-table">
             <thead>
               <tr>
-                <th>المريض</th>
-                <th>الموعد</th>
-                <th>الحالة</th>
+                <th>{t("patient")}</th>
+                <th>{t("appointment")}</th>
+                <th> {t("status")}</th>
               </tr>
             </thead>
             <tbody>
               {sortedUpcoming.map((s) => {
                 const patientName = s.userId?.userName || s.userName || "—";
-                const { text, cls } = STATUS_LABEL[s.status] || { text: s.status, cls: "" };
+                const { text, cls } = STATUS_LABEL[s.status] || {
+                  text: s.status,
+                  cls: "",
+                };
                 return (
                   <tr key={s._id}>
                     <td>{patientName}</td>
                     <td>{formatDate(s.sessionTime)}</td>
-                    <td><span className={cls}>{text}</span></td>
+                    <td>
+                      <span className={cls}>{text}</span>
+                    </td>
                   </tr>
                 );
               })}

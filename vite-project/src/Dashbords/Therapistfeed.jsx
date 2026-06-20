@@ -254,7 +254,7 @@ function PostCard({
   onDeleteComment,
   showMenuOptions = true,
 }) {
-   const { t } = useLang();
+   const { t,lang } = useLang();
   const { user } = useDashUser();
   const [draft, setDraft] = useState("");
   const currentUserId = getUserIdFromToken();
@@ -480,13 +480,13 @@ function PostCard({
             )}
           </div>
 
-          <div className="comment-input-section">
+         <div className="comment-input-section" style={{ flexDirection: lang === "ar" ? "row-reverse" : "row" }}>
             <UserAvatar size={36} />
-            <div className="comment-input-wrapper">
+            <div className="comment-input-wrapper" style={{ flexDirection: lang === "ar" ? "row-reverse" : "row" }}>
               <input
                 type="text"
                 className="comment-input"
-               placeholder={t("writeResponse..." )   } 
+               placeholder={t("writeResponse")}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 onKeyDown={(e) => {
@@ -711,7 +711,8 @@ function formatArticle(article) {
 
 /* ─── MAIN COMPONENT ─── */
 export default function TherapistFeed() {
-  const { t } = useLang();
+  const { lang, t } = useLang();
+
   const { user } = useDashUser();
   const [posts, setPosts] = useState([]);
   const [archivedPosts, setArchivedPosts] = useState([]);
@@ -1116,15 +1117,13 @@ export default function TherapistFeed() {
         <div className="create-card">
           <div className="create-top">
             <UserAvatar size={48} />
-            <button
-              className="create-input"
-              onClick={() => {
-                setEditingPost(null);
-                setModalOpen(true);
-              }}
-            >
-              {t("shareToday")}
-            </button>
+        <button 
+  className="create-input" 
+  onClick={() => { setEditingPost(null); setModalOpen(true); }}
+  style={{ textAlign: lang === "ar" ? "right" : "left" }}
+>
+  {t("shareToday")}
+</button>
           </div>
 
           <div className="create-actions">

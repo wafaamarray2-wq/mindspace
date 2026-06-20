@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FiUser, FiCalendar, FiClock } from "react-icons/fi";
+import { useLang } from "../i18n/LanguageContext";
 import "./patients.css";
 
 const BASE = "https://mind-space-ov3r.onrender.com";
@@ -12,10 +13,10 @@ function authHeader() {
 }
 
 const STATUS_MAP = {
-  pending:   { text: "في الانتظار", cls: "pat-status pending"   },
-  confirmed: { text: "مؤكدة",       cls: "pat-status confirmed" },
-  canceled:  { text: "ملغاة",       cls: "pat-status canceled"  },
-  completed: { text: "منتهية",      cls: "pat-status completed" },
+  pending:   { key: "pending",   cls: "pat-status pending"   },
+  confirmed: { key: "confirmed", cls: "pat-status confirmed" },
+  canceled:  { key: "cancelled", cls: "pat-status canceled"  },
+  completed: { key: "completed", cls: "pat-status completed" },
 };
 
 function Avatar({ name }) {
@@ -34,17 +35,17 @@ function Avatar({ name }) {
 }
 
 export default function Patients() {
+  const { t } = useLang();
   const navigate  = useNavigate();
   const [sessions, setSessions] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState("");
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchData = async () => {
       try {
         const res  = await axios.get(`${BASE}/session/therapist`, { headers: authHeader() });
         const data = res.data?.data || res.data || [];
-        // deduplicate by patient + keep latest session per patient
         const map  = new Map();
         data.forEach((s) => {
           const pid = s.userId?._id || s.userId;
@@ -54,12 +55,12 @@ export default function Patients() {
         });
         setSessions([...map.values()]);
       } catch (e) {
-        setError("تعذر تحميل بيانات المرضى");
+        setError(t("errorLoadingPatients"));
       } finally {
         setLoading(false);
       }
     };
-    fetch();
+    fetchData();
   }, []);
 
   const formatDate = (d) =>
@@ -68,15 +69,15 @@ export default function Patients() {
   return (
     <div className="patients">
       <div className="pat-header">
-        <h1>المرضى</h1>
+        <h1>{t("patients")}</h1>
         {!loading && (
-          <span className="pat-count">{sessions.length} مريض</span>
+          <span className="pat-count">{sessions.length} {t("patients")}</span>
         )}
       </div>
 
       {loading && (
         <div className="pat-loading">
-          <span className="pat-spinner" /> جاري التحميل…
+          <span className="pat-spinner" /> {t("loading")}
         </div>
       )}
 
@@ -85,7 +86,7 @@ export default function Patients() {
       {!loading && !error && sessions.length === 0 && (
         <div className="pat-empty">
           <FiUser size={36} />
-          <p>لا يوجد مرضى بعد</p>
+          <p>{t("noPatients")}</p>
         </div>
       )}
 
@@ -95,27 +96,23 @@ export default function Patients() {
             const patient = s.userId;
             const name    = patient?.userName || "مريض";
             const pid     = patient?._id || s.userId;
-            const { text, cls } = STATUS_MAP[s.status] || { text: s.status, cls: "pat-status" };
+            const { key, cls } = STATUS_MAP[s.status] || { key: s.status, cls: "pat-status" };
 
             return (
               <div className="box" key={s._id}>
                 <Avatar name={name} />
-
                 <div className="content">
                   <h2>{name}</h2>
-
                   <div className="pat-info-row">
                     <FiCalendar size={13} />
                     <span>{formatDate(s.sessionTime)}</span>
                   </div>
-
                   <div className="pat-info-row">
                     <FiClock size={13} />
-                    <span className={cls}>{text}</span>
+                    <span className={cls}>{t(key)}</span>
                   </div>
-
                   <button onClick={() => navigate(`/patient/${pid}`, { state: { session: s } })}>
-                    عرض الملف
+                    {t("viewProfile")}
                   </button>
                 </div>
               </div>

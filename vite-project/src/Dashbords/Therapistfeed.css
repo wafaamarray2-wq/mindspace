@@ -560,11 +560,13 @@
 }
 
 .action-btn.liked {
-   color: #f87171;
+  color: var(--accent-color);
+  border-color: transparent;
+  background: rgba(245, 87, 108, 0.1);
 }
 
 .action-btn.liked:hover {
-  background: #ffe6e6;
+  background: rgba(245, 87, 108, 0.18);
 }
 
 .action-btn:disabled {

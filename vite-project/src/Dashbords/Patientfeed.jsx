@@ -46,7 +46,7 @@ function formatTime(date) {
 }
 
 /* ─── Avatar Component ─── */
-function Avatar({ initials, color = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", size = 44 }) {
+function Avatar({ initials, color = "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)", size = 44 }) {
   return (
     <div
       className="avatar"
@@ -75,12 +75,12 @@ function DoctorAvatar({ doctor, size = 44 }) {
     );
   }
   const initial = doctor?.userName?.charAt(0)?.toUpperCase() || "D";
-  const colors = [
-    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-    "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-    "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-  ];
+const colors = [
+    "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)",
+    "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+    "linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)",
+    "linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%)",
+];
   const hash = doctor?.userName?.charCodeAt(0) || 0;
   return <Avatar initials={initial} color={colors[hash % colors.length]} size={size} />;
 }
@@ -627,7 +627,7 @@ localStorage.setItem("mindspace-theme-patient", next);
               <input
                 type="text"
                 className="search-input"
-              placeholder={t("searchPlaceholder...")}
+              placeholder={t("searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />

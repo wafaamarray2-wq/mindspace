@@ -187,7 +187,7 @@ const [isDark, setIsDark] = useState(false);
   {lang === "en" ? "ع" : "EN"}
 </button>
   <div className="dash-header__greeting">
-    Welcome back,&nbsp;<strong>Dr. {user?.userName || "..."}</strong>
+   {t("welcomeBack")}&nbsp;<strong>{user?.userName || "..."}</strong>
   </div>
   <div className="dash-header__avatar">
               {user?.pfp?.secure_url ? (
@@ -258,7 +258,7 @@ const [isDark, setIsDark] = useState(false);
                     <span>
                       <MdDashboard />
                     </span>
-                    <h5>{t("Dashboard")}</h5>
+                   <h5>{t("dashboard")}</h5>
                   </NavLink>
                 </li>
 
@@ -271,7 +271,7 @@ const [isDark, setIsDark] = useState(false);
                     <span>
                       <IoPerson />
                     </span>
-                    <h5>{t("Profile")}</h5>
+                  <h5>{t("profile")}</h5>
                   </NavLink>
                 </li>
 
@@ -284,7 +284,7 @@ const [isDark, setIsDark] = useState(false);
                     <span>
                       <FaUserInjured />
                     </span>
-                    <h5>{t("Patients")}</h5>
+                  <h5>{t("patients")}</h5>
                   </NavLink>
                 </li>
 
@@ -310,7 +310,7 @@ const [isDark, setIsDark] = useState(false);
                     <span>
                       <MdEventNote />
                     </span>
-                    <h5>Sessions</h5>
+                   <h5>{t("sessions")}</h5>
                   </NavLink>
                 </li>
 
