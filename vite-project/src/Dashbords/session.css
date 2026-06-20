@@ -119,3 +119,98 @@
   border-radius: 6px;
   cursor: pointer;
 }
+/* ─── Responsive ─── */
+@media (max-width: 992px) {
+  .stats-grid {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sessions-page {
+    padding: 16px;
+  }
+
+  .sessions-header h2 {
+    font-size: 22px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-card h3 {
+    font-size: 20px;
+  }
+
+  .table-card {
+    padding: 10px;
+  }
+
+  /* الجدول يتحول لكروت بدل ما يطلع خارج الشاشة */
+  .sessions-table thead {
+    display: none;
+  }
+
+  .sessions-table,
+  .sessions-table tbody,
+  .sessions-table tr,
+  .sessions-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .sessions-table tr {
+    margin-bottom: 14px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .sessions-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px;
+    border-bottom: 1px solid #f4f4f4;
+    text-align: left;
+  }
+
+  .sessions-table td:last-child {
+    border-bottom: none;
+  }
+
+  .sessions-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #555;
+    margin-right: 10px;
+  }
+
+  .actions {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .view-btn,
+  .delete-btn {
+    flex: 1;
+    text-align: center;
+    min-width: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sessions-header h2 {
+    font-size: 20px;
+  }
+}
