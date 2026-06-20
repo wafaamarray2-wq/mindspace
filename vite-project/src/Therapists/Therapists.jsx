@@ -4,8 +4,9 @@ import { CiSearch } from "react-icons/ci";
 import Empty from "../images/photo_2026-03-08_01-28-32.jpg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Login from "../Registers/Login";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useLang } from "../i18n/LanguageContext";
+
 const BASE_URL = "https://mind-space-ov3r.onrender.com";
 
 function getUserIdFromToken() {
@@ -24,9 +25,6 @@ function authHeader() {
   return { Authorization: `dash ${token}` };
 }
 
-console.log("TOKEN:", localStorage.getItem("token"));
-console.log("ROLE:", localStorage.getItem("role"));
-
 function getInitials(name) {
   if (!name) return "د";
   const parts = name.trim().split(" ");
@@ -35,8 +33,8 @@ function getInitials(name) {
 }
 
 function Therapists() {
+  const { t } = useLang();
   const navigate = useNavigate();
-
   const [therapists, setTherapists] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -46,32 +44,27 @@ function Therapists() {
         const res = await axios.get(`${BASE_URL}/user/get-therapists`, {
           headers: authHeader(),
         });
-
-        console.log(res.data);
-
         setTherapists(res.data?.therapists || res.data?.data || res.data);
       } catch (error) {
         console.log(error);
       }
     };
-
     getTherapists();
   }, []);
 
   return (
     <div className="thera">
       <div className="container">
-        <h1>الاخصائيون النفسيون</h1>
-        <p>اختر المعالج المناسب لبدء رحلتك نحو الدعم النفسي</p>
+        <h1>{t("therapistsTitle")}</h1>
+        <p>{t("therapistsSubtitle")}</p>
 
         <div className="inp">
           <span>
             <CiSearch />
           </span>
-
           <input
             type="text"
-            placeholder="ابحث عن معالج..."
+            placeholder={t("searchTherapist")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -80,13 +73,10 @@ function Therapists() {
         {therapists.length === 0 ? (
           <div className="empty">
             <img src={Empty} alt="" />
-
-            <h2>لا يوجد معالجون متاحون حاليا</h2>
-
-            <p>كن اول من ينضم الي منصتنا</p>
-
+            <h2>{t("noTherapists")}</h2>
+            <p>{t("beFirstTherapist")}</p>
             <Link to="/login">
-              <button>تسجيل كمعالج</button>
+              <button>{t("registerAsTherapist")}</button>
             </Link>
           </div>
         ) : (
@@ -107,21 +97,19 @@ function Therapists() {
                       {getInitials(doctor.userName)}
                     </div>
                   )}
-
                   <h3>Dr. {doctor.userName}</h3>
-
-                  <p className="par">اخصائي نفسي</p>
-
-                  <p>خبره {doctor.experience} سنوات</p>
-
+                  <p className="par">{t("psychologist")}</p>
+                  <p>
+                    {t("experiencePrefix") ? `${t("experiencePrefix")} ` : ""}
+                    {doctor.experience || 0}
+                    {` ${t("experienceSuffix")}`}
+                  </p>
                   <button
                     onClick={() =>
-                      navigate(`/doctor/${doctor._id}`, {
-                        state: doctor,
-                      })
+                      navigate(`/doctor/${doctor._id}`, { state: doctor })
                     }
                   >
-                    عرض الملف
+                    {t("viewProfile")}
                   </button>
                 </div>
               ))}

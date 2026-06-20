@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useLang } from "../i18n/LanguageContext";
 import "./session.css";
 
 export default function Sessions() {
+    const { t } = useLang();
   const navigate = useNavigate();
 
   const [sessions, setSessions] = useState([]);
@@ -79,25 +81,25 @@ export default function Sessions() {
 
       {/* Header */}
       <div className="sessions-header">
-        <h2>Sessions Dashboard</h2>
-        <p>Manage and track all patient sessions</p>
+      <h2>{t("sessionsDashboard")}</h2>
+        <p>{ t("sessionsSubtitle")}</p>
       </div>
 
       {/* Stats Cards */}
       <div className="stats-grid">
         <div className="stat-card">
           <h3>{stats.total}</h3>
-          <span>Total Sessions</span>
+          <span>{t("totalSessions")}</span>
         </div>
 
         <div className="stat-card green">
           <h3>{stats.completed}</h3>
-          <span>Completed</span>
+          <span>{t("completed")}</span>
         </div>
 
         <div className="stat-card orange">
           <h3>{stats.pending}</h3>
-          <span>Pending</span>
+          <span>{t("pending")}</span>
         </div>
       </div>
 
@@ -106,11 +108,11 @@ export default function Sessions() {
         <table className="sessions-table">
           <thead>
             <tr>
-              <th>Patient</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Notes</th>
-              <th>Actions</th>
+              <th>{t("patient")}</th>
+              <th>{t("date")}</th>
+              <th>{t("status")}</th>
+              <th>{t("notes")}</th>
+              <th> {t("actions")}</th>
             </tr>
           </thead>
 
@@ -133,13 +135,13 @@ export default function Sessions() {
                     className="view-btn"
                     onClick={() => navigate(`/doctor-dashboard/session/${session.id}`, { state: session })}
                   >
-                    View
+                    {t("view")}
                   </button>
                   <button 
                     className="delete-btn"
                     onClick={() => handleDeleteSession(session.id)}
                   >
-                    Delete
+                   {t("delete")}
                   </button>
                 </td>
               </tr>

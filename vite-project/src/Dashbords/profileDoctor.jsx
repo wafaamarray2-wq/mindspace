@@ -7,7 +7,7 @@ import {
   FiDollarSign, FiCheck, FiTrash2, FiX,
 } from "react-icons/fi";
 import "./profileDoctor.css";
-
+import { useLang } from "../i18n/LanguageContext";
 function CropModal({ src, onCrop, onCancel }) {
   const canvasRef = useRef();
   const imgRef    = useRef();
@@ -62,6 +62,7 @@ function CropModal({ src, onCrop, onCancel }) {
 
 
 export default function ProfileDoctor() {
+  const { t } = useLang();
   const dashUser      = useDashUser() || {};
   const user          = dashUser.user        || {};
   const setUser       = dashUser.setUser       || (() => {});
@@ -142,7 +143,7 @@ export default function ProfileDoctor() {
       const formData = new FormData();
       formData.append("pfp", file);
       const res    = await axios.post(
-        "https://mind-space-ov3r.onrender.com/user/profile-picture",
+        "hEttps://mind-space-ov3r.onrender.com/user/profile-picture",
         formData,
         { headers: { Authorization: `dash ${token}` } }
       );
@@ -195,9 +196,9 @@ export default function ProfileDoctor() {
   const avgRatingText = hasReviews ? avgRating.toFixed(1) : "—";
 
   const info = [
-    { icon: <FiMail />,       label: "البريد الإلكتروني", val: user?.email       || "—" },
-    { icon: <FiPhone />,      label: "الهاتف",             val: user?.phoneNumber || "—" },
-    { icon: <FiDollarSign />, label: "سعر الجلسة",
+    { icon: <FiMail />,       label:  t("email"), val: user?.email || "—" },
+    { icon: <FiPhone />,      label:  t("phone"),   val: user?.phoneNumber || "—" },
+    { icon: <FiDollarSign />, label: t("sessionFee"),
       val: user?.sessionFee ? `${user.sessionFee} ج.م / 60 دقيقة` : "—" },
   ];
 
@@ -223,6 +224,8 @@ export default function ProfileDoctor() {
 
       {/* ── HERO ── */}
       <div className="dp-card">
+
+        
         <div className="dp-hero">
           <div className="dp-avatar-wrap">
             <div className="dp-avatar-ring">
@@ -264,9 +267,9 @@ export default function ProfileDoctor() {
       {/* ── STATS — real data now ── */}
       <div className="dp-stats-row">
         {[
-          { n: uniquePatients || "0",   l: "المرضى"        },
-          { n: avgRatingText,           l: "متوسط التقييم"  },
-          { n: feedbacks.length || "0", l: "التقييمات"     },
+          { n: uniquePatients || "0",   l: t("myPatients")      },
+          { n: avgRatingText,           l: t("avgRating") },
+          { n: feedbacks.length || "0", l: t("reviews")     },
         ].map(({ n, l }) => (
           <div className="dp-stat-box" key={l}>
             <div className="dp-stat-n">{n}</div>
@@ -278,7 +281,7 @@ export default function ProfileDoctor() {
       {/* ── PERSONAL INFO ── */}
       <div className="dp-card">
         <div className="dp-sec-head">
-          <span className="dp-sec-title">البيانات الشخصية</span>
+          <span className="dp-sec-title">{t("profileInfo")}</span>
         </div>
         {info.map(({ icon, label, val }) => (
           <div className="dp-info-row" key={label}>
@@ -292,7 +295,7 @@ export default function ProfileDoctor() {
       {/* ── REVIEWS ── */}
       <div className="dp-card">
         <div className="dp-sec-head">
-          <span className="dp-sec-title">تقييمات وآراء المرضى</span>
+          <span className="dp-sec-title">{t("reviews")} </span>
           {hasReviews && (
             <span style={{ fontSize: 12, color: "var(--muted)" }}>
               {feedbacks.length} تقييم
@@ -302,11 +305,11 @@ export default function ProfileDoctor() {
 
         {loadingFeedbacks ? (
           <div className="dp-about-text" style={{ color: "var(--muted)" }}>
-            جاري تحميل التقييمات…
+           {t("loading")}
           </div>
         ) : !hasReviews ? (
           <div className="dp-about-text" style={{ color: "var(--muted)" }}>
-            لا توجد تقييمات من المرضى بعد.
+        {t("noReviewsYet")}
           </div>
         ) : (
           feedbacks.map((f, index) => {

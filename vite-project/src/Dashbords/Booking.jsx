@@ -4,8 +4,10 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Book from "../images/book.avif";
 import "./Booking.css";
+import { useLang } from "../i18n/LanguageContext";
 
 export default function Booking() {
+  const { t } = useLang();
   const { id } = useParams();
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDate, setSelectedDate] = useState("2027-01-01");
@@ -17,11 +19,11 @@ export default function Booking() {
 
   const handleConfirmBooking = async () => {
     if (!selectedDate) {
-      toast.warning("⚠️ الرجاء اختيار تاريخ الجلسة");
+      toast.warning(t("selectDateWarning"));
       return;
     }
     if (!selectedTime) {
-      toast.warning("⚠️ الرجاء اختيار وقت الجلسة");
+      toast.warning(t("selectTimeWarning"));
       return;
     }
 
@@ -29,30 +31,20 @@ export default function Booking() {
     try {
       const token = localStorage.getItem("token");
       const therapistId = id || "69d4df0bc42edaef1d9433e3";
-      // Format sessionTime exactly as required: "YYYY-MM-DD HH:mm"
       const sessionTime = `${selectedDate} ${selectedTime}`;
 
       const response = await axios.post(
         "https://mind-space-ov3r.onrender.com/session/request",
-        {
-          therapistId,
-          sessionTime,
-        },
-        {
-          headers: {
-            Authorization: `dash ${token}`,
-          },
-        }
+        { therapistId, sessionTime },
+        { headers: { Authorization: `dash ${token}` } }
       );
 
-      toast.success("🎉 تم تقديم طلب حجز الجلسة بنجاح!");
-      console.log("Booking response:", response.data);
+      toast.success(t("bookingSuccess"));
     } catch (err) {
-      console.error("Booking error:", err);
       const errorMsg =
         err.response?.data?.message ||
         err.response?.data?.error ||
-        "حدث خطأ أثناء حجز الجلسة. الرجاء المحاولة مرة أخرى.";
+        t("bookingError");
       toast.error(`❌ ${errorMsg}`);
     } finally {
       setLoading(false);
@@ -62,14 +54,14 @@ export default function Booking() {
   return (
     <div className="booking-container">
       <div className="container">
-        <h2 className="title">حجز جلسة</h2>
+        <h2 className="title">{t("bookSession")}</h2>
 
         <div className="book-details">
           <div className="image">
             <img src={Book} alt="Booking" />
           </div>
 
-          <h2>:اختر التاريخ والموعد المناسب</h2>
+          <h2>{t("selectDateTime")}</h2>
 
           <div className="form" style={{ maxWidth: "500px", margin: "0 auto 20px" }}>
             <div className="input-group">
@@ -86,7 +78,7 @@ export default function Booking() {
               <span className="icon">👤</span>
               <input
                 type="text"
-                placeholder="الاسم بالكامل"
+                placeholder={t("fullName")}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
@@ -96,7 +88,7 @@ export default function Booking() {
               <span className="icon">📞</span>
               <input
                 type="number"
-                placeholder="رقم الهاتف"
+                placeholder={t("phoneNumber")}
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
               />
@@ -122,7 +114,7 @@ export default function Booking() {
             onClick={handleConfirmBooking}
             disabled={loading}
           >
-            {loading ? "جاري التأكيد..." : "تأكيد الحجز"}
+            {loading ? t("confirming") : t("confirmBooking")}
           </button>
         </div>
       </div>
