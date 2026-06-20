@@ -11,7 +11,7 @@ function createSocket(token) {
     auth: {
       authorization: `dash ${token}`,
     },
-    transports: ["websocket", "polling"],
+    transports: ["websocket"],
     autoConnect: true,
     reconnection: true,
     reconnectionAttempts: Infinity,
