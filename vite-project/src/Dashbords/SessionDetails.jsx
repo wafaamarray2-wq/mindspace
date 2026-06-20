@@ -143,12 +143,11 @@ export default function SessionDetails() {
           <p>{session.notes}</p>
         </div>
 
-        <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
+        <div className="session-actions">
           <button
             className="confirm-btn"
             onClick={handleConfirm}
             disabled={loading || delayLoading || cancelLoading}
-            style={{ padding: "10px 20px", backgroundColor: "#28a745", color: "white", border: "none", borderRadius: "5px", cursor: loading || delayLoading || cancelLoading ? "not-allowed" : "pointer", fontSize: "16px" }}
           >
             {loading ? t("confirming") : t("confirmSession")}
           </button>
@@ -157,7 +156,6 @@ export default function SessionDetails() {
             className="delay-btn"
             onClick={() => setShowDelayInput(!showDelayInput)}
             disabled={loading || delayLoading || cancelLoading}
-            style={{ padding: "10px 20px", backgroundColor: "#ffc107", color: "#333", border: "none", borderRadius: "5px", cursor: loading || delayLoading || cancelLoading ? "not-allowed" : "pointer", fontSize: "16px" }}
           >
             {t("delaySession")}
           </button>
@@ -166,7 +164,6 @@ export default function SessionDetails() {
             className="cancel-btn"
             onClick={handleCancel}
             disabled={loading || delayLoading || cancelLoading}
-            style={{ padding: "10px 20px", backgroundColor: "#dc3545", color: "white", border: "none", borderRadius: "5px", cursor: loading || delayLoading || cancelLoading ? "not-allowed" : "pointer", fontSize: "16px" }}
           >
             {cancelLoading ? t("cancelling") : t("cancelSession")}
           </button>
