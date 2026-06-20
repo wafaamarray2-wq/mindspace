@@ -43,24 +43,31 @@ function App() {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          localStorage.getItem("token") ? (
-            localStorage.getItem("role") === "therapist" ? (
-              <Navigate to="/doctor-dashboard" replace />
-            ) : (
-              <Navigate to="/patient-dashboard" replace />
-            )
-          ) : (
-            <>
-              <Navbar />
-              <HeroSection />
-              <Footer />
-            </>
-          )
-        }
-      />
+<Route
+  path="/"
+  element={
+    (() => {
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+
+      if (token && role === "therapist") {
+        return <Navigate to="/doctor-dashboard" replace />;
+      }
+      if (token && role === "patient") {
+        return <Navigate to="/patient-dashboard" replace />;
+      }
+
+      // لو مفيش token أو role → Home العادي
+      return (
+        <>
+          <Navbar />
+          <HeroSection />
+          <Footer />
+        </>
+      );
+    })()
+  }
+/>
 
 
 
@@ -124,7 +131,7 @@ function App() {
      <Route index element={<Patientfeed/>} />
         <Route path="message" element={<Messages />} />
         <Route path="groups" element={<PatientGroups />} />
-        <Route path="test" element={<TestPage />} />
+       
         <Route path="setting" element={<SettingPatients />} />
       <Route path="logOut" element={<LogOut />} />
       {/* <Route path="profile" element={<Profilepatient/>} /> */}
@@ -135,6 +142,7 @@ function App() {
       <Route path="/doctor/:id" element={<DoctorProfile />} />
      
       <Route path="/booking/:id" element={<Booking />} />
+       <Route path="test" element={<TestPage />} />
 
       <Route path="/doctor" element={<Therapists />} />
       <Route path="/forget-password" element={<ForgetPassword />} />

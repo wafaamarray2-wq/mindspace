@@ -71,7 +71,7 @@ function HeroSection() {
                 className='btn2'
                 variant="outlined"
                 sx={{ color: '#3b7d7f' }}
-                onClick={() => window.location.href = "/test.html"}
+               onClick={() => native("/test")}
               >
                 ابدا الاختبار
               </Button>

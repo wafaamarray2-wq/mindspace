@@ -1,15 +1,17 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   FiSearch,
   FiFilter,
   FiHeart,
   FiMessageCircle,
   FiSend,
+  FiTrash2,
 } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import "./Patientfeed.css";
 import axios from "axios";
 import { useLang } from "../i18n/LanguageContext";
+
 const BASE_URL = "https://mind-space-ov3r.onrender.com";
 
 /* ─── Helper Functions ─── */
@@ -33,7 +35,6 @@ function formatTime(date) {
   const now = new Date();
   const postDate = new Date(date);
   const diffInSeconds = Math.floor((now - postDate) / 1000);
-
   if (diffInSeconds < 60) return "Just now";
   const diffInMinutes = Math.floor(diffInSeconds / 60);
   if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
@@ -42,11 +43,18 @@ function formatTime(date) {
   const diffInDays = Math.floor(diffInHours / 24);
   if (diffInDays === 1) return "Yesterday";
   if (diffInDays < 7) return `${diffInDays}d ago`;
-  return postDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return postDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 }
 
 /* ─── Avatar Component ─── */
-function Avatar({ initials, color = "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)", size = 44 }) {
+function Avatar({
+  initials,
+  color = "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)",
+  size = 44,
+}) {
   return (
     <div
       className="avatar"
@@ -75,18 +83,27 @@ function DoctorAvatar({ doctor, size = 44 }) {
     );
   }
   const initial = doctor?.userName?.charAt(0)?.toUpperCase() || "D";
-const colors = [
+  const colors = [
     "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)",
     "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
     "linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)",
     "linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%)",
-];
+  ];
   const hash = doctor?.userName?.charCodeAt(0) || 0;
-  return <Avatar initials={initial} color={colors[hash % colors.length]} size={size} />;
+  return (
+    <Avatar
+      initials={initial}
+      color={colors[hash % colors.length]}
+      size={size}
+    />
+  );
 }
 
 /* ─── Comment Item ─── */
-function CommentItem({ comment }) {
+function CommentItem({ comment, onDelete }) {
+  const currentUserId = getUserIdFromToken();
+  const canDelete = comment.userId === currentUserId;
+
   return (
     <div className="comment-item">
       <div className="comment-avatar">
@@ -101,14 +118,45 @@ function CommentItem({ comment }) {
           <div className="comment-author">{comment.author}</div>
           <div className="comment-text">{comment.text}</div>
         </div>
-        <div className="comment-time">{comment.time}</div>
+        <div
+          className="comment-time"
+          style={{ display: "flex", alignItems: "center", gap: 8 }}
+        >
+          {comment.time}
+          {canDelete && onDelete && (
+            <button
+              onClick={() => onDelete(comment.id)}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "#e57373",
+                padding: 0,
+                display: "flex",
+                alignItems: "center",
+              }}
+              title="Delete comment"
+            >
+              <FiTrash2 size={13} />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 /* ─── Post Card ─── */
-function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesList, userImage, userName }) {
+function PostCard({
+  post,
+  onLike,
+  onAddComment,
+  onToggleComments,
+  onToggleLikesList,
+  onDeleteComment,
+  userImage,
+  userName,
+}) {
   const [draft, setDraft] = useState("");
   const { t } = useLang();
 
@@ -118,13 +166,10 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
     setDraft("");
   };
 
-  // FIX: تجنب تكرار النص - لو النص أقل من 100 حرف متعرضوش في العنوان والوصف مع بعض
   const lines = post.text ? post.text.split("\n") : [];
   const hasTitle = lines.length > 1 && lines[0].trim().length > 0;
   const titleText = hasTitle ? lines[0] : null;
-  const bodyText = hasTitle
-    ? lines.slice(1).join("\n").trim()
-    : post.text;
+  const bodyText = hasTitle ? lines.slice(1).join("\n").trim() : post.text;
 
   return (
     <article className="post-card">
@@ -140,98 +185,78 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
           </div>
           <div className="post-time">{post.time}</div>
         </div>
-
       </div>
 
-      {/* Content - FIX: إزالة تكرار النص */}
+      {/* Content */}
       {post.text && (
-  <div className="post-content">
-    {titleText && <h3 className="post-title">{titleText}</h3>}
-
-    <p className="post-description">
-      {(titleText ? bodyText : post.text)?.length > 300
-        ? `${(titleText ? bodyText : post.text).substring(0, 300)}...`
-        : (titleText ? bodyText : post.text)}
-    </p>
-  </div>
-)}
+        <div className="post-content">
+          {titleText && <h3 className="post-title">{titleText}</h3>}
+          <p className="post-description">
+            {(titleText ? bodyText : post.text)?.length > 300
+              ? `${(titleText ? bodyText : post.text).substring(0, 300)}...`
+              : titleText
+                ? bodyText
+                : post.text}
+          </p>
+        </div>
+      )}
 
       {/* Image */}
-     {post.img && (
-  <div className="post-image-container">
-    <img
-      src={post.img}
-      alt="post"
-      className="post-image"
-      onClick={() => {
-        const modal = document.createElement("div");
-        modal.style.cssText = `
-          position:fixed; inset:0; background:rgba(0,0,0,0.9);
-          display:flex; align-items:center; justify-content:center;
-          z-index:9999; cursor:pointer; flex-direction:column; gap:16px;
-        `;
-
-        const img = document.createElement("img");
-        img.src = post.img;
-        img.style.cssText = `
-          max-width:90vw; max-height:85vh;
-          object-fit:contain; border-radius:8px;
-          box-shadow:0 20px 60px rgba(0,0,0,0.5);
-        `;
-
-        const btnRow = document.createElement("div");
-        btnRow.style.cssText = "display:flex; gap:12px;";
-
-        const downloadBtn = document.createElement("a");
-        downloadBtn.href = post.img;
-        downloadBtn.download = "image.jpg";
-        downloadBtn.target = "_blank";
-        downloadBtn.innerText = "⬇ تنزيل الصورة";
-        downloadBtn.style.cssText = `
-          background:#6366f1; color:#fff; padding:10px 20px;
-          border-radius:8px; text-decoration:none; font-size:14px;
-          font-weight:600; cursor:pointer;
-        `;
-        downloadBtn.onclick = (e) => e.stopPropagation();
-
-        const closeBtn = document.createElement("button");
-        closeBtn.innerText = "✕ إغلاق";
-        closeBtn.style.cssText = `
-          background:#334155; color:#fff; padding:10px 20px;
-          border-radius:8px; border:none; font-size:14px;
-          font-weight:600; cursor:pointer;
-        `;
-        closeBtn.onclick = () => document.body.removeChild(modal);
-
-        btnRow.appendChild(downloadBtn);
-        btnRow.appendChild(closeBtn);
-        modal.appendChild(img);
-        modal.appendChild(btnRow);
-        modal.onclick = () => document.body.removeChild(modal);
-        document.body.appendChild(modal);
-      }}
-    />
-  </div>
-)}
+      {post.img && (
+        <div className="post-image-container">
+          <img
+            src={post.img}
+            alt="post"
+            className="post-image"
+            onClick={() => {
+              const modal = document.createElement("div");
+              modal.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:pointer;flex-direction:column;gap:16px;`;
+              const img = document.createElement("img");
+              img.src = post.img;
+              img.style.cssText = `max-width:90vw;max-height:85vh;object-fit:contain;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,0.5);`;
+              const btnRow = document.createElement("div");
+              btnRow.style.cssText = "display:flex;gap:12px;";
+              const downloadBtn = document.createElement("a");
+              downloadBtn.href = post.img;
+              downloadBtn.download = "image.jpg";
+              downloadBtn.target = "_blank";
+              downloadBtn.innerText = "⬇ تنزيل الصورة";
+              downloadBtn.style.cssText = `background:#6366f1;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;cursor:pointer;`;
+              downloadBtn.onclick = (e) => e.stopPropagation();
+              const closeBtn = document.createElement("button");
+              closeBtn.innerText = "✕ إغلاق";
+              closeBtn.style.cssText = `background:#334155;color:#fff;padding:10px 20px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer;`;
+              closeBtn.onclick = () => document.body.removeChild(modal);
+              btnRow.appendChild(downloadBtn);
+              btnRow.appendChild(closeBtn);
+              modal.appendChild(img);
+              modal.appendChild(btnRow);
+              modal.onclick = () => document.body.removeChild(modal);
+              document.body.appendChild(modal);
+            }}
+          />
+        </div>
+      )}
 
       {/* Stats */}
       <div className="post-stats">
-        {/* FIX: زرار اللايكات بيفتح قائمة المعجبين */}
         <button
           className="stat-item stat-button"
           onClick={() => onToggleLikesList(post.id)}
         >
           <FaHeart className="stat-icon liked" />
           <span className="stat-number">{post.likes}</span>
-         <span className="stat-label">{t("likes")}</span>
+          <span className="stat-label">{t("likes")}</span>
         </button>
         <button
           className="stat-item stat-button"
           onClick={() => onToggleComments(post.id)}
         >
           <FiMessageCircle className="stat-icon" />
-          <span className="stat-number">{post.commentsCount ?? post.comments.length}</span>
-         <span className="stat-label">{t("comments")}</span>
+          <span className="stat-number">
+            {post.commentsCount ?? post.comments.length}
+          </span>
+          <span className="stat-label">{t("comments")}</span>
         </button>
       </div>
 
@@ -247,9 +272,8 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
           ) : (
             <FiHeart className="icon" />
           )}
-         <span>{post.liked ? t("liked") : t("like")}</span>
+          <span>{post.liked ? t("liked") : t("like")}</span>
         </button>
-
         <button
           className="action-btn"
           onClick={() => onToggleComments(post.id)}
@@ -259,10 +283,13 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
         </button>
       </div>
 
-      {/* Likes List Section */}
+      {/* Likes List */}
       {post.showLikesList && (
-        <div className="likes-list-section" style={{ direction: "rtl", textAlign: "right" }}>
-        <h4>{t("whoLiked")}</h4>
+        <div
+          className="likes-list-section"
+          style={{ direction: "rtl", textAlign: "right" }}
+        >
+          <h4>{t("whoLiked")}</h4>
           <div className="likes-avatars-row">
             {post.likesList && post.likesList.length > 0 ? (
               post.likesList.map((likeUser, idx) => {
@@ -282,19 +309,27 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
                 );
               })
             ) : (
-            <div className="no-likes-text">{t("noLikesYet")}</div>
+              <div className="no-likes-text">{t("noLikesYet")}</div>
             )}
           </div>
         </div>
       )}
 
-      {/* Comments Section */}
+   {/* Comments Section */}
       {post.showComments && (
         <div className="comments-section">
           <div className="comments-list">
             {post.comments.length > 0 ? (
               post.comments.map((c, i) => (
-                <CommentItem key={i} comment={c} />
+                <CommentItem
+                  key={i}
+                  comment={c}
+                  onDelete={
+                    onDeleteComment
+                      ? (commentId) => onDeleteComment(post.id, commentId)
+                      : undefined
+                  }
+                />
               ))
             ) : (
               <div className="no-comments">{t("noPostsFound")}</div>
@@ -309,11 +344,13 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
                 <Avatar initials={userName?.charAt(0) || "U"} size={36} />
               )}
             </div>
+
             <div className="comment-input-wrapper">
               <input
+                dir="auto"
                 type="text"
                 className="comment-input"
-                placeholder={t("writeComment...")}
+                placeholder={t("writeResponse")}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 onKeyDown={(e) => {
@@ -338,11 +375,10 @@ function PostCard({ post, onLike, onAddComment, onToggleComments, onToggleLikesL
   );
 }
 
-/* ─── Format Helpers ─── */
-// FIX: formatComments تتعامل مع كل الـ fields الممكنة من الـ API
 function formatComments(rawComments = []) {
   return rawComments.map((c) => ({
     id: c._id,
+    userId: c.user?._id || c.userId?._id || c.author?._id || null,
     author:
       c.user?.userName ||
       c.author?.userName ||
@@ -364,12 +400,9 @@ function formatArticle(article) {
   const liked = Array.isArray(article.likes)
     ? article.likes.some((l) => l === userId || l?._id === userId)
     : false;
-
-  // FIX: likesList تكون array من objects مش strings
   const likesList = Array.isArray(article.likes)
     ? article.likes.filter((l) => typeof l === "object" && l !== null)
     : [];
-
   return {
     ...article,
     id: article._id,
@@ -396,37 +429,59 @@ export default function PatientFeed() {
   const [loading, setLoading] = useState(true);
   const [userImage, setUserImage] = useState(null);
   const [userName, setUserName] = useState("Patient");
-
-
-
-    // ← ضيفي الـ dark mode state هنا
   const [isDark, setIsDark] = useState(false);
 
-  // ← ضيفي الـ useEffect ده هنا
+  const handleDeleteComment = async (articleId, commentId) => {
+    try {
+      await axios.delete(
+        `${BASE_URL}/article/${articleId}/comment/${commentId}`,
+        { headers: authHeader() },
+      );
+
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === articleId
+            ? {
+                ...p,
+                comments: p.comments.filter((c) => c.id !== commentId),
+                commentsCount: Math.max((p.commentsCount || 1) - 1, 0),
+              }
+            : p,
+        ),
+      );
+    } catch (err) {
+      console.log("Error deleting comment:", err.response?.data || err);
+    }
+  };
+
   useEffect(() => {
     const saved = localStorage.getItem("mindspace-theme-patient") || "light";
     document.documentElement.setAttribute("data-theme", saved);
     setIsDark(saved === "dark");
   }, []);
 
-  const toggleTheme = () => {
-    const next = isDark ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
- 
-localStorage.setItem("mindspace-theme-patient", next);
-    setIsDark(!isDark);
-  };
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`${BASE_URL}/user/profile`, {
+          headers: { Authorization: `dash ${token}` },
+        });
+        const userData = res.data.data;
+        setUserImage(userData?.pfp?.secure_url || null);
+        setUserName(userData?.userName || "User");
+      } catch (err) {
+        console.log("Error fetching user profile:", err);
+      }
+    };
+    fetchUserProfile();
+  }, []);
 
-  
-  /* ─── Fetch Comments - FIX: بنجيب كل الكومنتات مش بس بتاعت اليوزر ─── */
   const fetchComments = async (articleId) => {
     try {
-      const userId = getUserIdFromToken();
-      if (!userId) return [];
-
       const res = await axios.get(
-        `${BASE_URL}/article/${articleId}/comment/${userId}`,
-        { headers: authHeader() }
+        `${BASE_URL}/article/${articleId}/comment`,
+        { headers: authHeader() },
       );
 
       const raw = res.data?.data || res.data || [];
@@ -437,13 +492,11 @@ localStorage.setItem("mindspace-theme-patient", next);
     }
   };
 
-  /* ─── Fetch Likes List ─── */
   const fetchLikesList = async (articleId) => {
     try {
-      const res = await axios.get(
-        `${BASE_URL}/article/${articleId}`,
-        { headers: authHeader() }
-      );
+      const res = await axios.get(`${BASE_URL}/article/${articleId}`, {
+        headers: authHeader(),
+      });
       const article = res.data?.data || res.data;
       const likes = article?.likes || [];
       return likes.filter((l) => typeof l === "object" && l !== null);
@@ -453,61 +506,55 @@ localStorage.setItem("mindspace-theme-patient", next);
     }
   };
 
-  /* ─── Fetch Posts ─── */
-  const fetchPosts = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(`${BASE_URL}/article`, {
-        headers: authHeader(),
-      });
+ // بعد
+const fetchPosts = async () => {
+  setLoading(true);
+  try {
+    const res = await axios.get(`${BASE_URL}/article`, {
+      headers: authHeader(),
+    });
+    const articles = res.data.data || [];
+    const formatted = articles.map((article) => formatArticle(article));
+    setPosts(formatted);
 
-      const articles = res.data.data || [];
-      const formattedPosts = articles.map((article) => formatArticle(article));
-      setPosts(formattedPosts);
-    } catch (err) {
-      console.log("Error fetching posts:", err.response?.data || err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    formatted.forEach(async (post) => {
+      const comments = await fetchComments(post.id);
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === post.id ? { ...p, commentsCount: comments.length } : p,
+        ),
+      );
+    });
+  } catch (err) {
+    console.log("Error fetching posts:", err.response?.data || err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
-  /* ─── Handle Toggle Likes List - FIX: بنجيب اللايكات من الـ API ─── */
   const handleToggleLikesList = async (id) => {
     const post = posts.find((p) => p.id === id);
-
-    // لو مفتوح، اقفله
     if (post?.showLikesList) {
       setPosts((prev) =>
-        prev.map((p) =>
-          p.id === id ? { ...p, showLikesList: false } : p
-        )
+        prev.map((p) => (p.id === id ? { ...p, showLikesList: false } : p)),
       );
       return;
     }
-
-    // افتح وجيب البيانات
     setPosts((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, showLikesList: true } : p
-      )
+      prev.map((p) => (p.id === id ? { ...p, showLikesList: true } : p)),
     );
-
-    // لو الـ likesList فاضية أو objects مش loaded، نجيبها
     if (!post?.likesList || post.likesList.length === 0) {
       const likesList = await fetchLikesList(id);
       setPosts((prev) =>
-        prev.map((p) =>
-          p.id === id ? { ...p, likesList } : p
-        )
+        prev.map((p) => (p.id === id ? { ...p, likesList } : p)),
       );
     }
   };
 
-  /* ─── Handle Like ─── */
   const handleLike = async (id) => {
     setPosts((prev) =>
       prev.map((p) =>
@@ -518,25 +565,20 @@ localStorage.setItem("mindspace-theme-patient", next);
               likes: p.liked ? p.likes - 1 : p.likes + 1,
               likeLoading: true,
             }
-          : p
-      )
+          : p,
+      ),
     );
-
     try {
       await axios.patch(
         `${BASE_URL}/article/like-unlike/${id}`,
         {},
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
-
       setPosts((prev) =>
-        prev.map((p) =>
-          p.id === id ? { ...p, likeLoading: false } : p
-        )
+        prev.map((p) => (p.id === id ? { ...p, likeLoading: false } : p)),
       );
     } catch (err) {
       console.log("Error liking post:", err.response?.data || err);
-      // Revert on error
       setPosts((prev) =>
         prev.map((p) =>
           p.id === id
@@ -546,55 +588,56 @@ localStorage.setItem("mindspace-theme-patient", next);
                 likes: p.liked ? p.likes - 1 : p.likes + 1,
                 likeLoading: false,
               }
-            : p
-        )
+            : p,
+        ),
       );
     }
   };
 
-  /* ─── Toggle Comments - FIX: بنجيب كل الكومنتات مش بس بتاعت اليوزر ─── */
   const handleToggleComments = async (id) => {
     const post = posts.find((p) => p.id === id);
-
     if (post?.showComments) {
       setPosts((prev) =>
-        prev.map((p) =>
-          p.id === id ? { ...p, showComments: false } : p
-        )
+        prev.map((p) => (p.id === id ? { ...p, showComments: false } : p)),
       );
       return;
     }
-
     const comments = await fetchComments(id);
-
     setPosts((prev) =>
       prev.map((p) =>
         p.id === id
-          ? { ...p, showComments: true, comments, commentsCount: comments.length }
-          : p
-      )
+          ? {
+              ...p,
+              showComments: true,
+              comments,
+              commentsCount: comments.length,
+            }
+          : p,
+      ),
     );
   };
 
-  /* ─── Add Comment ─── */
   const handleAddComment = async (id, text) => {
     try {
       const userId = getUserIdFromToken();
-
       await axios.post(
         `${BASE_URL}/article/${id}/comment/${userId}`,
         { content: text },
-        { headers: authHeader() }
+        { headers: authHeader() },
       );
-
       setTimeout(async () => {
         const comments = await fetchComments(id);
         setPosts((prev) =>
           prev.map((p) =>
             p.id === id
-              ? { ...p, showComments: true, comments, commentsCount: comments.length }
-              : p
-          )
+              ? {
+                  ...p,
+                  showComments: true,
+                  comments,
+                  commentsCount: comments.length,
+                }
+              : p,
+          ),
         );
       }, 300);
     } catch (err) {
@@ -602,7 +645,6 @@ localStorage.setItem("mindspace-theme-patient", next);
     }
   };
 
-  /* ─── Filter Posts ─── */
   const filteredPosts = posts.filter((p) => {
     const matchesSearch =
       p.text?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -612,40 +654,36 @@ localStorage.setItem("mindspace-theme-patient", next);
 
   return (
     <div className="feed-container">
-      {/* ─── Header ─── */}
       <header className="feed-header">
         <div className="header-content">
           <div className="header-text">
-          <h1 className="header-title">{t("mentalHealthFeed")}</h1>
-
-          <p className="header-subtitle">{t("feedSubtitle")}</p>
+            <h1 className="header-title">{t("mentalHealthFeed")}</h1>
+            <p className="header-subtitle">{t("feedSubtitle")}</p>
           </div>
-
           <div className="header-controls">
             <div className="search-wrapper">
               <FiSearch className="search-icon" />
               <input
                 type="text"
                 className="search-input"
-              placeholder={t("searchPlaceholder")}
+                placeholder={t("searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <button className="filter-btn">
               <FiFilter />
-            <span>{t("filter")}</span>
+              <span>{t("filter")}</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* ─── Posts Feed ─── */}
       <main className="feed-main">
         {loading ? (
           <div className="loading-state">
             <div className="spinner"></div>
-          <p>{t("loadingPosts")}</p>
+            <p>{t("loadingPosts")}</p>
           </div>
         ) : filteredPosts.length > 0 ? (
           <div className="posts-list">
@@ -657,6 +695,7 @@ localStorage.setItem("mindspace-theme-patient", next);
                 onAddComment={handleAddComment}
                 onToggleComments={handleToggleComments}
                 onToggleLikesList={handleToggleLikesList}
+                onDeleteComment={handleDeleteComment}
                 userImage={userImage}
                 userName={userName}
               />
@@ -665,8 +704,8 @@ localStorage.setItem("mindspace-theme-patient", next);
         ) : (
           <div className="empty-state">
             <div className="empty-icon">📝</div>
-           <h3>{t("noPostsFound")}</h3>
-         <p>{t("tryAdjusting")}</p>
+            <h3>{t("noPostsFound")}</h3>
+            <p>{t("tryAdjusting")}</p>
           </div>
         )}
       </main>

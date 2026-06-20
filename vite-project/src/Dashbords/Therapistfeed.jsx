@@ -15,6 +15,15 @@ import {
   FiRotateCcw,
   FiTrash2,
   FiList,
+  // بعد
+
+  FiSearch,
+  FiFilter,
+
+
+
+
+
 } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import { useDashUser } from "../Dashbords/DoctorDashbord";
@@ -723,34 +732,46 @@ export default function TherapistFeed() {
   const [currentTab, setCurrentTab] = useState("feed");
 
   /* ─── Fetch Posts ─── */
-  const fetchAndSeparatePosts = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(`${BASE_URL}/article`, {
-        headers: authHeader(),
-      });
-      const articles = res.data.data || [];
+ // بعد
+const fetchAndSeparatePosts = async () => {
+  setLoading(true);
+  try {
+    const res = await axios.get(`${BASE_URL}/article`, {
+      headers: authHeader(),
+    });
+    const articles = res.data.data || [];
 
-      const active = [],
-        archived = [],
-        trashed = [];
+    const active = [],
+      archived = [],
+      trashed = [];
 
-      articles.forEach((article) => {
-        const formatted = formatArticle(article);
-        if (article.isDeleted === true) trashed.push(formatted);
-        else if (article.isArchived === true) archived.push(formatted);
-        else active.push(formatted);
-      });
+    articles.forEach((article) => {
+      const formatted = formatArticle(article);
+      if (article.isDeleted === true) trashed.push(formatted);
+      else if (article.isArchived === true) archived.push(formatted);
+      else active.push(formatted);
+    });
 
-      setPosts(active);
-      setArchivedPosts(archived);
-      setTrashedPosts(trashed);
-    } catch (err) {
-      console.log("Error fetching posts:", err.response?.data || err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setPosts(active);
+    setArchivedPosts(archived);
+    setTrashedPosts(trashed);
+
+    [...active, ...archived, ...trashed].forEach(async (post) => {
+      const comments = await fetchComments(post.id);
+      const updateCount = (prev) =>
+        prev.map((p) =>
+          p.id === post.id ? { ...p, commentsCount: comments.length } : p,
+        );
+      setPosts(updateCount);
+      setArchivedPosts(updateCount);
+      setTrashedPosts(updateCount);
+    });
+  } catch (err) {
+    console.log("Error fetching posts:", err.response?.data || err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchAndSeparatePosts();
@@ -767,23 +788,21 @@ export default function TherapistFeed() {
   };
 
   /* ─── Fetch Comments - FIX: كل الكومنتات ─── */
-  const fetchComments = async (articleId) => {
-    try {
-      const userId = getUserIdFromToken();
-      if (!userId) return [];
+// بعد
+const fetchComments = async (articleId) => {
+  try {
+    const res = await axios.get(
+      `${BASE_URL}/article/${articleId}/comment`,
+      { headers: authHeader() },
+    );
 
-      const res = await axios.get(
-        `${BASE_URL}/article/${articleId}/comment/${userId}`,
-        { headers: authHeader() },
-      );
-
-      const raw = res.data?.data || res.data || [];
-      return formatComments(Array.isArray(raw) ? raw : []);
-    } catch (err) {
-      console.log("Error fetching comments:", err.response?.data || err);
-      return [];
-    }
-  };
+    const raw = res.data?.data || res.data || [];
+    return formatComments(Array.isArray(raw) ? raw : []);
+  } catch (err) {
+    console.log("Error fetching comments:", err.response?.data || err);
+    return [];
+  }
+};
 
   /* ─── Fetch Likes List ─── */
   const fetchLikesList = async (articleId) => {
